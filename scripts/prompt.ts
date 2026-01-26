@@ -1,24 +1,15 @@
 import "dotenv/config";
 import inquirer from "inquirer";
 import { hashPassword } from "@/utils/password";
-import { quizdb } from "@/config/db";
+import { db } from "@/config/db";
 
 async function main() {
     const answers = await inquirer.prompt([
+        
         {
             type: "input",
-            name: "name",
-            message: "Enter your name:",
-        },
-        {
-            type: "input",
-            name: "mobile",
-            message: "Enter your mobile:",
-        },
-        {
-            type: "input",
-            name: "sap_id",
-            message: "Enter your SAP ID:",
+            name: "employee_id",
+            message: "Enter your Employee ID:",
         },
         {
             type: "password",
@@ -30,35 +21,30 @@ async function main() {
             type: "list",
             name: "role",
             message: "Select your role:",
-            choices: ["superadmin", "admin", "mio"],
+            choices: ["superadmin", "ao", "flm", "slm", "marketing", "director", "franchise_head"],
         },
     ]);
 
     // create admin user
-    await quizdb.user.create({
+    await db.user.create({
         data: {
-            sap_id: answers.sap_id,
+            employee_id: answers.employee_id,
             password: await hashPassword(answers.password),
             role: answers.role,
-            user_information: {
-                create: {
-                    full_name: answers.name, mobile: answers.mobile
-                }
-            }
         },
     });
 
     console.log(
-        `Welcome, ${answers.name}! You are signed up as ${answers.role}.`
+        `Welcome, ${answers.employee_id}! You are signed up as ${answers.role}.`
     );
 }
 
 main()
     .then(async () => {
-        await quizdb.$disconnect();
+        await db.$disconnect();
     })
     .catch(async (e) => {
         console.error(e);
-        await quizdb.$disconnect();
+        await db.$disconnect();
         process.exit(1);
     });
