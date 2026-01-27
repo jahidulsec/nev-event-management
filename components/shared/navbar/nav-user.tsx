@@ -1,5 +1,5 @@
 import React from "react";
-import { Settings, User } from "lucide-react";
+import { Bell, Settings, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { AuthUser } from "@/types/auth-user";
 import Link from "next/link";
@@ -15,8 +15,8 @@ export default function NavUser({ user }: { user: AuthUser }) {
           className="rounded-full"
           asChild
         >
-          <Link href={`/dashboard/settings`}>
-            <Settings /> <span className="sr-only">Settings</span>
+          <Link href={`/dashboard/notifications`}>
+            <Bell /> <span className="sr-only">Notifications</span>
           </Link>
         </Button>
       )}

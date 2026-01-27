@@ -1,6 +1,6 @@
 import { Footer } from "@/components/shared/footer/footer";
 import AppNav from "@/components/shared/navbar/app-nav";
-import { getAuthUser } from "@/types/dal";
+import { getAuthUser } from "@/lib/dal";
 import { redirect } from "next/navigation";
 import React from "react";
 
