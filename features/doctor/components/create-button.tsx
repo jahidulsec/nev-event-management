@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 // import QuizForm from "./quiz-form";
 import { FormSheet } from "@/components/shared/sheet/sheet";
+import DoctorForm from "./form";
 
 export default function CreateDoctorButton() {
   const [open, setOpen] = React.useState(false);
@@ -18,7 +19,7 @@ export default function CreateDoctorButton() {
       </Button>
 
       <FormSheet open={open} onOpenChange={setOpen} formTitle={`Create ${title}`}>
-        {/* <QuizForm onClose={() => setOpen(false)} /> */}
+        <DoctorForm onClose={() => setOpen(false)} />
       </FormSheet>
     </>
   );

@@ -2,9 +2,9 @@ import { QuerySchema } from "@/schemas/query";
 import z from "zod";
 
 export const DoctorSchema = z.object({
-  full_name: z.string().min(2, "Name must be at least 2 characters."),
-  designation: z.string().min(2, "Desingation must be at least 2 characters."),
-  speciality: z.string().min(2, "Sepciality must be at least 2 characters."),
+  full_name: z.string("Enter doctor name").min(2, "Name must be at least 2 characters."),
+  designation: z.string('Enter desingation').min(2, "Desingation must be at least 2 characters."),
+  speciality: z.string('Enter speciality').min(2, "Sepciality must be at least 2 characters."),
 });
 
 export const DoctorQuerySchema = QuerySchema.extend({

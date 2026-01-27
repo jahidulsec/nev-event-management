@@ -7,10 +7,15 @@ import { doctor } from "@/lib/generated/prisma";
 import { deleteToastTemplate } from "@/lib/template";
 import { formatDate } from "@/utils/formatter";
 import { ColumnDef } from "@tanstack/react-table";
-import { Edit2, Trash2 } from "lucide-react";
+import { Edit, Trash2 } from "lucide-react";
 import React from "react";
 import { deleteDoctor } from "../actions/doctor";
-import { ActionButton } from "@/components/shared/button/button";
+import {
+  ActionButton,
+  TableActionButton,
+} from "@/components/shared/button/button";
+import DoctorForm from "./form";
+import { FormSheet } from "@/components/shared/sheet/sheet";
 
 export default function DoctorTable({ data }: { data: doctor[] }) {
   const [edit, setEdit] = React.useState<doctor | boolean>(false);
@@ -38,12 +43,21 @@ export default function DoctorTable({ data }: { data: doctor[] }) {
 
         return (
           <div className="flex justify-end items-center gap-1">
-            <Button onClick={() => setEdit(value)}>
-              <Edit2 /> <span className="sr-only">Edit</span>
-            </Button>
-            <ActionButton isPending={pending} onClick={() => setDel(value.id)}>
+            <TableActionButton
+              tooltip="Edit"
+              variant={"edit"}
+              onClick={() => setEdit(value)}
+            >
+              <Edit /> <span className="sr-only">Edit</span>
+            </TableActionButton>
+            <TableActionButton
+              tooltip="delete"
+              variant={"delete"}
+              disabled={pending}
+              onClick={() => setDel(value.id)}
+            >
               <Trash2 /> <span className="sr-only">Delete</span>
-            </ActionButton>
+            </TableActionButton>
           </div>
         );
       },
@@ -53,6 +67,13 @@ export default function DoctorTable({ data }: { data: doctor[] }) {
   return (
     <>
       <DataTable data={data} columns={columns} />
+
+      <FormSheet open={!!edit} onOpenChange={setEdit} formTitle="Edit Doctor">
+        <DoctorForm
+          onClose={() => setEdit(false)}
+          prevData={typeof edit !== "boolean" ? edit : undefined}
+        />
+      </FormSheet>
 
       <AlertModal
         onOpenChange={setDel}
