@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { AuthUserRole } from "@/types/auth-user";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { LogoFull } from "../logo/logo";
 import { navlist } from "@/lib/data";
 
@@ -31,6 +31,7 @@ export default function NavTitle({ role }: { role: AuthUserRole }) {
         <SheetContent side="left" className="min-h-svh h-full">
           <SheetHeader>
             <LogoFull width={100} />
+            <SheetTitle className="sr-only">Nevian</SheetTitle>
           </SheetHeader>
 
           <nav className="flex-1 overflow-y-auto">

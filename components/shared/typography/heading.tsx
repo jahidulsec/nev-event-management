@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import React from "react";
-import { BackButton } from "../buttons/button";
+import { BackButton } from "../button/button";
 
 const SectionHeading = ({
   className,
@@ -21,7 +21,7 @@ const SectionHeadingIcon = ({
   return (
     <div
       className={cn(
-        "h-8 aspect-square [&>svg]:size-6 [&>svg]:fill-success/15 flex justify-center items-center bg-success-foreground text-success rounded-full",
+        "h-8 aspect-square [&>svg]:size-5 [&>svg]:fill-secondary/15 flex justify-center items-center bg-secondary-foreground text-secondary rounded-full",
         className
       )}
       {...props}

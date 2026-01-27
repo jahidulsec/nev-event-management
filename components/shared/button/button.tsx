@@ -30,8 +30,7 @@ const ActionButton = ({
 }: ButtonProps & { isPending?: boolean }) => {
   return (
     <Button {...props} disabled={isPending || props.disabled}>
-      {isPending && <Loader className="animate-spin" />}
-      {children}
+      {isPending ? <Loader className="animate-spin" /> : children}
     </Button>
   );
 };
@@ -43,7 +42,11 @@ const FormButton = ({
   ...props
 }: ButtonProps & { isPending?: boolean }) => {
   return (
-    <Button className={cn("font-semibold", className)} {...props} disabled={isPending || props.disabled}>
+    <Button
+      className={cn("font-semibold", className)}
+      {...props}
+      disabled={isPending || props.disabled}
+    >
       {isPending && <Loader className="animate-spin" />}
       {children}
     </Button>
@@ -72,7 +75,10 @@ const ViewButtonGroup = () => {
     searchParams.get("view") === "tabular" ? "tabular" : "folder";
 
   return (
-    <ButtonGroup aria-label="Button group" className="w-full sm:w-fit justify-end">
+    <ButtonGroup
+      aria-label="Button group"
+      className="w-full sm:w-fit justify-end"
+    >
       {layoutList.map((item) => (
         <Button
           key={item.label}

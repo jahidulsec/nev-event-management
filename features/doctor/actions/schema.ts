@@ -1,0 +1,18 @@
+import { QuerySchema } from "@/schemas/query";
+import z from "zod";
+
+export const DoctorSchema = z.object({
+  full_name: z.string().min(2, "Name must be at least 2 characters."),
+  designation: z.string().min(2, "Desingation must be at least 2 characters."),
+  speciality: z.string().min(2, "Sepciality must be at least 2 characters."),
+});
+
+export const DoctorQuerySchema = QuerySchema.extend({
+  // participant_id: z.string().optional(),
+});
+
+export const DoctorsSchema = z.array(DoctorSchema);
+
+export type DoctorType = z.infer<typeof DoctorSchema>;
+export type DoctorsType = z.infer<typeof DoctorsSchema>;
+export type DoctorQueryType = z.infer<typeof DoctorQuerySchema>;
