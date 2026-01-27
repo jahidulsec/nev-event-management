@@ -44,7 +44,7 @@ const SectionActions = ({
   return (
     <div
       className={cn(
-        "flex items-center gap-3 flex-col w-full sm:w-fit sm:flex-row [&>button]:w-full sm:[&>button]:w-fit",
+        "flex items-center gap-3 flex-col sm:flex-wrap w-full sm:w-fit sm:flex-row [&>button]:w-full sm:[&>button]:w-fit",
         className
       )}
       {...props}

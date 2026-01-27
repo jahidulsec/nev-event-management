@@ -14,6 +14,7 @@ import {
   SectionHeading,
   SectionHeadingIcon,
 } from "@/components/shared/typography/heading";
+import { createDoctors } from "@/features/doctor/actions/doctor";
 import CreateDoctorButton from "@/features/doctor/components/create-button";
 import DoctorTable from "@/features/doctor/components/table";
 import { getDoctors } from "@/features/doctor/lib/doctor";
@@ -46,11 +47,7 @@ export default function DoctorsPage({
           <SectionActions>
             <SearchForm />
             <DownloadButton filePath="/public/templates/quiz_template.xlsx" />
-            {/* <ExcelUploadButton
-              action={async (data) => {
-                console.log(data);
-              }}
-            /> */}
+            <ExcelUploadButton action={createDoctors} />
             <CreateDoctorButton />
           </SectionActions>
         </SectionHeader>

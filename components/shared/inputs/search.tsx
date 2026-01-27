@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { SearchIcon } from "lucide-react";
 import { useRouter } from "@bprogress/next";
 import { usePathname, useSearchParams } from "next/navigation";
-import React, { FormEvent, useState } from "react";
+import { FormEvent, useState } from "react";
 import { Button } from "../../ui/button";
 
 function Search({
