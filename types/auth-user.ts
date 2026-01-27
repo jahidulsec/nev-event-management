@@ -1,10 +1,12 @@
+import { $Enums } from "@/lib/generated/prisma";
 
 export type AuthUser = {
-    sapId: string;
+    id: string;
+    employeeId: string;
     name: string;
     mobile: string;
     role: AuthUserRole;
 };
 
 
-export type AuthUserRole = 'superadmin' | 'admin' | 'mio'
+export type AuthUserRole = $Enums.user_role

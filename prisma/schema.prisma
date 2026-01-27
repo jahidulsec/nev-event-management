@@ -132,11 +132,12 @@ model product {
 }
 
 model user {
-  employee_id    String           @id @db.VarChar(10)
+  employee_id    String           @unique(map: "employee_id") @db.VarChar(10)
   created_at     DateTime?        @default(now()) @db.Timestamp(0)
   updated_at     DateTime?        @default(now()) @db.Timestamp(0)
   password       String           @db.VarChar(150)
   role           user_role
+  id             String           @id @unique(map: "id") @db.VarChar(21) @default(nanoid())
   event          event[]
   event_approver event_approver[]
   user_details   user_details?
