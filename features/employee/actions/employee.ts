@@ -101,7 +101,7 @@ export const createEmployees = async (data: EmployeesType) => {
 
     if (validatedData.length === 0) throw new Error("No column is included");
 
-    const quiz = await db.user.create({
+    const employees = await db.user.create({
       data: {
         employee_id: validatedData[0].employee_id,
         role: validatedData[0].role,
@@ -110,12 +110,12 @@ export const createEmployees = async (data: EmployeesType) => {
     });
 
     revalidatePath("/dashboard");
-    revalidatePath("/dashboard/quiz");
+    revalidatePath("/dashboard/employees");
 
     return response({
       success: true,
-      message: "New quiz is created successfully",
-      data: quiz,
+      message: "New employees is created successfully",
+      data: employees,
     });
   } catch (error) {
     console.error(error);

@@ -4,21 +4,22 @@ import { db } from "@/config/db";
 import { handleError } from "@/lib/error";
 import { response } from "@/lib/response";
 import { revalidatePath } from "next/cache";
-import { DoctorsSchema, DoctorsType, DoctorType } from "./schema";
+import { ProductsSchema, ProductsType, ProductType } from "./schema";
+import { hashPassword } from "@/utils/password";
 
-export const createDoctor = async (data: DoctorType) => {
+export const createProduct = async (data: ProductType) => {
   try {
-    const doctor = await db.doctor.create({
+    const product = await db.product.create({
       data: data,
     });
 
     revalidatePath("/dashboard");
-    revalidatePath("/dashboard/doctors");
+    revalidatePath("/dashboardd/products");
 
     return response({
       success: true,
-      message: "New doctor is created successfully",
-      data: doctor,
+      message: "New product is created successfully",
+      data: product,
     });
   } catch (error) {
     console.error(error);
@@ -30,76 +31,76 @@ export const createDoctor = async (data: DoctorType) => {
   }
 };
 
-export const updateDoctor = async (id: string, data: DoctorType) => {
+export const updateProduct = async (id: string, data: ProductType) => {
   try {
-    const doctor = await db.doctor.update({
+    const product = await db.product.update({
       where: { id },
-      data: data,
-    });
-
-    revalidatePath("/dashboard");
-    revalidatePath("/dashboard/doctors");
-
-    return response({
-      success: true,
-      message: "Doctor is updated successfully",
-      data: doctor,
-    });
-  } catch (error) {
-    console.error(error);
-    const err = handleError(error);
-    return response({
-      success: false,
-      message: err.message ?? "Something went wrong",
-    });
-  }
-};
-
-export const deleteDoctor = async (id: string) => {
-  try {
-    const doctor = await db.doctor.delete({
-      where: { id },
-    });
-
-    revalidatePath("/dashboard");
-    revalidatePath("/dashboard/doctors");
-
-    return response({
-      success: true,
-      message: "Doctor is deleted successfully",
-      data: doctor,
-    });
-  } catch (error) {
-    console.error(error);
-    const err = handleError(error);
-    return response({
-      success: false,
-      message: err.message ?? "Something went wrong",
-    });
-  }
-};
-
-export const createDoctors = async (data: DoctorsType) => {
-  try {
-    const validatedData = DoctorsSchema.parse(data);
-
-    if (validatedData.length === 0) throw new Error("No column is included");
-
-    const doctors = await db.doctor.create({
       data: {
-        full_name: validatedData[0].full_name,
-        designation: validatedData[0].designation,
-        speciality: validatedData[0].speciality,
+        ...data,
       },
     });
 
     revalidatePath("/dashboard");
-    revalidatePath("/dashboard/doctors");
+    revalidatePath("/dashboardd/products");
 
     return response({
       success: true,
-      message: "New doctors is created successfully",
-      data: doctors,
+      message: "product is updated successfully",
+      data: product,
+    });
+  } catch (error) {
+    console.error(error);
+    const err = handleError(error);
+    return response({
+      success: false,
+      message: err.message ?? "Something went wrong",
+    });
+  }
+};
+
+export const deleteProduct = async (id: string) => {
+  try {
+    const product = await db.product.delete({
+      where: { id },
+    });
+
+    revalidatePath("/dashboard");
+    revalidatePath("/dashboardd/products");
+
+    return response({
+      success: true,
+      message: "Doctor is deleted successfully",
+      data: product,
+    });
+  } catch (error) {
+    console.error(error);
+    const err = handleError(error);
+    return response({
+      success: false,
+      message: err.message ?? "Something went wrong",
+    });
+  }
+};
+
+export const createProducts = async (data: ProductsType) => {
+  try {
+    const validatedData = ProductsSchema.parse(data);
+
+    if (validatedData.length === 0) throw new Error("No column is included");
+
+    const products = await db.product.create({
+      data: {
+        name: validatedData[0].name,
+      },
+    });
+
+    revalidatePath("/dashboard");
+    revalidatePath("/dashboard/products");
+
+    return response({
+      success: true,
+      message: "New products is created successfully",
+      data: products,
     });
   } catch (error) {
     console.error(error);
