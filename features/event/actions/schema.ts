@@ -1,3 +1,4 @@
+import { eventApproverTypeEnum, userRoleSchema } from "@/schemas/common";
 import { QuerySchema } from "@/schemas/query";
 import z from "zod";
 
@@ -16,3 +17,18 @@ export const EventTypeQuerySchema = QuerySchema.extend({
 
 export type EventTypeType = z.infer<typeof EventTypeSchema>;
 export type EventTypeQueryType = z.infer<typeof EventTypeQuerySchema>;
+
+export const EventTypeApproverSchema = z.object({
+  event_type_id: z.string("Select a event type"),
+  user_type: userRoleSchema,
+  type: eventApproverTypeEnum,
+});
+
+export const EventTypeApproverQuerySchema = QuerySchema.extend({
+  // participant_id: z.string().optional(),
+});
+
+export type EventTypeApproverType = z.infer<typeof EventTypeApproverSchema>;
+export type EventTypeApproverQueryType = z.infer<
+  typeof EventTypeApproverQuerySchema
+>;

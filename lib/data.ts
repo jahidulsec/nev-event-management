@@ -1,4 +1,11 @@
-import { Calendars, FileLock, Layout, Pill, Stethoscope, Users2 } from "lucide-react";
+import {
+  Calendars,
+  FileLock,
+  Layout,
+  Pill,
+  Stethoscope,
+  Users2,
+} from "lucide-react";
 
 export const navlist = {
   superadmin: [
@@ -40,3 +47,53 @@ export const navlist = {
     },
   ],
 };
+
+export const approverTypeList = [
+  {
+    label: "First",
+    value: "First",
+  },
+  {
+    label: "Second",
+    value: "second",
+  },
+  {
+    label: "Third",
+    value: "third",
+  },
+  {
+    label: "Final",
+    value: "final",
+  },
+  {
+    label: "Budget",
+    value: "budget",
+  },
+];
+
+export const userRoleList = [
+  {
+    label: "Superadmin",
+    value: "superadmin",
+  },
+  {
+    label: "AO",
+    value: "ao",
+  },
+  {
+    label: "FLM",
+    value: "flm",
+  },
+  {
+    label: "SLM",
+    value: "slm",
+  },
+  {
+    label: "Marketing",
+    value: "marketing",
+  },
+   {
+    label: "Director",
+    value: "director",
+  },
+];

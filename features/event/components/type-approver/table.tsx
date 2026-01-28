@@ -5,34 +5,48 @@ import {
   DataTable,
   useTableSerialColumn,
 } from "@/components/shared/table/data-table";
-import { event_type } from "@/lib/generated/prisma";
+import { approver } from "@/lib/generated/prisma";
 import { deleteToastTemplate } from "@/lib/template";
 import { formatDate, formatNumber } from "@/utils/formatter";
 import { ColumnDef } from "@tanstack/react-table";
 import { Edit, Trash2 } from "lucide-react";
 import React from "react";
-import { deleteEventType } from "../../actions/type";
+import { deleteEventTypeApprover } from "../../actions/type-approver";
 import { TableActionButton } from "@/components/shared/button/button";
-import EventTypeForm from "./form";
+import EventTypeApproverForm from "./form";
 import { FormSheet } from "@/components/shared/sheet/sheet";
+import { ApproverMultiProps } from "../../lib/type-approver";
+import { Badge } from "@/components/ui/badge";
 
-export default function EventTypeTable({ data }: { data: event_type[] }) {
-  const [edit, setEdit] = React.useState<event_type | boolean>(false);
+export default function EventTypeApproverTable({
+  data,
+}: {
+  data: ApproverMultiProps[];
+}) {
+  const [edit, setEdit] = React.useState<ApproverMultiProps | boolean>(false);
   const [del, setDel] = React.useState<string | boolean>(false);
   const [pending, startTransition] = React.useTransition();
-  const serialColumn = useTableSerialColumn<event_type>();
+  const serialColumn = useTableSerialColumn<ApproverMultiProps>();
 
-  const columns: ColumnDef<event_type>[] = [
+  const columns: ColumnDef<ApproverMultiProps>[] = [
     serialColumn,
-    { accessorKey: "title", header: "Title" },
+    {
+      id: "event_title",
+      header: "Event",
+      cell: ({ row }) => {
+        const value = row.original.event_type;
+
+        return <p>{value?.title}</p>;
+      },
+    },
     {
       id: "cost_limit",
       header: "Cost Limit",
       cell: ({ row }) => {
-        const value = row.original;
+        const value = row.original?.event_type;
 
-        const upperLimit = Number(value.upper_limit);
-        const lowerLimit = Number(value.lower_limit);
+        const upperLimit = Number(value?.upper_limit);
+        const lowerLimit = Number(value?.lower_limit);
 
         let limit = "All";
 
@@ -43,6 +57,16 @@ export default function EventTypeTable({ data }: { data: event_type[] }) {
 
         return <p>{limit}</p>;
       },
+    },
+    {
+      id: "approver_type",
+      header: "Approver Type",
+      cell: ({ row }) => <Badge variant={'outline'}>{row.original.type}</Badge>,
+    },
+    {
+      id: "role",
+      header: "User Role",
+      cell: ({ row }) => <Badge variant={'outline'}>{row.original.user_type}</Badge>,
     },
     {
       accessorKey: "created_at",
@@ -86,7 +110,7 @@ export default function EventTypeTable({ data }: { data: event_type[] }) {
       <DataTable data={data} columns={columns} />
 
       <FormSheet open={!!edit} onOpenChange={setEdit} formTitle="Edit Doctor">
-        <EventTypeForm
+        <EventTypeApproverForm
           onClose={() => setEdit(false)}
           prevData={typeof edit !== "boolean" ? edit : undefined}
         />
@@ -99,7 +123,7 @@ export default function EventTypeTable({ data }: { data: event_type[] }) {
           const id = typeof del !== "boolean" ? del : "";
 
           startTransition(() => {
-            deleteToastTemplate(() => deleteEventType(id));
+            deleteToastTemplate(() => deleteEventTypeApprover(id));
           });
         }}
       />

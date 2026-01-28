@@ -1,30 +1,42 @@
 "use server";
 
 import { db } from "@/config/db";
-import { event_type, Prisma } from "@/lib/generated/prisma";
+import { approver, Prisma } from "@/lib/generated/prisma";
 import { apiResponse } from "@/lib/response";
 import { getCleanData } from "@/utils/formatter";
-import { EventTypeQuerySchema, EventTypeQueryType } from "../actions/schema";
+import {
+  EventTypeApproverQuerySchema,
+  EventTypeApproverQueryType,
+} from "../actions/schema";
 import { getSerializeData } from "@/utils/helper";
 
-const getMulti = async (query: EventTypeQueryType) => {
+export type ApproverMultiProps = Prisma.approverGetPayload<{
+  include: { event_type: true };
+}>;
+
+const getMulti = async (query: EventTypeApproverQueryType) => {
   try {
     const cleanData = getCleanData(query);
 
     // validated searchparams
-    const params = EventTypeQuerySchema.parse(cleanData);
+    const params = EventTypeApproverQuerySchema.parse(cleanData);
 
     // extract params
-    const filter: Prisma.event_typeWhereInput = {
+    const filter: Prisma.approverWhereInput = {
       ...(params.search && {
-        title: {
-          contains: params.search,
+        event_type: {
+          title: {
+            contains: params.search,
+          },
         },
       }),
     };
 
     const [data, count] = await Promise.all([
-      db.event_type.findMany({
+      db.approver.findMany({
+        include: {
+          event_type: true,
+        },
         where: filter,
         skip: (params.page - 1) * params.size,
         take: params.size,
@@ -32,14 +44,14 @@ const getMulti = async (query: EventTypeQueryType) => {
           created_at: params.sort ?? "desc",
         },
       }),
-      db.event_type.count({
+      db.approver.count({
         where: filter,
       }),
     ]);
 
-    return apiResponse.multi<event_type>({
-      message: "Get event types successful",
-      data: getSerializeData(data) as event_type[],
+    return apiResponse.multi<ApproverMultiProps>({
+      message: "Get event type approvers successful",
+      data: data,
       count,
     });
   } catch (error) {
@@ -50,15 +62,15 @@ const getMulti = async (query: EventTypeQueryType) => {
 
 const getSingle = async (id: string) => {
   try {
-    const data = await db.event_type.findUnique({
+    const data = await db.approver.findUnique({
       where: { id },
     });
 
     // if quiz does not exist, throw error
     if (!data) throw new Error("Data not found");
 
-    return apiResponse.single<event_type>({
-      message: "Get event type successful",
+    return apiResponse.single<approver>({
+      message: "Get event type approver successful",
       data: data,
     });
   } catch (error) {
@@ -67,4 +79,4 @@ const getSingle = async (id: string) => {
   }
 };
 
-export { getMulti as getEventTypes, getSingle as getEventType };
+export { getMulti as getEventTypeApprovers, getSingle as getEventTypeApprover };

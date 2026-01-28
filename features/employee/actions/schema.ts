@@ -1,3 +1,4 @@
+import { userRoleSchema } from "@/schemas/common";
 import { QuerySchema } from "@/schemas/query";
 import z from "zod";
 
@@ -9,10 +10,7 @@ export const EmployeeSchema = z.object({
   password: z
     .string("Enter password")
     .min(6, "Password must be at least 6 characters."),
-  role: z.enum(
-    ["superadmin", "ao", "flm", "slm", "marketing", "director"],
-    "Select a role",
-  ),
+  role: userRoleSchema,
 });
 
 export const UpdateEmployeeSchema = EmployeeSchema.partial();
