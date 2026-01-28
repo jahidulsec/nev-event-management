@@ -5,8 +5,9 @@ export const EventTypeSchema = z.object({
   title: z
     .string("Enter event title name")
     .min(2, "Title must be at least 2 characters."),
-  lower_limit: z.number("Enter lower limit").optional(),
-  upper_limit: z.number("Enter upper limit").optional(),
+  type: z.string("Select a type"),
+  lower_limit: z.number().default(0).optional(),
+  upper_limit: z.number().default(0).optional(),
 });
 
 export const EventTypeQuerySchema = QuerySchema.extend({

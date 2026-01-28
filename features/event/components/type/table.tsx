@@ -7,7 +7,7 @@ import {
 } from "@/components/shared/table/data-table";
 import { event_type } from "@/lib/generated/prisma";
 import { deleteToastTemplate } from "@/lib/template";
-import { formatDate } from "@/utils/formatter";
+import { formatDate, formatNumber } from "@/utils/formatter";
 import { ColumnDef } from "@tanstack/react-table";
 import { Edit, Trash2 } from "lucide-react";
 import React from "react";
@@ -39,9 +39,9 @@ export default function EventTypeTable({ data }: { data: event_type[] }) {
         let limit = "All";
 
         if (upperLimit > 0 && lowerLimit > 0)
-          limit = `${lowerLimit} <= budget <= ${upperLimit}`;
-        else if (upperLimit) limit = `budget <= ${upperLimit}`;
-        else if (lowerLimit) limit = `${lowerLimit} <= budget`;
+          limit = `${formatNumber(lowerLimit)} <= Cost <= ${formatNumber(upperLimit)}`;
+        else if (upperLimit) limit = `Cost <= ${formatNumber(upperLimit)}`;
+        else if (lowerLimit) limit = `${formatNumber(lowerLimit)} <= Cost`;
 
         return <p>{limit}</p>;
       },
@@ -70,7 +70,7 @@ export default function EventTypeTable({ data }: { data: event_type[] }) {
               <Edit /> <span className="sr-only">Edit</span>
             </TableActionButton>
             <TableActionButton
-              tooltip="delete"
+              tooltip="Delete"
               variant={"delete"}
               disabled={pending}
               onClick={() => setDel(value.id)}
