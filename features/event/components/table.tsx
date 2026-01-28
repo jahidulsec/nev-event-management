@@ -2,14 +2,18 @@
 
 import AlertModal from "@/components/shared/alert-dialog/alert-dialog";
 import { DataTable } from "@/components/shared/table/data-table";
+import { Button } from "@/components/ui/button";
 import { doctor } from "@/lib/generated/prisma";
 import { deleteToastTemplate } from "@/lib/template";
 import { formatDate } from "@/utils/formatter";
 import { ColumnDef } from "@tanstack/react-table";
 import { Edit, Trash2 } from "lucide-react";
 import React from "react";
-import { deleteDoctor } from "../actions/doctor";
-import { TableActionButton } from "@/components/shared/button/button";
+import { deleteDoctor } from "../actions/type";
+import {
+  ActionButton,
+  TableActionButton,
+} from "@/components/shared/button/button";
 import DoctorForm from "./form";
 import { FormSheet } from "@/components/shared/sheet/sheet";
 

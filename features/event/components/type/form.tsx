@@ -1,10 +1,8 @@
 "use client";
 
-import { doctor } from "@/lib/generated/prisma";
+import { event_type } from "@/lib/generated/prisma";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
-import { DoctorSchema, DoctorType } from "../actions/schema";
-import { createDoctor, updateDoctor } from "../actions/doctor";
 import { toast } from "sonner";
 import { Form } from "@/components/shared/form/form";
 import {
@@ -15,27 +13,29 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { FormButton } from "@/components/shared/button/button";
+import { EventTypeSchema, EventTypeType } from "../../actions/schema";
+import { createEventType, updateEventType } from "../../actions/type";
 
-export default function DoctorForm({
+export default function EventTypeForm({
   onClose,
   prevData,
 }: {
   onClose: () => void;
-  prevData?: doctor;
+  prevData?: event_type;
 }) {
-  const form = useForm<DoctorType>({
-    resolver: zodResolver(DoctorSchema),
+  const form = useForm<EventTypeType>({
+    resolver: zodResolver(EventTypeSchema),
     defaultValues: {
-      full_name: prevData?.full_name,
-      designation: prevData?.designation,
-      speciality: prevData?.speciality,
+      title: prevData?.title,
+      upper_limit: Number(prevData?.upper_limit) ?? undefined,
+      lower_limit: Number(prevData?.lower_limit) ?? undefined,
     },
   });
 
-  async function onSubmit(data: DoctorType) {
+  async function onSubmit(data: EventTypeType) {
     const res = prevData
-      ? await updateDoctor(prevData.id, data)
-      : await createDoctor(data);
+      ? await updateEventType(prevData.id, data)
+      : await createEventType(data);
     toast[res.success ? "success" : "error"](res.message);
 
     if (res.success) {
@@ -47,15 +47,15 @@ export default function DoctorForm({
       <FieldGroup>
         <Controller
           control={form.control}
-          name="full_name"
+          name="title"
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Full Name</FieldLabel>
+              <FieldLabel htmlFor={field.name}>Event Title</FieldLabel>
               <Input
                 {...field}
                 id={field.name}
                 aria-invalid={fieldState.invalid}
-                placeholder="eg. Dr. Abdullah"
+                placeholder="Event Title"
                 autoComplete="off"
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -66,13 +66,17 @@ export default function DoctorForm({
       <FieldGroup>
         <Controller
           control={form.control}
-          name="designation"
+          name="upper_limit"
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Designation</FieldLabel>
+              <FieldLabel htmlFor={field.name}>Max Value</FieldLabel>
               <Input
-                {...field}
+                type="number"
                 id={field.name}
+                value={field.value}
+                onChange={(e) => {
+                  field.onChange(Number(e.target.value));
+                }}
                 aria-invalid={fieldState.invalid}
                 placeholder="eg. Professor"
                 autoComplete="off"
@@ -85,12 +89,16 @@ export default function DoctorForm({
       <FieldGroup>
         <Controller
           control={form.control}
-          name="speciality"
+          name="lower_limit"
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Speciality</FieldLabel>
+              <FieldLabel htmlFor={field.name}>Min. Value</FieldLabel>
               <Input
-                {...field}
+                value={field.value}
+                onChange={(e) => {
+                  field.onChange(Number(e.target.value));
+                }}
+                type="number"
                 id={field.name}
                 aria-invalid={fieldState.invalid}
                 placeholder="eg. Eye Specialist"

@@ -4,12 +4,12 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import { FormSheet } from "@/components/shared/sheet/sheet";
-import DoctorForm from "./form";
+import EventTypeForm from "./form";
 
-export default function CreateDoctorButton() {
+export default function CreatEventTypeButton() {
   const [open, setOpen] = React.useState(false);
 
-  const title = `Doctor`;
+  const title = `Type`;
 
   return (
     <>
@@ -18,7 +18,7 @@ export default function CreateDoctorButton() {
       </Button>
 
       <FormSheet open={open} onOpenChange={setOpen} formTitle={`Create ${title}`}>
-        <DoctorForm onClose={() => setOpen(false)} />
+        <EventTypeForm onClose={() => setOpen(false)} />
       </FormSheet>
     </>
   );

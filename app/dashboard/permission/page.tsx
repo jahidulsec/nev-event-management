@@ -1,10 +1,5 @@
-import { CommingSoon } from "@/components/shared/state/state";
-import React from "react";
+import { redirect } from "next/navigation";
 
 export default function EventPermissionsPage() {
-  return (
-    <div>
-      <CommingSoon />
-    </div>
-  );
+  return redirect("/dashboard/permission/event-type");
 }

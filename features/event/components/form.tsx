@@ -2,9 +2,10 @@
 
 import { doctor } from "@/lib/generated/prisma";
 import { zodResolver } from "@hookform/resolvers/zod";
+import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { DoctorSchema, DoctorType } from "../actions/schema";
-import { createDoctor, updateDoctor } from "../actions/doctor";
+import { createDoctor, updateDoctor } from "../actions/type";
 import { toast } from "sonner";
 import { Form } from "@/components/shared/form/form";
 import {
