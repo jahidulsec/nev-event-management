@@ -32,6 +32,7 @@ export type EventTypeApproverQueryType = z.infer<
 >;
 
 export const EventSchema = z.object({
+  track_no: z.string().optional(),
   title: z
     .string("Enter event title")
     .min(3, "Title must be more than 2 characters"),
@@ -45,31 +46,38 @@ export const EventSchema = z.object({
   venue_address: z
     .string("Enter event venue address")
     .min(3, "Venue address must be more than 2 characters"),
+  venue_appropriateness: z.enum(["yes", "no"], "Please fill this field"),
   institute: z
     .string("Enter event institute name")
-    .min(3, "Institute name must be more than 2 characters")
-    .optional(),
+    .min(3, "Institute name must be more than 2 characters"),
   institute_code: z
     .string("Enter institute code")
-    .min(3, "Institute code must be more than 2 characters")
-    .optional(),
+    .min(3, "Institute code must be more than 2 characters"),
   institute_area: z
     .string("Enter institute area")
-    .min(3, "Institute area must be more than 2 characters")
-    .optional(),
+    .min(3, "Institute area must be more than 2 characters"),
   institute_unit: z
     .string("Enter institute unit")
-    .min(3, "Institute unit must be more than 2 characters")
-    .optional(),
+    .min(3, "Institute unit must be more than 2 characters"),
   institute_dept: z
     .string("Enter institute dept")
-    .min(3, "Institute dept must be more than 2 characters")
-    .optional(),
+    .min(3, "Institute dept must be more than 2 characters"),
   objective: z
     .string("Enter event objective")
     .min(3, "Objective must be more than 2 characters"),
-  evemt_type_id: z.string("Select a event type"),
+  event_type_id: z.string("Select a event type"),
   other_type: z.string("Select a event type").optional(),
+  internal_participants: z
+    .number("Enter internal participants number")
+    .positive("Number must be positive value"),
+  external_participants: z
+    .number("Enter external participants number")
+    .positive("Number must be positive value"),
+  other_participants: z
+    .number("Enter other participants number")
+    .positive("Number must be positive value")
+    .default(0)
+    .optional(),
 });
 
 export const EventQuerySchema = QuerySchema.extend({});
