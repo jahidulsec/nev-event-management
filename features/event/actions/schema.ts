@@ -24,11 +24,55 @@ export const EventTypeApproverSchema = z.object({
   type: eventApproverTypeEnum,
 });
 
-export const EventTypeApproverQuerySchema = QuerySchema.extend({
-  // participant_id: z.string().optional(),
-});
+export const EventTypeApproverQuerySchema = QuerySchema.extend({});
 
 export type EventTypeApproverType = z.infer<typeof EventTypeApproverSchema>;
 export type EventTypeApproverQueryType = z.infer<
   typeof EventTypeApproverQuerySchema
 >;
+
+export const EventSchema = z.object({
+  title: z
+    .string("Enter event title")
+    .min(3, "Title must be more than 2 characters"),
+  event_date: z.coerce.date(),
+  user_id: z.string("Select a user"),
+  product_id: z.string("Select a product"),
+  user_type: userRoleSchema,
+  venue_name: z
+    .string("Enter event venue name")
+    .min(3, "Venue name must be more than 2 characters"),
+  venue_address: z
+    .string("Enter event venue address")
+    .min(3, "Venue address must be more than 2 characters"),
+  institute: z
+    .string("Enter event institute name")
+    .min(3, "Institute name must be more than 2 characters")
+    .optional(),
+  institute_code: z
+    .string("Enter institute code")
+    .min(3, "Institute code must be more than 2 characters")
+    .optional(),
+  institute_area: z
+    .string("Enter institute area")
+    .min(3, "Institute area must be more than 2 characters")
+    .optional(),
+  institute_unit: z
+    .string("Enter institute unit")
+    .min(3, "Institute unit must be more than 2 characters")
+    .optional(),
+  institute_dept: z
+    .string("Enter institute dept")
+    .min(3, "Institute dept must be more than 2 characters")
+    .optional(),
+  objective: z
+    .string("Enter event objective")
+    .min(3, "Objective must be more than 2 characters"),
+  evemt_type_id: z.string("Select a event type"),
+  other_type: z.string("Select a event type").optional(),
+});
+
+export const EventQuerySchema = QuerySchema.extend({});
+
+export type EventType = z.infer<typeof EventSchema>;
+export type EventQueryType = z.infer<typeof EventQuerySchema>;
