@@ -17,6 +17,10 @@ import EventTypeApproverForm from "./form";
 import { FormSheet } from "@/components/shared/sheet/sheet";
 import { ApproverMultiProps } from "../../lib/type-approver";
 import { Badge } from "@/components/ui/badge";
+import {
+  ApproverTypeBadge,
+  UserRoleBadge,
+} from "@/components/shared/badge/badge";
 
 export default function EventTypeApproverTable({
   data,
@@ -61,12 +65,20 @@ export default function EventTypeApproverTable({
     {
       id: "approver_type",
       header: "Approver Type",
-      cell: ({ row }) => <Badge variant={'outline'}>{row.original.type}</Badge>,
+      cell: ({ row }) => (
+        <ApproverTypeBadge type={row.original.type}>
+          {row.original.type}
+        </ApproverTypeBadge>
+      ),
     },
     {
       id: "role",
       header: "User Role",
-      cell: ({ row }) => <Badge variant={'outline'}>{row.original.user_type}</Badge>,
+      cell: ({ row }) => (
+        <UserRoleBadge type={row.original.user_type}>
+          {row.original.user_type}
+        </UserRoleBadge>
+      ),
     },
     {
       accessorKey: "created_at",
