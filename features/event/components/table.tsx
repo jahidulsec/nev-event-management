@@ -1,32 +1,56 @@
 "use client";
 
 import AlertModal from "@/components/shared/alert-dialog/alert-dialog";
-import { DataTable } from "@/components/shared/table/data-table";
-import { Button } from "@/components/ui/button";
-import { doctor } from "@/lib/generated/prisma";
+import {
+  DataTable,
+  useTableSerialColumn,
+} from "@/components/shared/table/data-table";
 import { deleteToastTemplate } from "@/lib/template";
 import { formatDate } from "@/utils/formatter";
 import { ColumnDef } from "@tanstack/react-table";
 import { Edit, Trash2 } from "lucide-react";
 import React from "react";
-import { deleteDoctor } from "../actions/type";
-import {
-  ActionButton,
-  TableActionButton,
-} from "@/components/shared/button/button";
-import DoctorForm from "./form";
-import { FormSheet } from "@/components/shared/sheet/sheet";
+import { deleteEvent } from "../actions/event";
+import { TableActionButton } from "@/components/shared/button/button";
+import { EventMultiProps } from "../lib/event";
+import { Badge } from "@/components/ui/badge";
 
-export default function DoctorTable({ data }: { data: doctor[] }) {
-  const [edit, setEdit] = React.useState<doctor | boolean>(false);
+export default function EventTable({ data }: { data: EventMultiProps[] }) {
+  const [edit, setEdit] = React.useState<EventMultiProps | boolean>(false);
   const [del, setDel] = React.useState<string | boolean>(false);
   const [pending, startTransition] = React.useTransition();
+  const serialColumn = useTableSerialColumn<EventMultiProps>();
 
-  const columns: ColumnDef<doctor>[] = [
-    { accessorKey: "id", header: "ID" },
-    { accessorKey: "full_name", header: "Full Name" },
-    { accessorKey: "designation", header: "Designation" },
-    { accessorKey: "speciality", header: "Speciality" },
+  const columns: ColumnDef<EventMultiProps>[] = [
+    serialColumn,
+    { accessorKey: "title", header: "Title" },
+    {
+      accessorKey: "event_date",
+      header: "Event Date",
+      cell: ({ row }) => (
+        <p>
+          {row.original.event_date ? formatDate(row.original.event_date) : "-"}
+        </p>
+      ),
+    },
+    {
+      accessorKey: "user_id",
+      header: "Employee ID",
+    },
+    {
+      id: "AO",
+      header: "AO name",
+      cell: ({ row }) => {
+        <p>{row.original.user.user_details?.full_name ?? "-"}</p>;
+      },
+    },
+    {
+      id: "status",
+      header: "Status",
+      cell: ({ row }) => {
+        <Badge variant={"outline"}>{row.original.current_status}</Badge>;
+      },
+    },
     {
       accessorKey: "created_at",
       header: "Created At",
@@ -68,13 +92,6 @@ export default function DoctorTable({ data }: { data: doctor[] }) {
     <>
       <DataTable data={data} columns={columns} />
 
-      <FormSheet open={!!edit} onOpenChange={setEdit} formTitle="Edit Doctor">
-        <DoctorForm
-          onClose={() => setEdit(false)}
-          prevData={typeof edit !== "boolean" ? edit : undefined}
-        />
-      </FormSheet>
-
       <AlertModal
         onOpenChange={setDel}
         open={!!del}
@@ -82,7 +99,7 @@ export default function DoctorTable({ data }: { data: doctor[] }) {
           const id = typeof del !== "boolean" ? del : "";
 
           startTransition(() => {
-            deleteToastTemplate(() => deleteDoctor(id));
+            deleteToastTemplate(() => deleteEvent(id));
           });
         }}
       />

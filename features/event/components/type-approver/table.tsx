@@ -5,7 +5,6 @@ import {
   DataTable,
   useTableSerialColumn,
 } from "@/components/shared/table/data-table";
-import { approver } from "@/lib/generated/prisma";
 import { deleteToastTemplate } from "@/lib/template";
 import { formatDate, formatNumber } from "@/utils/formatter";
 import { ColumnDef } from "@tanstack/react-table";
@@ -16,7 +15,6 @@ import { TableActionButton } from "@/components/shared/button/button";
 import EventTypeApproverForm from "./form";
 import { FormSheet } from "@/components/shared/sheet/sheet";
 import { ApproverMultiProps } from "../../lib/type-approver";
-import { Badge } from "@/components/ui/badge";
 import {
   ApproverTypeBadge,
   UserRoleBadge,

@@ -4,21 +4,20 @@ import { db } from "@/config/db";
 import { handleError } from "@/lib/error";
 import { response } from "@/lib/response";
 import { revalidatePath } from "next/cache";
-import { EventTypeApproverType } from "./schema";
+import { EventType } from "./schema";
 
-
-export const createEventTypeApprover = async (data: EventTypeApproverType) => {
+export const createEvent = async (data: EventType) => {
   try {
-    const etype = await db.approver.create({
+    const etype = await db.event.create({
       data: data,
     });
 
     revalidatePath("/dashboard");
-    revalidatePath("/dashboard/permission/approver");
+    revalidatePath("/dashboard/events");
 
     return response({
       success: true,
-      message: "New event type approver is created successfully",
+      message: "New event is created successfully",
       data: etype,
     });
   } catch (error) {
@@ -31,22 +30,19 @@ export const createEventTypeApprover = async (data: EventTypeApproverType) => {
   }
 };
 
-export const updateEventTypeApprover = async (
-  id: string,
-  data: EventTypeApproverType,
-) => {
+export const updateEvent = async (id: string, data: EventType) => {
   try {
-    const etype = await db.approver.update({
+    const etype = await db.event.update({
       where: { id },
       data: data,
     });
 
     revalidatePath("/dashboard");
-    revalidatePath("/dashboard/permission/approver");
+    revalidatePath("/dashboard/events");
 
     return response({
       success: true,
-      message: "Event type approver is updated successfully",
+      message: "Event is updated successfully",
       data: etype,
     });
   } catch (error) {
@@ -59,18 +55,18 @@ export const updateEventTypeApprover = async (
   }
 };
 
-export const deleteEventTypeApprover = async (id: string) => {
+export const deleteEvent = async (id: string) => {
   try {
     const type = await db.approver.delete({
       where: { id },
     });
 
     revalidatePath("/dashboard");
-    revalidatePath("/dashboard/permission/approver");
+    revalidatePath("/dashboard/events");
 
     return response({
       success: true,
-      message: "Event type approver is deleted successfully",
+      message: "Event is deleted successfully",
       data: type,
     });
   } catch (error) {

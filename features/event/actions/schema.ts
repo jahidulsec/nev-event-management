@@ -78,6 +78,8 @@ export const EventSchema = z.object({
     .positive("Number must be positive value")
     .default(0)
     .optional(),
+  approved_material: z.enum(["promotional", "non_branded"], "Select a option"),
+  material_code: z.string("Please enter material code").optional(),
 });
 
 export const EventQuerySchema = QuerySchema.extend({});
