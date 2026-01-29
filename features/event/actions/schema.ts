@@ -36,10 +36,9 @@ export const EventSchema = z.object({
   title: z
     .string("Enter event title")
     .min(3, "Title must be more than 2 characters"),
-  event_date: z.coerce.date(),
+  event_date: z.date(),
   user_id: z.string("Select a user"),
   product_id: z.string("Select a product"),
-  user_type: userRoleSchema,
   venue_name: z
     .string("Enter event venue name")
     .min(3, "Venue name must be more than 2 characters"),
@@ -65,8 +64,7 @@ export const EventSchema = z.object({
   objective: z
     .string("Enter event objective")
     .min(3, "Objective must be more than 2 characters"),
-  event_type_id: z.string("Select a event type"),
-  other_type: z.string("Select a event type").optional(),
+  event_type: z.string("Enter event type"),
   internal_participants: z
     .number("Enter internal participants number")
     .positive("Number must be positive value"),
@@ -80,6 +78,7 @@ export const EventSchema = z.object({
     .optional(),
   approved_material: z.enum(["promotional", "non_branded"], "Select a option"),
   material_code: z.string("Please enter material code").optional(),
+  details_participants: z.string("Please enter details").optional(),
 });
 
 export const EventQuerySchema = QuerySchema.extend({});

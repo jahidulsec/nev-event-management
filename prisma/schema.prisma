@@ -43,8 +43,7 @@ model event {
   institute_unit        String                      @db.VarChar(50)
   institute_dept        String                      @db.VarChar(25)
   objective             String                      @db.VarChar(150)
-  event_type_id         String                      @db.VarChar(21)
-  other_type            String?                     @db.VarChar(50)
+  event_type            String                      @db.VarChar(100)
   internal_participants Int
   external_participants Int
   details_participants  String?                     @db.Text
@@ -58,13 +57,12 @@ model event {
   track_no              String?                     @db.VarChar(20)
   user                  user                        @relation(fields: [user_id], references: [employee_id], onDelete: Cascade, map: "event_ibfk_1")
   product               product                     @relation(fields: [product_id], references: [id], onUpdate: Restrict, map: "event_ibfk_2")
-  event_type            event_type                  @relation(fields: [event_type_id], references: [id], onUpdate: Restrict, map: "event_ibfk_3")
   event_approver        event_approver[]
   event_attachment      event_attachment[]
   event_budget          event_budget[]
 
-  @@unique([user_id, product_id, event_type_id], map: "user_id")
-  @@index([event_type_id], map: "event_type_id")
+  @@unique([user_id, product_id], map: "user_id")
+  @@index([event_type], map: "event_type_id")
   @@index([product_id], map: "product_id")
 }
 
@@ -123,7 +121,6 @@ model event_type {
   created_at  DateTime?  @default(now()) @db.Timestamp(0)
   updated_at  DateTime?  @default(now()) @db.Timestamp(0)
   approver    approver[]
-  event       event[]
 }
 
 model product {

@@ -21,6 +21,7 @@ const Select = ({
   placeholder,
   id,
   paramsName,
+  pending,
   onValueChange,
   ...props
 }: React.ComponentProps<React.FC<SelectProps>> & {
@@ -29,6 +30,7 @@ const Select = ({
   id?: string;
   data: { label: string; value: string }[];
   paramsName?: string;
+  pending?: boolean;
 }) => {
   const searchParams = useSearchParams();
   const pathname = usePathname();
@@ -48,7 +50,7 @@ const Select = ({
       }}
       defaultValue={
         props.defaultValue ??
-        (paramsName ? searchParams.get(paramsName) ?? undefined : undefined)
+        (paramsName ? (searchParams.get(paramsName) ?? undefined) : undefined)
       }
     >
       <SelectTrigger
@@ -66,7 +68,7 @@ const Select = ({
             ))
           ) : (
             <SelectLabel className="text-xs text-muted-foreground">
-              No data.
+              {pending ? "Loading..." : "No data."}
             </SelectLabel>
           )}
         </SelectGroup>

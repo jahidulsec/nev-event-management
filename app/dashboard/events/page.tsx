@@ -12,6 +12,7 @@ import {
   SectionHeading,
   SectionHeadingIcon,
 } from "@/components/shared/typography/heading";
+import CreateEventButton from "@/features/event/components/create-button";
 import EventTable from "@/features/event/components/table";
 import { getEvents } from "@/features/event/lib/event";
 import { SearchParams } from "@/types/search-params";
@@ -42,9 +43,7 @@ export default function EventsPage({
 
           <SectionActions>
             <SearchForm />
-            {/* <DownloadButton filePath="/public/templates/quiz_template.xlsx" /> */}
-            {/* <ExcelUploadButton action={createDoctors} /> */}
-            {/* <CreateDoctorButton /> */}
+            <CreateEventButton />
           </SectionActions>
         </SectionHeader>
 
