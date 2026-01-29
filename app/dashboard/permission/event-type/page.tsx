@@ -68,8 +68,6 @@ const TableSection = async ({
     search: search?.toString().trim(),
   });
 
-  const test = new Prisma.Decimal(150.02);
-
   return (
     <ErrorBoundary message={!res.success ? res.message : undefined}>
       <EventTypeTable data={res?.data ?? []} />

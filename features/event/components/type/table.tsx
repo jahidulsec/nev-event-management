@@ -5,24 +5,34 @@ import {
   DataTable,
   useTableSerialColumn,
 } from "@/components/shared/table/data-table";
-import { event_type } from "@/lib/generated/prisma";
 import { deleteToastTemplate } from "@/lib/template";
-import { formatDate, formatNumber } from "@/utils/formatter";
+import { formatDate } from "@/utils/formatter";
 import { ColumnDef } from "@tanstack/react-table";
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, Trash2, Workflow } from "lucide-react";
 import React from "react";
 import { deleteEventType } from "../../actions/type";
 import { TableActionButton } from "@/components/shared/button/button";
 import EventTypeForm from "./form";
 import { FormSheet } from "@/components/shared/sheet/sheet";
+import { getCostLimitText } from "@/utils/helper";
+import { EventTypeMultiProps } from "../../lib/type";
+import { FormDialog } from "@/components/shared/modal/modal";
+import { ApproverFlowChart } from "@/components/shared/flowchart/approver";
 
-export default function EventTypeTable({ data }: { data: event_type[] }) {
-  const [edit, setEdit] = React.useState<event_type | boolean>(false);
+export default function EventTypeTable({
+  data,
+}: {
+  data: EventTypeMultiProps[];
+}) {
+  const [edit, setEdit] = React.useState<EventTypeMultiProps | boolean>(false);
+  const [flowchart, setFlowchart] = React.useState<
+    EventTypeMultiProps | boolean
+  >(false);
   const [del, setDel] = React.useState<string | boolean>(false);
   const [pending, startTransition] = React.useTransition();
-  const serialColumn = useTableSerialColumn<event_type>();
+  const serialColumn = useTableSerialColumn<EventTypeMultiProps>();
 
-  const columns: ColumnDef<event_type>[] = [
+  const columns: ColumnDef<EventTypeMultiProps>[] = [
     serialColumn,
     { accessorKey: "title", header: "Title" },
     {
@@ -31,15 +41,7 @@ export default function EventTypeTable({ data }: { data: event_type[] }) {
       cell: ({ row }) => {
         const value = row.original;
 
-        const upperLimit = Number(value.upper_limit);
-        const lowerLimit = Number(value.lower_limit);
-
-        let limit = "All";
-
-        if (upperLimit > 0 && lowerLimit > 0)
-          limit = `${formatNumber(lowerLimit)} <= Cost <= ${formatNumber(upperLimit)}`;
-        else if (upperLimit) limit = `Cost <= ${formatNumber(upperLimit)}`;
-        else if (lowerLimit) limit = `${formatNumber(lowerLimit)} <= Cost`;
+        const limit = getCostLimitText(value);
 
         return <p>{limit}</p>;
       },
@@ -60,6 +62,12 @@ export default function EventTypeTable({ data }: { data: event_type[] }) {
 
         return (
           <div className="flex justify-end items-center gap-1">
+            <TableActionButton
+              tooltip="Flowchart"
+              onClick={() => setFlowchart(value)}
+            >
+              <Workflow /> <span className="sr-only">Workflow</span>
+            </TableActionButton>
             <TableActionButton
               tooltip="Edit"
               variant={"edit"}
@@ -85,12 +93,26 @@ export default function EventTypeTable({ data }: { data: event_type[] }) {
     <>
       <DataTable data={data} columns={columns} />
 
-      <FormSheet open={!!edit} onOpenChange={setEdit} formTitle="Edit Doctor">
+      <FormSheet
+        open={!!edit}
+        onOpenChange={setEdit}
+        formTitle="Edit event type"
+      >
         <EventTypeForm
           onClose={() => setEdit(false)}
           prevData={typeof edit !== "boolean" ? edit : undefined}
         />
       </FormSheet>
+
+      <FormDialog
+        open={!!flowchart}
+        onOpenChange={setFlowchart}
+        formTitle="View approver flow"
+      >
+        {typeof flowchart !== "boolean" && (
+          <ApproverFlowChart data={flowchart.approver} />
+        )}
+      </FormDialog>
 
       <AlertModal
         onOpenChange={setDel}

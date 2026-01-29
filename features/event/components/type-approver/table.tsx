@@ -121,7 +121,7 @@ export default function EventTypeApproverTable({
     <>
       <DataTable data={data} columns={columns} />
 
-      <FormSheet open={!!edit} onOpenChange={setEdit} formTitle="Edit Doctor">
+      <FormSheet open={!!edit} onOpenChange={setEdit} formTitle="Edit Approver">
         <EventTypeApproverForm
           onClose={() => setEdit(false)}
           prevData={typeof edit !== "boolean" ? edit : undefined}

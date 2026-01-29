@@ -7,6 +7,10 @@ import { getCleanData } from "@/utils/formatter";
 import { EventTypeQuerySchema, EventTypeQueryType } from "../actions/schema";
 import { getSerializeData } from "@/utils/helper";
 
+export type EventTypeMultiProps = Prisma.event_typeGetPayload<{
+  include: { approver: true };
+}>;
+
 const getMulti = async (query: EventTypeQueryType) => {
   try {
     const cleanData = getCleanData(query);
@@ -31,15 +35,18 @@ const getMulti = async (query: EventTypeQueryType) => {
         orderBy: {
           created_at: params.sort ?? "desc",
         },
+        include: {
+          approver: true,
+        },
       }),
       db.event_type.count({
         where: filter,
       }),
     ]);
 
-    return apiResponse.multi<event_type>({
+    return apiResponse.multi<EventTypeMultiProps>({
       message: "Get event types successful",
-      data: getSerializeData(data) as event_type[],
+      data: getSerializeData(data) as EventTypeMultiProps[],
       count,
     });
   } catch (error) {

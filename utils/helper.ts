@@ -49,8 +49,8 @@ export const getCostLimitText = (value: event_type) => {
 
   if (upperLimit > 0 && lowerLimit > 0)
     limit = `${formatNumber(lowerLimit)} <= Cost <= ${formatNumber(upperLimit)}`;
-  else if (upperLimit) limit = `Cost <= ${formatNumber(upperLimit)}`;
-  else if (lowerLimit) limit = `${formatNumber(lowerLimit)} <= Cost`;
+  else if (upperLimit) limit = `Cost < ${formatNumber(upperLimit)}`;
+  else if (lowerLimit) limit = `${formatNumber(lowerLimit)} < Cost`;
 
   return limit;
 };
