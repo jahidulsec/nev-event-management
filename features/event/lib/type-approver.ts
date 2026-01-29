@@ -51,7 +51,7 @@ const getMulti = async (query: EventTypeApproverQueryType) => {
 
     return apiResponse.multi<ApproverMultiProps>({
       message: "Get event type approvers successful",
-      data: data,
+      data: getSerializeData(data) as ApproverMultiProps[],
       count,
     });
   } catch (error) {

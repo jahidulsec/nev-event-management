@@ -81,6 +81,7 @@ export default function EventTypeApproverForm({
               <FieldLabel>Event Type</FieldLabel>
               <Select
                 placeholder="Select a type"
+                defaultValue={prevData?.event_type_id}
                 data={type.map((item) => ({
                   label: `${item.title} (${getCostLimitText(item)})`,
                   value: item.id,
@@ -104,6 +105,7 @@ export default function EventTypeApproverForm({
               <FieldLabel>User Role</FieldLabel>
               <Select
                 placeholder="Select a type"
+                defaultValue={prevData?.user_type}
                 data={userRoleList}
                 onValueChange={(value) => {
                   field.onChange(value);
@@ -123,6 +125,7 @@ export default function EventTypeApproverForm({
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel>Approver Type</FieldLabel>
               <Select
+                defaultValue={prevData?.type}
                 placeholder="Select a type"
                 data={approverTypeList}
                 onValueChange={(value) => {

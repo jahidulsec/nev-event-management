@@ -1,5 +1,5 @@
 import { navlist } from "@/lib/data";
-import { event_type } from "@/lib/generated/prisma";
+import { event_type, Prisma } from "@/lib/generated/prisma";
 import { AuthUserRole } from "@/types/auth-user";
 import { formatNumber } from "./formatter";
 
@@ -9,18 +9,36 @@ export function getPageData(title: string, role: AuthUserRole) {
   );
 }
 
-export const getSerializeData = (data: any[]) => {
-  return data.map((r) =>
-    Object.fromEntries(
-      Object.entries(r).map(([k, v]) => [
-        k,
-        ["string", "boolean", "undefine"].includes(typeof v) ||
-        v instanceof Date
-          ? v
-          : Number(v),
+export const getSerializeData = (data: any): any => {
+  if (data === null || data === undefined) return data;
+
+  // Handle Decimal
+  if (Object.prototype.toString.call(data).slice(8, -1) === "Decimal") {
+    return Number(data); // safest
+  }
+
+  // Handle Date
+  if (data instanceof Date) {
+    return data;
+  }
+
+  // Handle Array
+  if (Array.isArray(data)) {
+    return data.map(getSerializeData);
+  }
+
+  // Handle Object
+  if (typeof data === "object") {
+    return Object.fromEntries(
+      Object.entries(data).map(([key, value]) => [
+        key,
+        getSerializeData(value),
       ]),
-    ),
-  );
+    );
+  }
+
+  // string, number, boolean
+  return data;
 };
 
 export const getCostLimitText = (value: event_type) => {

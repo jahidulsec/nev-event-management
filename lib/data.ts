@@ -51,7 +51,7 @@ export const navlist = {
 export const approverTypeList = [
   {
     label: "First",
-    value: "First",
+    value: "first",
   },
   {
     label: "Second",
