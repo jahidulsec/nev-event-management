@@ -20,6 +20,10 @@ import React from "react";
 import { Select } from "@/components/shared/select/select";
 import { getProducts } from "@/features/product/lib/product";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import { PlusCircle, X } from "lucide-react";
+import { formatNumber } from "@/utils/formatter";
+import { EventBudgetSection } from "./event-budget-section";
 
 export default function EventForm({ prevData }: { prevData?: event }) {
   const [products, setProducts] = React.useState<product[]>([]);
@@ -508,6 +512,11 @@ export default function EventForm({ prevData }: { prevData?: event }) {
           )}
         />
       </FieldGroup>
+
+      <Separator />
+
+      {/* event budget section */}
+      <EventBudgetSection form={form} />
 
       <FormButton
         isPending={form.formState.isSubmitting}

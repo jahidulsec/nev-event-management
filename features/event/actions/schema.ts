@@ -31,6 +31,13 @@ export type EventTypeApproverQueryType = z.infer<
   typeof EventTypeApproverQuerySchema
 >;
 
+export const EventBudgetSchema = z.object({
+  event_id: z.string().min(1),
+  item: z.string("Enter budget field name").min(2, "At least 2 characters"),
+  unit: z.number("Enter unit quantity").min(1),
+  unit_cost: z.number("Enter per unit cose").min(1),
+});
+
 export const EventSchema = z.object({
   track_no: z.string().optional(),
   title: z
@@ -79,9 +86,12 @@ export const EventSchema = z.object({
   approved_material: z.enum(["promotional", "non_branded"], "Select a option"),
   material_code: z.string("Please enter material code").optional(),
   details_participants: z.string("Please enter details").optional(),
+  eventBudget: z.array(EventBudgetSchema.omit({ event_id: true })),
 });
 
 export const EventQuerySchema = QuerySchema.extend({});
 
 export type EventType = z.infer<typeof EventSchema>;
 export type EventQueryType = z.infer<typeof EventQuerySchema>;
+
+
