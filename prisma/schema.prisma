@@ -21,12 +21,13 @@ model approver {
 }
 
 model doctor {
-  id          String    @id @default(nanoid()) @db.VarChar(21)
-  full_name   String    @db.VarChar(150)
-  speciality  String    @db.VarChar(50)
-  designation String    @db.VarChar(50)
-  created_at  DateTime? @default(now()) @db.Timestamp(0)
-  updated_at  DateTime? @default(now()) @db.Timestamp(0)
+  id               String             @id @default(nanoid()) @db.VarChar(21)
+  full_name        String             @db.VarChar(150)
+  speciality       String             @db.VarChar(50)
+  designation      String             @db.VarChar(50)
+  created_at       DateTime?          @default(now()) @db.Timestamp(0)
+  updated_at       DateTime?          @default(now()) @db.Timestamp(0)
+  event_consultant event_consultant[]
 }
 
 model event {
@@ -60,6 +61,7 @@ model event {
   event_approver        event_approver[]
   event_attachment      event_attachment[]
   event_budget          event_budget[]
+  event_consultant      event_consultant[]
 
   @@unique([user_id, product_id], map: "user_id")
   @@index([event_type], map: "event_type_id")
@@ -157,6 +159,22 @@ model user_details {
   mobile       String    @db.VarChar(14)
   email        String?   @db.VarChar(150)
   user         user      @relation(fields: [user_id], references: [employee_id], onDelete: Cascade, map: "user_details_ibfk_1")
+}
+
+model event_consultant {
+  id         String    @id @default(nanoid()) @db.VarChar(21)
+  doctor_id  String    @db.VarChar(21)
+  event_id   String    @db.VarChar(21)
+  duration_h Decimal   @db.Decimal(5, 2)
+  role       String    @db.VarChar(100)
+  honorarium Decimal?  @default(0.00) @db.Decimal(8, 2)
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  updated_at DateTime? @default(now()) @db.Timestamp(0)
+  doctor     doctor    @relation(fields: [doctor_id], references: [id], map: "event_consultant_ibfk_1")
+  event      event     @relation(fields: [event_id], references: [id], onDelete: Cascade, map: "event_consultant_ibfk_2")
+
+  @@unique([doctor_id, event_id], map: "doctor_id")
+  @@index([event_id], map: "event_id")
 }
 
 enum approver_type {

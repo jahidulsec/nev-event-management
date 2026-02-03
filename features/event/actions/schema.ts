@@ -38,6 +38,16 @@ export const EventBudgetSchema = z.object({
   unit_cost: z.number("Enter per unit cose").min(1),
 });
 
+export const EventConsultantSchema = z.object({
+  event_id: z.string("Please select a event").min(1),
+  doctor_id: z.string("Please select a doctor").min(1),
+  role: z
+    .string("Enter doctor role for the event")
+    .min(2, "At least 2 characters"),
+  honorarium: z.number("enter doctor honorarium").default(0).optional(),
+  duration: z.number("enter consultant session duration in hours"),
+});
+
 export const EventSchema = z.object({
   track_no: z.string().optional(),
   title: z
@@ -87,11 +97,10 @@ export const EventSchema = z.object({
   material_code: z.string("Please enter material code").optional(),
   details_participants: z.string("Please enter details").optional(),
   eventBudget: z.array(EventBudgetSchema.omit({ event_id: true })),
+  eventConsultant: z.array(EventConsultantSchema.omit({ event_id: true })),
 });
 
 export const EventQuerySchema = QuerySchema.extend({});
 
 export type EventType = z.infer<typeof EventSchema>;
 export type EventQueryType = z.infer<typeof EventQuerySchema>;
-
-
