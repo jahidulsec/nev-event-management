@@ -30,10 +30,8 @@ const getMulti = async (query: EventQueryType) => {
     // extract params
     const filter: Prisma.eventWhereInput = {
       ...(params.search && {
-        event_type: {
-          title: {
-            contains: params.search,
-          },
+        title: {
+          contains: params.search,
         },
       }),
     };

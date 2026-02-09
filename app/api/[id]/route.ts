@@ -2,17 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 import path from "path";
 import fs from "fs";
 import mime from "mime-types";
-import { quizdb } from "@/config/quizdb";
-import { params } from "@/types/search-params";
+import { db } from "@/config/db";
+import { Params } from "@/types/search-params";
 
 export async function GET(
     req: NextRequest,
-    { params }: { params: params }
+    { params }: { params: Params }
 ) {
     const { id } = await params;
 
 
-    const file = await quizdb.resource.findUnique({
+    const file = await db.event_attachment.findUnique({
         where: {
             id: id?.toString()
         }
@@ -28,7 +28,7 @@ export async function GET(
 
 
     // Find file with any extension
-    const fileName = file.title
+    const fileName = file.document_title
 
     // check if file exists in dir
     if (!fs.existsSync(filePath)) {
