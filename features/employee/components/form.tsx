@@ -33,7 +33,7 @@ export default function EmployeeForm({
   const form = useForm<EmployeeType | UpdateEmployeeType>({
     resolver: zodResolver(prevData ? UpdateEmployeeSchema : EmployeeSchema),
     defaultValues: {
-      employee_id: prevData?.employee_id,
+      work_area_code: prevData?.work_area_code,
       role: prevData?.role as any,
     },
   });
@@ -53,10 +53,10 @@ export default function EmployeeForm({
       <FieldGroup>
         <Controller
           control={form.control}
-          name="employee_id"
+          name='work_area_code'
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Employee ID</FieldLabel>
+              <FieldLabel htmlFor={field.name}>Work Area Code</FieldLabel>
               <Input
                 {...field}
                 id={field.name}

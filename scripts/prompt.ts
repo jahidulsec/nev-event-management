@@ -8,8 +8,8 @@ async function main() {
         
         {
             type: "input",
-            name: "employee_id",
-            message: "Enter your Employee ID:",
+            name: "work_area_code",
+            message: "Enter your work area code:",
         },
         {
             type: "password",
@@ -21,21 +21,21 @@ async function main() {
             type: "list",
             name: "role",
             message: "Select your role:",
-            choices: ["superadmin", "ao", "flm", "slm", "marketing", "director", "franchise_head"],
+            choices: ["superadmin", "ao", "flm", "slm", "marketing", "director", "eo"],
         },
     ]);
 
     // create admin user
     await db.user.create({
         data: {
-            employee_id: answers.employee_id,
+            work_area_code: answers.work_area_code,
             password: await hashPassword(answers.password),
             role: answers.role,
         },
     });
 
     console.log(
-        `Welcome, ${answers.employee_id}! You are signed up as ${answers.role}.`
+        `Welcome, ${answers.work_area_code}! You are signed up as ${answers.role}.`
     );
 }
 

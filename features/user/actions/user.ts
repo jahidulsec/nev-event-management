@@ -15,7 +15,7 @@ export const updateUserPassword = async (
 ) => {
   try {
     const user = await db.user.update({
-      where: { employee_id: id },
+      where: { work_area_code: id },
       data: {
         password: await hashPassword(data.password),
       },

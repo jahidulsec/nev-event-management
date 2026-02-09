@@ -24,7 +24,7 @@ export default function LoginForm() {
   const form = useForm<LoginType>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
-      employee_id: "",
+      work_area_code: "",
       password: "",
     },
   });
@@ -56,7 +56,7 @@ export default function LoginForm() {
       <FieldGroup>
         <Controller
           control={form.control}
-          name="employee_id"
+          name='work_area_code'
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor={field.name}>

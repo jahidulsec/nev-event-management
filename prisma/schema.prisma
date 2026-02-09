@@ -9,13 +9,13 @@ datasource db {
 }
 
 model approver {
-  id            String        @id @default(nanoid()) @db.VarChar(21)
-  event_type_id String        @db.VarChar(21)
+  id            String             @id @default(nanoid()) @db.VarChar(21)
+  event_type_id String             @db.VarChar(21)
   user_type     user_role
   type          approver_type
-  created_at    DateTime?     @default(now()) @db.Timestamp(0)
-  updated_at    DateTime?     @default(now()) @db.Timestamp(0)
-  event_type    event_type    @relation(fields: [event_type_id], references: [id], onUpdate: Restrict, map: "approver_ibfk_1")
+  created_at    DateTime?          @default(now()) @db.Timestamp(0)
+  updated_at    DateTime?          @default(now()) @db.Timestamp(0)
+  event_type    event_type         @relation(fields: [event_type_id], references: [id], onUpdate: Restrict, map: "approver_ibfk_1")
 
   @@index([event_type_id], map: "event_type_id")
 }
@@ -61,7 +61,7 @@ model event {
   other_participants    Int?
   venue_appropriateness event_venue_appropriateness
   track_no              String?                     @db.VarChar(20)
-  user                  user                        @relation(fields: [user_id], references: [employee_id], onDelete: Cascade, map: "event_ibfk_1")
+  user                  user                        @relation(fields: [user_id], references: [work_area_code], onDelete: Cascade, map: "event_ibfk_1")
   product               product                     @relation(fields: [product_id], references: [id], onUpdate: Restrict, map: "event_ibfk_2")
   event_approver        event_approver[]
   event_attachment      event_attachment[]
@@ -74,14 +74,14 @@ model event {
 }
 
 model event_approver {
-  id         String    @id @default(nanoid()) @db.VarChar(21)
-  event_id   String    @db.VarChar(21)
-  user_id    String    @db.VarChar(21)
+  id         String                   @id @default(nanoid()) @db.VarChar(21)
+  event_id   String                   @db.VarChar(21)
+  user_id    String                   @db.VarChar(21)
   user_role  user_role
-  created_at DateTime? @default(now()) @db.Timestamp(0)
-  updated_at DateTime? @default(now()) @db.Timestamp(0)
-  event      event     @relation(fields: [event_id], references: [id], onDelete: Cascade, map: "event_approver_ibfk_1")
-  user       user      @relation(fields: [user_id], references: [employee_id], onDelete: Cascade, map: "event_approver_ibfk_2")
+  created_at DateTime?                @default(now()) @db.Timestamp(0)
+  updated_at DateTime?                @default(now()) @db.Timestamp(0)
+  event      event                    @relation(fields: [event_id], references: [id], onDelete: Cascade, map: "event_approver_ibfk_1")
+  user       user                     @relation(fields: [user_id], references: [work_area_code], onDelete: Cascade, map: "event_approver_ibfk_2")
 
   @@unique([event_id, user_id], map: "event_id")
   @@index([user_id], map: "user_id")
@@ -139,7 +139,7 @@ model product {
 }
 
 model user {
-  employee_id    String           @unique(map: "employee_id") @db.VarChar(10)
+  work_area_code String           @unique(map: "employee_id") @db.VarChar(10)
   created_at     DateTime?        @default(now()) @db.Timestamp(0)
   updated_at     DateTime?        @default(now()) @db.Timestamp(0)
   password       String           @db.VarChar(150)
@@ -163,7 +163,7 @@ model user_details {
   updated_at   DateTime? @default(now()) @db.Timestamp(0)
   mobile       String    @db.VarChar(14)
   email        String?   @db.VarChar(150)
-  user         user      @relation(fields: [user_id], references: [employee_id], onDelete: Cascade, map: "user_details_ibfk_1")
+  user         user      @relation(fields: [user_id], references: [work_area_code], onDelete: Cascade, map: "user_details_ibfk_1")
 }
 
 model event_consultant {
@@ -182,22 +182,24 @@ model event_consultant {
   @@index([event_id], map: "event_id")
 }
 
+model ao {
+  employee_id    String @unique(map: "employee_id") @db.VarChar(6)
+  full_name      String @db.VarChar(150)
+  designation    String @db.VarChar(100)
+  email          String @db.VarChar(200)
+  group_name     String @db.VarChar(10)
+  rm_code        String @db.VarChar(6)
+  zm_code        String @db.VarChar(6)
+  wing_code      String @db.VarChar(6)
+  work_area_code String @id @db.VarChar(6)
+}
+
 enum approver_type {
   first
   second
   third
   final
   budget
-}
-
-enum user_role {
-  ao
-  flm
-  slm
-  marketing
-  director
-  superadmin
-  franchise_head
 }
 
 enum event_approved_material {
@@ -215,3 +217,14 @@ enum event_venue_appropriateness {
   yes
   no
 }
+
+enum user_role {
+  ao
+  flm
+  slm
+  marketing
+  director
+  superadmin
+  eo
+}
+

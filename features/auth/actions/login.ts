@@ -11,7 +11,7 @@ export const userLogin = async (data: LoginType) => {
     // check user
     const user = await db.user.findUnique({
       where: {
-        employee_id: data.employee_id,
+        work_area_code: data.work_area_code,
       },
       include: {
         user_details: true,
@@ -29,10 +29,10 @@ export const userLogin = async (data: LoginType) => {
     // create session
     await createSession({
       id: user.id,
-      employeeId: user.employee_id,
+      employeeId: user.work_area_code,
       role: user.role,
       mobile: "",
-      name: user.user_details?.full_name ?? user.employee_id,
+      name: user.user_details?.full_name ?? user.work_area_code,
     });
 
     return response({

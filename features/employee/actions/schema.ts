@@ -3,7 +3,7 @@ import { QuerySchema } from "@/schemas/query";
 import z from "zod";
 
 export const EmployeeSchema = z.object({
-  employee_id: z
+  work_area_code: z
     .string("Enter Employee id")
     .min(2, "Employee ID must be at least 2 characters.")
     .max(21, "Not more than 21 characters"),

@@ -103,7 +103,7 @@ export const createEmployees = async (data: EmployeesType) => {
 
     const employees = await db.user.create({
       data: {
-        employee_id: validatedData[0].employee_id,
+        work_area_code: validatedData[0].work_area_code,
         role: validatedData[0].role,
         password: validatedData[0].password,
       },
