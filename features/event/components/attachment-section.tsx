@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { Controller, useFieldArray, UseFormReturn } from "react-hook-form";
 import { EventType } from "../actions/schema";
@@ -14,24 +12,22 @@ import {
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Plus, PlusCircle, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { AsyncCombobox } from "@/components/shared/combobox/async-combobox";
-import { getDoctors } from "@/features/doctor/lib/doctor";
 
-export default function ConsultantSection({
+export default function AttachmentSection({
   form,
 }: {
   form: UseFormReturn<EventType>;
 }) {
   const { append, remove, fields } = useFieldArray({
     control: form.control,
-    name: "eventConsultant",
+    name: "eventAttachment",
   });
 
   return (
     <>
       <div className="flex justify-baseline items-center gap-5">
         <div className="flex flex-col gap-1 w-full">
-          <h4 className="w-full text-2xl font-medium">Event Consultants</h4>
+          <h4 className="w-full text-2xl font-medium">Event Attachements</h4>
         </div>
 
         <Button
@@ -39,10 +35,8 @@ export default function ConsultantSection({
           type="button"
           onClick={() =>
             append({
-              doctor_id: "",
-              role: "",
-              duration_h: 1,
-              honorarium: 0,
+              document_title: "",
+              file: undefined as any,
             })
           }
         >
@@ -57,19 +51,11 @@ export default function ConsultantSection({
             <div className="col-span-2 flex items-end gap-3">
               <Controller
                 control={form.control}
-                name={`eventConsultant.${index}.doctor_id`}
+                name={`eventAttachment.${index}.document_title`}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={field.name}>Doctor</FieldLabel>
-                    <AsyncCombobox
-                      getKey={(p: any) => p.id}
-                      getLabel={(p: any) =>
-                        `${p.full_name} (${p.dr_master_id}) - ${p.area_name}`
-                      }
-                      fetcher={getDoctors as any}
-                      placeholder="Select a doctor"
-                      onValueChange={(value) => field.onChange(value.id)}
-                    />
+                    <FieldLabel htmlFor={field.name}>Document Title</FieldLabel>
+                    <Input {...field} placeholder="eg. Consultant form" />
 
                     {fieldState.error?.message && (
                       <FieldError errors={[fieldState.error]} />
@@ -91,48 +77,18 @@ export default function ConsultantSection({
 
             <Controller
               control={form.control}
-              name={`eventConsultant.${index}.role`}
+              name={`eventAttachment.${index}.file`}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid} className="col-span-2">
-                  <FieldLabel htmlFor={field.name}>Role</FieldLabel>
+                  <FieldLabel htmlFor={field.name}>Upload</FieldLabel>
 
-                  <Input {...field} />
-
-                  {fieldState.error?.message && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-
-            <Controller
-              control={form.control}
-              name={`eventConsultant.${index}.duration_h`}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor={field.name}>Duration (hour)</FieldLabel>
                   <Input
-                    type="number"
-                    {...field}
-                    onChange={(e) => field.onChange(e.target.valueAsNumber)}
-                  />
-
-                  {fieldState.error?.message && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-            <Controller
-              control={form.control}
-              name={`eventConsultant.${index}.honorarium`}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor={field.name}>Honorarium</FieldLabel>
-                  <Input
-                    type="number"
-                    {...field}
-                    onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                    type="file"
+                    onChange={(e) => {
+                      if (e.target.files) {
+                        field.onChange(e.target.files[0]);
+                      }
+                    }}
                   />
 
                   {fieldState.error?.message && (

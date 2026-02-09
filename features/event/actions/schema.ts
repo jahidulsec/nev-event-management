@@ -48,6 +48,25 @@ export const EventConsultantSchema = z.object({
   duration_h: z.number("enter consultant session duration in hours"),
 });
 
+export const EventAttachemntSchema = z.object({
+  event_id: z.string("Please select a event").min(1),
+  document_title: z
+    .string("Enter document title")
+    .min(3, "At least 2 characters"),
+  file: z
+    .instanceof(File, { message: "Upload a valid file" })
+    .refine(
+      (file) =>
+        ["application/pdf", "image/jpeg", "image/png", "image/webp"].includes(
+          file.type,
+        ),
+      "Upload pdf, image only",
+    )
+    .refine((file) => file.size <= 5 * 1024 * 1024, {
+      message: "File size must be under 5MB",
+    }),
+});
+
 export const EventSchema = z.object({
   track_no: z.string().optional(),
   title: z
@@ -98,6 +117,7 @@ export const EventSchema = z.object({
   details_participants: z.string("Please enter details").optional(),
   eventBudget: z.array(EventBudgetSchema.omit({ event_id: true })),
   eventConsultant: z.array(EventConsultantSchema.omit({ event_id: true })),
+  eventAttachment: z.array(EventAttachemntSchema.omit({ event_id: true })),
 });
 
 export const EventQuerySchema = QuerySchema.extend({});

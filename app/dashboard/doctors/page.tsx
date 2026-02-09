@@ -46,7 +46,7 @@ export default function DoctorsPage({
 
           <SectionActions>
             <SearchForm />
-            <DownloadButton filePath="/public/templates/quiz_template.xlsx" />
+            <DownloadButton filePath="/public/templates/doctor_list_template.xlsx" />
             <ExcelUploadButton action={createDoctors} />
             <CreateDoctorButton />
           </SectionActions>

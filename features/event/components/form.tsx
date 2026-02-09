@@ -25,6 +25,7 @@ import { PlusCircle, X } from "lucide-react";
 import { formatNumber } from "@/utils/formatter";
 import { EventBudgetSection } from "./event-budget-section";
 import ConsultantSection from "./consultant-section";
+import AttachmentSection from "./attachment-section";
 
 export default function EventForm({ prevData }: { prevData?: event }) {
   const [products, setProducts] = React.useState<product[]>([]);
@@ -519,7 +520,13 @@ export default function EventForm({ prevData }: { prevData?: event }) {
       {/* event budget section */}
       <EventBudgetSection form={form} />
 
+      <Separator />
+
       <ConsultantSection form={form} />
+
+      <Separator />
+
+      <AttachmentSection form={form} />
 
       <FormButton
         isPending={form.formState.isSubmitting}
