@@ -112,3 +112,11 @@ export function AsyncCombobox<T>({
     </Comboboxui>
   );
 }
+
+{/* <AsyncCombobox
+  fetcher={getProducts}
+  getKey={(p) => p.id}
+  getLabel={(p) => p.name}
+  placeholder="Select a product"
+  onValueChange={onValueChange}
+/>; */}

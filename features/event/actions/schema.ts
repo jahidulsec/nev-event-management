@@ -45,7 +45,7 @@ export const EventConsultantSchema = z.object({
     .string("Enter doctor role for the event")
     .min(2, "At least 2 characters"),
   honorarium: z.number("enter doctor honorarium").default(0).optional(),
-  duration: z.number("enter consultant session duration in hours"),
+  duration_h: z.number("enter consultant session duration in hours"),
 });
 
 export const EventSchema = z.object({
