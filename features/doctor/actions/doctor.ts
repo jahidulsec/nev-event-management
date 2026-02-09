@@ -46,7 +46,7 @@ export const updateDoctor = async (id: string, data: DoctorType) => {
       data: doctor,
     });
   } catch (error) {
-    console.error(error);
+    console.error(JSON.stringify(error));
     const err = handleError(error);
     return response({
       success: false,
@@ -85,13 +85,33 @@ export const createDoctors = async (data: DoctorsType) => {
 
     if (validatedData.length === 0) throw new Error("No column is included");
 
-    const doctors = await db.doctor.create({
-      data: {
-        full_name: validatedData[0].full_name,
-        designation: validatedData[0].designation,
-        speciality: validatedData[0].speciality,
-      },
-    });
+    for (let i = 0; i < validatedData.length; i++) {
+      await db.doctor.upsert({
+        where: {
+          dr_master_id: validatedData[i].DrMasterID,
+        },
+        create: {
+          full_name: validatedData[i].DoctorName,
+          degrees: validatedData[i].Degrees,
+          speciality: validatedData[i].Speciality,
+          dr_child_id: validatedData[i].DrChildID,
+          dr_master_id: validatedData[i].DrMasterID,
+          chamber: validatedData[i].Chamber,
+          area_name: validatedData[i].AreaName,
+          territory_code: validatedData[i].TerritoryCode,
+        },
+        update: {
+          full_name: validatedData[i].DoctorName,
+          degrees: validatedData[i].Degrees,
+          speciality: validatedData[i].Speciality,
+          dr_child_id: validatedData[i].DrChildID,
+          dr_master_id: validatedData[i].DrMasterID,
+          chamber: validatedData[i].Chamber,
+          area_name: validatedData[i].AreaName,
+          territory_code: validatedData[i].TerritoryCode,
+        },
+      });
+    }
 
     revalidatePath("/dashboard");
     revalidatePath("/dashboard/doctors");
@@ -99,7 +119,7 @@ export const createDoctors = async (data: DoctorsType) => {
     return response({
       success: true,
       message: "New doctors is created successfully",
-      data: doctors,
+      data: [],
     });
   } catch (error) {
     console.error(error);

@@ -19,9 +19,9 @@ export default function DoctorTable({ data }: { data: doctor[] }) {
   const [pending, startTransition] = React.useTransition();
 
   const columns: ColumnDef<doctor>[] = [
-    { accessorKey: "id", header: "ID" },
+    { accessorKey: "dr_master_id", header: "ID" },
     { accessorKey: "full_name", header: "Full Name" },
-    { accessorKey: "designation", header: "Designation" },
+    { accessorKey: "degrees", header: "Degrees" },
     { accessorKey: "speciality", header: "Speciality" },
     {
       accessorKey: "created_at",
