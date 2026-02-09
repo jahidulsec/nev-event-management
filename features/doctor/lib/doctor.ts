@@ -16,9 +16,23 @@ const getMulti = async (query: QuerySchemaType) => {
     // extract params
     const filter: Prisma.doctorWhereInput = {
       ...(params.search && {
-        full_name: {
-          contains: params.search,
-        },
+        OR: [
+          {
+            full_name: {
+              contains: params.search,
+            },
+          },
+          {
+            dr_master_id: {
+              startsWith: params.search,
+            },
+          },
+          {
+            territory_code: {
+              startsWith: params.search,
+            },
+          },
+        ],
       }),
     };
 

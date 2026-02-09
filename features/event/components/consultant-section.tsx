@@ -63,7 +63,9 @@ export default function ConsultantSection({
                     <FieldLabel htmlFor={field.name}>Doctor</FieldLabel>
                     <AsyncCombobox
                       getKey={(p: any) => p.id}
-                      getLabel={(p: any) => p.full_name}
+                      getLabel={(p: any) =>
+                        `${p.full_name} (${p.dr_master_id}) - ${p.area_name}`
+                      }
                       fetcher={getDoctors as any}
                       placeholder="Select a doctor"
                       onValueChange={(value) => field.onChange(value.id)}
