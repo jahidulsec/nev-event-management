@@ -29,6 +29,10 @@ export default function DoctorForm({
       full_name: prevData?.full_name,
       degrees: prevData?.degrees ?? undefined,
       speciality: prevData?.speciality,
+      dr_child_id: prevData?.dr_child_id ?? undefined,
+      dr_master_id: prevData?.dr_master_id,
+      territory_code: prevData?.territory_code,
+      area_name: prevData?.area_name ?? undefined,
     },
   });
 

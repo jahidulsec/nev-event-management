@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 5013",
+    "dev": "next dev -p 5016",
     "build": "next build",
-    "start": "next start -p 5013",
+    "start": "next start -p 5016",
     "lint": "eslint",
     "db:postinstall": "npx prisma generate",
     "db:generate": "npx prisma generate",
