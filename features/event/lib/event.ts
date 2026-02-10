@@ -20,6 +20,14 @@ export type EventMultiProps = Prisma.eventGetPayload<{
   };
 }>;
 
+export type EventSingleProps = Prisma.eventGetPayload<{
+  include: {
+    event_attachment: true;
+    event_budget: true;
+    event_consultant: true;
+  };
+}>;
+
 const getMulti = async (query: EventQueryType) => {
   try {
     const cleanData = getCleanData(query);
@@ -71,12 +79,17 @@ const getSingle = async (id: string) => {
   try {
     const data = await db.event.findUnique({
       where: { id },
+      include: {
+        event_attachment: true,
+        event_budget: true,
+        event_consultant: true,
+      },
     });
 
     // if quiz does not exist, throw error
     if (!data) throw new Error("Data not found");
 
-    return apiResponse.single<event>({
+    return apiResponse.single<EventSingleProps>({
       message: "Get event successful",
       data: data,
     });

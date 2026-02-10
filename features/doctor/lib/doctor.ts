@@ -32,6 +32,11 @@ const getMulti = async (query: QuerySchemaType) => {
               startsWith: params.search,
             },
           },
+          {
+            id: {
+              startsWith: params.search,
+            },
+          },
         ],
       }),
     };

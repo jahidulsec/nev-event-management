@@ -1,6 +1,6 @@
 "use client";
 
-import { event, product } from "@/lib/generated/prisma";
+import { product } from "@/lib/generated/prisma";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -24,12 +24,14 @@ import { EventBudgetSection } from "./event-budget-section";
 import ConsultantSection from "./consultant-section";
 import AttachmentSection from "./attachment-section";
 import { AuthUser } from "@/types/auth-user";
+import { EventSingleProps } from "../lib/event";
+import { formatNumber } from "@/utils/formatter";
 
 export default function EventForm({
   prevData,
   user,
 }: {
-  prevData?: event;
+  prevData?: EventSingleProps;
   user?: AuthUser;
 }) {
   const [products, setProducts] = React.useState<product[]>([]);
@@ -39,13 +41,50 @@ export default function EventForm({
     resolver: zodResolver(EventSchema),
     defaultValues: {
       title: prevData?.title,
-      user_id: user?.employeeId,
+      user_id: user?.employeeId ?? prevData?.user_id,
+      product_id: prevData?.product_id,
+      event_date: prevData?.event_date,
+      venue_name: prevData?.venue_name,
+      venue_address: prevData?.venue_address,
+      venue_appropriateness: prevData?.venue_appropriateness,
+      institute: prevData?.institute,
+      institute_dept: prevData?.institute_dept,
+      institute_unit: prevData?.institute_unit,
+      objective: prevData?.objective,
+      event_type: prevData?.event_type,
+      approved_material: prevData?.approved_material,
+      material_code: prevData?.material_code ?? undefined,
+      internal_participants: prevData?.internal_participants,
+      external_participants: prevData?.external_participants,
+      other_participants: prevData?.other_participants ?? undefined,
+      details_participants: prevData?.details_participants ?? undefined,
+      eventAttachment: prevData?.event_attachment,
+      eventConsultant: prevData?.event_consultant.map((item) => {
+        const { duration_h, honorarium, ...rest } = item;
+
+        return {
+          ...rest,
+          duration_h: Number(duration_h),
+          honorarium: Number(honorarium),
+        };
+      }),
+      eventBudget: prevData?.event_budget.map((item) => {
+        const { unit_cost, ...rest } = item;
+
+        return {
+          ...rest,
+          unit_cost: Number(unit_cost),
+        };
+      }),
     },
   });
 
   // get form value
   const objective = form.watch("objective");
   const eventType = form.watch("event_type");
+  const internalParticipants = form.watch("internal_participants");
+  const externalParticipants = form.watch("external_participants");
+  const otherParticipants = form.watch("other_participants");
 
   async function onSubmit(data: EventType) {
     const res = prevData
@@ -219,7 +258,9 @@ export default function EventForm({
           name="institute"
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Institute</FieldLabel>
+              <FieldLabel htmlFor={field.name}>
+                Institute Name, Code & Area
+              </FieldLabel>
               <Input
                 {...field}
                 id={field.name}
@@ -234,42 +275,6 @@ export default function EventForm({
       </FieldGroup>
 
       <FieldGroup className="lg:flex-row">
-        <Controller
-          control={form.control}
-          name="institute_code"
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Code</FieldLabel>
-              <Input
-                {...field}
-                id={field.name}
-                aria-invalid={fieldState.invalid}
-                placeholder="Institute Code"
-                autoComplete="off"
-              />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-
-        <Controller
-          control={form.control}
-          name="institute_area"
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Area</FieldLabel>
-              <Input
-                {...field}
-                id={field.name}
-                aria-invalid={fieldState.invalid}
-                placeholder="Institute Area"
-                autoComplete="off"
-              />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-
         <Controller
           control={form.control}
           name="institute_unit"
@@ -293,7 +298,9 @@ export default function EventForm({
           name="institute_dept"
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Department</FieldLabel>
+              <FieldLabel htmlFor={field.name}>
+                Department/Speciality
+              </FieldLabel>
               <Input
                 {...field}
                 id={field.name}
@@ -318,7 +325,13 @@ export default function EventForm({
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor={field.name}>Objective</FieldLabel>
               <Select
-                defaultValue={prevData?.objective ?? undefined}
+                defaultValue={
+                  prevData?.objective
+                    ? objectiveList.includes(prevData?.objective)
+                      ? prevData.objective
+                      : "Other"
+                    : undefined
+                }
                 data={objectiveList.map((item) => ({
                   label: item,
                   value: item,
@@ -330,9 +343,9 @@ export default function EventForm({
               {objective &&
                 objectiveList.slice(0, 3).includes(objective) === false && (
                   <Input
-                    defaultValue={eventType}
+                    defaultValue={objective}
                     onChange={(e) => {
-                      form.setValue("event_type", e.target.value);
+                      form.setValue("objective", e.target.value);
                     }}
                     aria-invalid={fieldState.invalid}
                     placeholder="Others"
@@ -353,7 +366,13 @@ export default function EventForm({
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor={field.name}>Event Type</FieldLabel>
               <Select
-                defaultValue={prevData?.objective ?? undefined}
+                defaultValue={
+                  prevData?.event_type
+                    ? eventTypeList.includes(prevData?.event_type)
+                      ? prevData.event_type
+                      : "Other"
+                    : undefined
+                }
                 data={eventTypeList.map((item) => ({
                   label: item,
                   value: item,
@@ -365,9 +384,9 @@ export default function EventForm({
               {eventType &&
                 eventTypeList.slice(0, 4).includes(eventType) === false && (
                   <Input
-                    defaultValue={objective}
+                    defaultValue={eventType}
                     onChange={(e) => {
-                      form.setValue("objective", e.target.value);
+                      form.setValue("event_type", e.target.value);
                     }}
                     aria-invalid={fieldState.invalid}
                     placeholder="Others"
@@ -499,6 +518,15 @@ export default function EventForm({
           )}
         />
       </FieldGroup>
+
+      <p className="font-semibold">
+        Total:{" "}
+        {formatNumber(
+          internalParticipants +
+            externalParticipants +
+            (otherParticipants || 0),
+        )}
+      </p>
 
       <FieldGroup>
         <Controller

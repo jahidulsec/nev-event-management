@@ -30,6 +30,7 @@ interface AsyncComboboxProps<T> {
   getKey: (item: T) => React.Key;
   placeholder?: string;
   onValueChange?: (value: T | null) => void;
+  defaultValue?: string;
 }
 
 export function AsyncCombobox<T>({
@@ -38,9 +39,10 @@ export function AsyncCombobox<T>({
   getKey,
   placeholder = "Select an option",
   onValueChange,
+  defaultValue,
 }: AsyncComboboxProps<T>) {
   const [data, setData] = React.useState<T[]>([]);
-  const [input, setInput] = React.useState("");
+  const [input, setInput] = React.useState(defaultValue ?? "");
   const search = useDebounce(input);
 
   const [pending, startTransition] = React.useTransition();
@@ -113,10 +115,12 @@ export function AsyncCombobox<T>({
   );
 }
 
-{/* <AsyncCombobox
+{
+  /* <AsyncCombobox
   fetcher={getProducts}
   getKey={(p) => p.id}
   getLabel={(p) => p.name}
   placeholder="Select a product"
   onValueChange={onValueChange}
-/>; */}
+/>; */
+}

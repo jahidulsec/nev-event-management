@@ -14,12 +14,14 @@ import { deleteEvent } from "../actions/event";
 import { TableActionButton } from "@/components/shared/button/button";
 import { EventMultiProps } from "../lib/event";
 import { Badge } from "@/components/ui/badge";
+import { useRouter } from "@bprogress/next";
 
 export default function EventTable({ data }: { data: EventMultiProps[] }) {
-  const [edit, setEdit] = React.useState<EventMultiProps | boolean>(false);
   const [del, setDel] = React.useState<string | boolean>(false);
   const [pending, startTransition] = React.useTransition();
   const serialColumn = useTableSerialColumn<EventMultiProps>();
+
+  const router = useRouter();
 
   const columns: ColumnDef<EventMultiProps>[] = [
     serialColumn,
@@ -70,7 +72,7 @@ export default function EventTable({ data }: { data: EventMultiProps[] }) {
             <TableActionButton
               tooltip="Edit"
               variant={"edit"}
-              onClick={() => setEdit(value)}
+              onClick={() => router.push(`/dashboard/events/${value.id}`)}
             >
               <Edit /> <span className="sr-only">Edit</span>
             </TableActionButton>

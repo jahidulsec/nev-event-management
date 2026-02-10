@@ -19,10 +19,10 @@ export const createEvent = async (data: EventType) => {
     // get file path
     if (eventAttachment.length > 0) {
       for (let i = 0; i < eventAttachment.length; i++) {
-        const filePath = `/storage/events/${eventAttachment[i].document_title.replaceAll(" ", "_")}-${rest.user_id}-${crypto.randomUUID()}`;
+        const filePath = `storage/events/${eventAttachment[i].document_title.replaceAll(" ", "_")}-${rest.user_id}-${crypto.randomUUID()}.${eventAttachment[i].file.name.split(".").pop()}`;
 
         // storage document
-        fs.mkdir("storage", { recursive: true });
+        fs.mkdir("storage/events", { recursive: true });
         await fs.writeFile(
           filePath,
           Buffer.from(await eventAttachment[0].file.arrayBuffer()),
@@ -115,7 +115,7 @@ export const updateEvent = async (id: string, data: EventType) => {
 
 export const deleteEvent = async (id: string) => {
   try {
-    const type = await db.approver.delete({
+    const type = await db.event.delete({
       where: { id },
     });
 

@@ -16,6 +16,7 @@ import { Plus, PlusCircle, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { AsyncCombobox } from "@/components/shared/combobox/async-combobox";
 import { getDoctors } from "@/features/doctor/lib/doctor";
+import { formatNumber } from "@/utils/formatter";
 
 export default function ConsultantSection({
   form,
@@ -27,11 +28,25 @@ export default function ConsultantSection({
     name: "eventConsultant",
   });
 
+  const eventConsultant = form.watch("eventConsultant");
+
   return (
     <>
       <div className="flex justify-baseline items-center gap-5">
         <div className="flex flex-col gap-1 w-full">
           <h4 className="w-full text-2xl font-medium">Event Consultants</h4>
+          <p>
+            Total:{" "}
+            <strong>
+              BDT{" "}
+              {formatNumber(
+                eventConsultant?.reduce(
+                  (acc, sum) => acc + (sum.honorarium || 0),
+                  0,
+                ),
+              )}
+            </strong>
+          </p>
         </div>
 
         <Button
@@ -68,7 +83,8 @@ export default function ConsultantSection({
                       }
                       fetcher={getDoctors as any}
                       placeholder="Select a doctor"
-                      onValueChange={(value) => field.onChange(value.id)}
+                      onValueChange={(value) => field.onChange(value?.id)}
+                      defaultValue={eventConsultant[index].doctor_id}
                     />
 
                     {fieldState.error?.message && (

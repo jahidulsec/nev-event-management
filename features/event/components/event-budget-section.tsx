@@ -26,6 +26,7 @@ export const EventBudgetSection = ({
   });
 
   const eventBudget = form.watch("eventBudget");
+  const eventConsultant = form.watch("eventConsultant");
 
   return (
     <>
@@ -41,7 +42,11 @@ export const EventBudgetSection = ({
                 eventBudget?.reduce(
                   (acc, sum) => acc + sum.unit_cost * sum.unit,
                   0,
-                ),
+                ) +
+                  eventConsultant?.reduce(
+                    (acc, sum) => acc + (sum.honorarium || 0),
+                    0,
+                  ),
               )}
             </strong>
           </p>
