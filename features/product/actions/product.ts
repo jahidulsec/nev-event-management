@@ -88,11 +88,21 @@ export const createProducts = async (data: ProductsType) => {
 
     if (validatedData.length === 0) throw new Error("No column is included");
 
-    const products = await db.product.create({
-      data: {
-        name: validatedData[0].name,
-      },
-    });
+    for (let i = 0; i < validatedData.length; i++) {
+      await db.product.upsert({
+        where: {
+          id: validatedData[i].slug,
+        },
+        create: {
+          name: validatedData[i].name,
+          id: validatedData[i].slug,
+        },
+        update: {
+          name: validatedData[i].name,
+          id: validatedData[i].slug,
+        },
+      });
+    }
 
     revalidatePath("/dashboard");
     revalidatePath("/dashboard/products");
@@ -100,7 +110,7 @@ export const createProducts = async (data: ProductsType) => {
     return response({
       success: true,
       message: "New products is created successfully",
-      data: products,
+      data: [],
     });
   } catch (error) {
     console.error(error);

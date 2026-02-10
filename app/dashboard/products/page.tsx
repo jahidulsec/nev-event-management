@@ -46,7 +46,7 @@ export default function ProductsPage({
 
           <SectionActions>
             <SearchForm />
-            <DownloadButton filePath="/public/templates/quiz_template.xlsx" />
+            <DownloadButton filePath="/public/templates/products_list_template.xlsx" />
             <ExcelUploadButton action={createProducts} />
             <CreateProductButton />
           </SectionActions>

@@ -28,7 +28,7 @@ const getMulti = async (query: ProductQueryType) => {
         skip: (params.page - 1) * params.size,
         take: params.size,
         orderBy: {
-          created_at: params.sort ?? "desc",
+          name: params.sort ?? "asc",
         },
       }),
       db.product.count({
