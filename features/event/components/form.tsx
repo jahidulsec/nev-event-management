@@ -20,14 +20,18 @@ import React from "react";
 import { Select } from "@/components/shared/select/select";
 import { getProducts } from "@/features/product/lib/product";
 import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
-import { PlusCircle, X } from "lucide-react";
-import { formatNumber } from "@/utils/formatter";
 import { EventBudgetSection } from "./event-budget-section";
 import ConsultantSection from "./consultant-section";
 import AttachmentSection from "./attachment-section";
+import { AuthUser } from "@/types/auth-user";
 
-export default function EventForm({ prevData }: { prevData?: event }) {
+export default function EventForm({
+  prevData,
+  user,
+}: {
+  prevData?: event;
+  user?: AuthUser;
+}) {
   const [products, setProducts] = React.useState<product[]>([]);
   const [pending, startTransition] = React.useTransition();
 
@@ -35,6 +39,7 @@ export default function EventForm({ prevData }: { prevData?: event }) {
     resolver: zodResolver(EventSchema),
     defaultValues: {
       title: prevData?.title,
+      user_id: user?.employeeId,
     },
   });
 
@@ -390,8 +395,8 @@ export default function EventForm({ prevData }: { prevData?: event }) {
               <Select
                 defaultValue={prevData?.approved_material ?? undefined}
                 data={approvedMaterial.map((item) => ({
-                  label: item,
-                  value: item,
+                  label: item.label,
+                  value: item.value,
                 }))}
                 onValueChange={(value) => {
                   field.onChange(value);
@@ -554,4 +559,13 @@ const eventTypeList = [
   "Other",
 ];
 
-const approvedMaterial = ["Promotional", "Non-Branded"];
+const approvedMaterial = [
+  {
+    label: "Promotional",
+    value: "promotional",
+  },
+  {
+    label: "Non-Branded",
+    value: "non_branded",
+  },
+];

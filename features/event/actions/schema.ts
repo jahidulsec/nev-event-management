@@ -103,13 +103,13 @@ export const EventSchema = z.object({
   event_type: z.string("Enter event type"),
   internal_participants: z
     .number("Enter internal participants number")
-    .positive("Number must be positive value"),
+    .min(0, "Number must be positive value"),
   external_participants: z
     .number("Enter external participants number")
-    .positive("Number must be positive value"),
+    .min(0, "Number must be positive value"),
   other_participants: z
     .number("Enter other participants number")
-    .positive("Number must be positive value")
+    .min(0, "Number must be positive value")
     .default(0)
     .optional(),
   approved_material: z.enum(["promotional", "non_branded"], "Select a option"),
