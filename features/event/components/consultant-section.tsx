@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { AsyncCombobox } from "@/components/shared/combobox/async-combobox";
 import { getDoctors } from "@/features/doctor/lib/doctor";
 import { formatNumber } from "@/utils/formatter";
+import Combobox from "@/components/shared/combobox/combobox";
 
 export default function ConsultantSection({
   form,
@@ -76,14 +77,14 @@ export default function ConsultantSection({
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor={field.name}>Doctor</FieldLabel>
-                    <AsyncCombobox
+                    <Combobox
                       getKey={(p: any) => p.id}
                       getLabel={(p: any) =>
                         `${p.full_name} (${p.dr_master_id}) - ${p.area_name}`
                       }
                       fetcher={getDoctors as any}
                       placeholder="Select a doctor"
-                      onValueChange={(value) => field.onChange(value?.id)}
+                      onValueChange={(value) => field.onChange(value)}
                       defaultValue={eventConsultant[index].doctor_id}
                     />
 

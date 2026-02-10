@@ -26,6 +26,8 @@ import AttachmentSection from "./attachment-section";
 import { AuthUser } from "@/types/auth-user";
 import { EventSingleProps } from "../lib/event";
 import { formatNumber } from "@/utils/formatter";
+import Combobox from "@/components/shared/combobox/combobox";
+import { getDoctors } from "@/features/doctor/lib/doctor";
 
 export default function EventForm({
   prevData,
