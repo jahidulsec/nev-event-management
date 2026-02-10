@@ -23,7 +23,7 @@ const getMulti = async (query: QuerySchemaType) => {
             },
           },
           {
-            dr_master_id: {
+            dr_child_id: {
               startsWith: params.search,
             },
           },

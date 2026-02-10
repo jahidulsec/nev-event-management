@@ -68,7 +68,7 @@ export default function Combobox<T>({
       if (res.success) {
         setData(res.data ?? []);
 
-        if (defaultValue !== '' && search === defaultValue && res.data) {
+        if (defaultValue !== "" && search === defaultValue && res.data) {
           setSelect(res.data?.[0]);
         }
       }
@@ -93,7 +93,6 @@ export default function Combobox<T>({
         <Command
           shouldFilter={false}
           onInput={(e: any) => setInput(e.target.value)}
-          onValueChange={onValueChange}
         >
           <CommandInput />
           <CommandList>
@@ -104,6 +103,7 @@ export default function Combobox<T>({
                   onSelect={(value) => {
                     setValue(value);
                     setSelect(item);
+                    onValueChange?.(value)
                   }}
                   key={getKey(item)}
                   value={getKey(item) as string}

@@ -10,7 +10,7 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
-import { Plus, PlusCircle, X } from "lucide-react";
+import { FileText, Plus, PlusCircle, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 export default function AttachmentSection({
@@ -67,7 +67,9 @@ export default function AttachmentSection({
                 variant={"outline"}
                 size={"icon"}
                 type="button"
-                onClick={() => remove(index)}
+                onClick={() => {
+                  remove(index);
+                }}
                 className="text-destructive border-destructive"
               >
                 <X />
@@ -97,6 +99,18 @@ export default function AttachmentSection({
                 </Field>
               )}
             />
+
+            {item.file_path && (
+              <div className="my-3">
+                <a
+                  target="_blank"
+                  href={`/api/files/?file_path=${item.file_path}`}
+                  className="border rounded-md w-full p-2 flex items-center gap-3 [&_svg]:size-4"
+                >
+                  <FileText className="text-primary" /> {item.document_title}
+                </a>
+              </div>
+            )}
           </div>
         ))
       ) : (

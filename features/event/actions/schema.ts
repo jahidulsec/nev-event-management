@@ -32,14 +32,16 @@ export type EventTypeApproverQueryType = z.infer<
 >;
 
 export const EventBudgetSchema = z.object({
-  event_id: z.string().min(1),
+  id: z.string().optional(),
+  event_id: z.string().min(1).optional(),
   item: z.string("Enter budget field name").min(2, "At least 2 characters"),
   unit: z.number("Enter unit quantity").min(1),
   unit_cost: z.number("Enter per unit cose").min(1),
 });
 
 export const EventConsultantSchema = z.object({
-  event_id: z.string("Please select a event").min(1),
+  id: z.string().optional(),
+  event_id: z.string("Please select a event").min(1).optional(),
   doctor_id: z.string("Please select a doctor").min(1),
   role: z
     .string("Enter doctor role for the event")
@@ -48,24 +50,38 @@ export const EventConsultantSchema = z.object({
   duration_h: z.number("enter consultant session duration in hours"),
 });
 
-export const EventAttachemntSchema = z.object({
-  event_id: z.string("Please select a event").min(1),
-  document_title: z
-    .string("Enter document title")
-    .min(3, "At least 2 characters"),
-  file: z
-    .instanceof(File, { message: "Upload a valid file" })
-    .refine(
-      (file) =>
-        ["application/pdf", "image/jpeg", "image/png", "image/webp"].includes(
-          file.type,
-        ),
-      "Upload pdf, image only",
-    )
-    .refine((file) => file.size <= 5 * 1024 * 1024, {
-      message: "File size must be under 5MB",
-    }),
-});
+export const EventAttachemntSchema = z
+  .object({
+    id: z.string().optional(),
+    event_id: z.string("Please select a event").min(1).optional(),
+    document_title: z
+      .string("Enter document title")
+      .min(3, "At least 2 characters"),
+    file: z
+      .instanceof(File, { message: "Upload a valid file" })
+      .refine(
+        (file) =>
+          ["application/pdf", "image/jpeg", "image/png", "image/webp"].includes(
+            file.type,
+          ),
+        "Upload pdf, image only",
+      )
+      .refine((file) => file.size <= 5 * 1024 * 1024, {
+        message: "File size must be under 5MB",
+      })
+      .optional(),
+    file_path: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    // If no existing file_path, file is required
+    if (!data.file_path && !data.file) {
+      ctx.addIssue({
+        path: ["file"],
+        message: "File is required",
+        code: z.ZodIssueCode.custom,
+      });
+    }
+  });
 
 export const EventSchema = z.object({
   track_no: z.string().optional(),
@@ -115,9 +131,9 @@ export const EventSchema = z.object({
   approved_material: z.enum(["promotional", "non_branded"], "Select a option"),
   material_code: z.string("Please enter material code").optional(),
   details_participants: z.string("Please enter details").optional(),
-  eventBudget: z.array(EventBudgetSchema.omit({ event_id: true })),
-  eventConsultant: z.array(EventConsultantSchema.omit({ event_id: true })),
-  eventAttachment: z.array(EventAttachemntSchema.omit({ event_id: true })),
+  eventBudget: z.array(EventBudgetSchema),
+  eventConsultant: z.array(EventConsultantSchema),
+  eventAttachment: z.array(EventAttachemntSchema),
 });
 
 export const EventQuerySchema = QuerySchema.extend({});

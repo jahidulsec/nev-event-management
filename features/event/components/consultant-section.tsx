@@ -14,7 +14,6 @@ import {
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Plus, PlusCircle, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { AsyncCombobox } from "@/components/shared/combobox/async-combobox";
 import { getDoctors } from "@/features/doctor/lib/doctor";
 import { formatNumber } from "@/utils/formatter";
 import Combobox from "@/components/shared/combobox/combobox";
@@ -84,7 +83,10 @@ export default function ConsultantSection({
                       }
                       fetcher={getDoctors as any}
                       placeholder="Select a doctor"
-                      onValueChange={(value) => field.onChange(value)}
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        console.log(value)
+                      }}
                       defaultValue={eventConsultant[index].doctor_id}
                     />
 

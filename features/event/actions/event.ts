@@ -19,20 +19,22 @@ export const createEvent = async (data: EventType) => {
     // get file path
     if (eventAttachment.length > 0) {
       for (let i = 0; i < eventAttachment.length; i++) {
-        const filePath = `storage/events/${eventAttachment[i].document_title.replaceAll(" ", "_")}-${rest.user_id}-${crypto.randomUUID()}.${eventAttachment[i].file.name.split(".").pop()}`;
+        if (eventAttachment[0].file) {
+          const filePath = `storage/events/${eventAttachment[i].document_title.replaceAll(" ", "_")}-${rest.user_id}-${crypto.randomUUID()}.${eventAttachment[i]?.file?.name.split(".").pop()}`;
 
-        // storage document
-        fs.mkdir("storage/events", { recursive: true });
-        await fs.writeFile(
-          filePath,
-          Buffer.from(await eventAttachment[0].file.arrayBuffer()),
-        );
+          // storage document
+          fs.mkdir("storage/events", { recursive: true });
+          await fs.writeFile(
+            filePath,
+            Buffer.from(await eventAttachment[0].file.arrayBuffer()),
+          );
 
-        // add to files variable
-        files.push({
-          document_title: eventAttachment[i].document_title,
-          file_path: filePath,
-        });
+          // add to files variable
+          files.push({
+            document_title: eventAttachment[i].document_title,
+            file_path: filePath,
+          });
+        }
       }
     }
 
@@ -90,9 +92,12 @@ export const createEvent = async (data: EventType) => {
 
 export const updateEvent = async (id: string, data: EventType) => {
   try {
+    const { eventAttachment, eventConsultant, eventBudget, ...eventData } =
+      data;
+
     const etype = await db.event.update({
       where: { id },
-      data: data,
+      data: eventData,
     });
 
     revalidatePath("/dashboard");

@@ -26,8 +26,7 @@ import AttachmentSection from "./attachment-section";
 import { AuthUser } from "@/types/auth-user";
 import { EventSingleProps } from "../lib/event";
 import { formatNumber } from "@/utils/formatter";
-import Combobox from "@/components/shared/combobox/combobox";
-import { getDoctors } from "@/features/doctor/lib/doctor";
+import { useParams } from "next/navigation";
 
 export default function EventForm({
   prevData,
@@ -38,6 +37,8 @@ export default function EventForm({
 }) {
   const [products, setProducts] = React.useState<product[]>([]);
   const [pending, startTransition] = React.useTransition();
+
+  const params = useParams();
 
   const form = useForm<EventType>({
     resolver: zodResolver(EventSchema),
@@ -97,6 +98,7 @@ export default function EventForm({
     if (res.success) {
       // TODO: redirect to event list view page
     }
+    console.log(data);
   }
 
   // get products
@@ -118,7 +120,9 @@ export default function EventForm({
       className="max-w-2xl mx-auto py-10"
       onSubmit={form.handleSubmit(onSubmit)}
     >
-      <h3 className="text-2xl font-bold text-primary mb-6">Create Event</h3>
+      <h3 className="text-2xl font-bold text-primary mb-6">
+        {params.id ? "Event Details" : "Create Event"}
+      </h3>
       <FieldGroup>
         <Controller
           control={form.control}
