@@ -11,7 +11,7 @@ datasource db {
 model approver {
   id            String             @id @default(nanoid()) @db.VarChar(21)
   event_type_id String             @db.VarChar(21)
-  user_type     approver_user_type
+  user_type     user_role
   type          approver_type
   created_at    DateTime?          @default(now()) @db.Timestamp(0)
   updated_at    DateTime?          @default(now()) @db.Timestamp(0)
@@ -75,7 +75,7 @@ model event_approver {
   id         String                   @id @default(nanoid()) @db.VarChar(21)
   event_id   String                   @db.VarChar(21)
   user_id    String                   @db.VarChar(21)
-  user_role  event_approver_user_role
+  user_role  user_role
   created_at DateTime?                @default(now()) @db.Timestamp(0)
   updated_at DateTime?                @default(now()) @db.Timestamp(0)
   event      event                    @relation(fields: [event_id], references: [id], onDelete: Cascade, map: "event_approver_ibfk_1")
@@ -253,22 +253,3 @@ enum user_role {
   eo
 }
 
-enum approver_user_type {
-  ao
-  flm
-  slm
-  marketing
-  director
-  superadmin
-  franchise_head
-}
-
-enum event_approver_user_role {
-  ao
-  flm
-  slm
-  marketing
-  director
-  superadmin
-  franchise_head
-}
