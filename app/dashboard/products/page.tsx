@@ -18,11 +18,13 @@ import { createProducts } from "@/features/product/actions/product";
 import CreateProductButton from "@/features/product/components/create-button";
 import ProductTable from "@/features/product/components/table";
 import { getProducts } from "@/features/product/lib/product";
+import { getAuthUser } from "@/lib/dal";
 import { SearchParams } from "@/types/search-params";
 import { getPageData } from "@/utils/helper";
+import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
-export default function ProductsPage({
+export default async function ProductsPage({
   searchParams,
 }: {
   searchParams: SearchParams;
@@ -30,6 +32,9 @@ export default function ProductsPage({
   const pageTitle = "Products";
 
   const pageData = getPageData(pageTitle, "superadmin");
+
+  const authUser = await getAuthUser();
+  if (authUser?.role !== "superadmin") return notFound();
 
   return (
     <>

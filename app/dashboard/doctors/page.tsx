@@ -18,11 +18,13 @@ import { createDoctors } from "@/features/doctor/actions/doctor";
 import CreateDoctorButton from "@/features/doctor/components/create-button";
 import DoctorTable from "@/features/doctor/components/table";
 import { getDoctors } from "@/features/doctor/lib/doctor";
+import { getAuthUser } from "@/lib/dal";
 import { SearchParams } from "@/types/search-params";
 import { getPageData } from "@/utils/helper";
+import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
-export default function DoctorsPage({
+export default async function DoctorsPage({
   searchParams,
 }: {
   searchParams: SearchParams;
@@ -30,6 +32,9 @@ export default function DoctorsPage({
   const pageTitle = "Doctors";
 
   const pageData = getPageData(pageTitle, "superadmin");
+
+  const authUser = await getAuthUser();
+  if (authUser?.role !== "superadmin") return notFound();
 
   return (
     <>

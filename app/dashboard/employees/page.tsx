@@ -18,11 +18,13 @@ import { createEmployees } from "@/features/employee/actions/employee";
 import CreateEmployeeButton from "@/features/employee/components/create-button";
 import EmployeeTable from "@/features/employee/components/table";
 import { getEmployees } from "@/features/employee/lib/employee";
+import { getAuthUser } from "@/lib/dal";
 import { SearchParams } from "@/types/search-params";
 import { getPageData } from "@/utils/helper";
+import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
-export default function DoctorsPage({
+export default async function DoctorsPage({
   searchParams,
 }: {
   searchParams: SearchParams;
@@ -30,6 +32,9 @@ export default function DoctorsPage({
   const pageTitle = "Employees";
 
   const pageData = getPageData(pageTitle, "superadmin");
+
+    const authUser = await getAuthUser();
+    if (authUser?.role !== "superadmin") return notFound();
 
   return (
     <>
