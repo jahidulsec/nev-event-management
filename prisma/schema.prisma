@@ -143,8 +143,12 @@ model user {
   password       String           @db.VarChar(150)
   role           user_role
   id             String           @id @unique(map: "id") @default(nanoid()) @db.VarChar(21)
+  ao             ao?
+  director       director?
   event          event[]
   event_approver event_approver[]
+  flm            flm?
+  slm            slm?
   user_details   user_details?
 }
 
@@ -165,16 +169,17 @@ model user_details {
 }
 
 model event_consultant {
-  id         String    @id @default(nanoid()) @db.VarChar(21)
-  doctor_id  String    @db.VarChar(21)
-  event_id   String    @db.VarChar(21)
-  duration_h Decimal   @db.Decimal(5, 2)
-  role       String    @db.VarChar(100)
-  honorarium Decimal?  @default(0.00) @db.Decimal(8, 2)
-  created_at DateTime? @default(now()) @db.Timestamp(0)
-  updated_at DateTime? @default(now()) @db.Timestamp(0)
-  doctor     doctor    @relation(fields: [doctor_id], references: [id], map: "event_consultant_ibfk_1")
-  event      event     @relation(fields: [event_id], references: [id], onDelete: Cascade, map: "event_consultant_ibfk_2")
+  id                   String                                @id @default(nanoid()) @db.VarChar(21)
+  doctor_id            String                                @db.VarChar(21)
+  event_id             String                                @db.VarChar(21)
+  duration_h           Decimal                               @db.Decimal(5, 2)
+  role                 String                                @db.VarChar(100)
+  honorarium           Decimal?                              @default(0.00) @db.Decimal(8, 2)
+  created_at           DateTime?                             @default(now()) @db.Timestamp(0)
+  updated_at           DateTime?                             @default(now()) @db.Timestamp(0)
+  preparation_time_add event_consultant_preparation_time_add
+  doctor               doctor                                @relation(fields: [doctor_id], references: [id], map: "event_consultant_ibfk_1")
+  event                event                                 @relation(fields: [event_id], references: [id], onDelete: Cascade, map: "event_consultant_ibfk_2")
 
   @@unique([doctor_id, event_id], map: "doctor_id")
   @@index([event_id], map: "event_id")
@@ -192,6 +197,7 @@ model ao {
   work_area_code String    @id @db.VarChar(6)
   created_at     DateTime? @db.Timestamp(0)
   updated_at     DateTime? @default(now()) @db.Timestamp(0)
+  user           user      @relation(fields: [work_area_code], references: [work_area_code], onUpdate: Restrict, map: "ao_ibfk_1")
 }
 
 model director {
@@ -202,6 +208,7 @@ model director {
   work_area_code String    @id @db.VarChar(6)
   created_at     DateTime? @db.Timestamp(0)
   updated_at     DateTime? @default(now()) @db.Timestamp(0)
+  user           user      @relation(fields: [work_area_code], references: [work_area_code], onUpdate: Restrict, map: "director_ibfk_1")
 }
 
 model flm {
@@ -214,6 +221,7 @@ model flm {
   work_area_code String    @id @db.VarChar(6)
   created_at     DateTime? @db.Timestamp(0)
   updated_at     DateTime? @default(now()) @db.Timestamp(0)
+  user           user      @relation(fields: [work_area_code], references: [work_area_code], onUpdate: Restrict, map: "flm_ibfk_1")
 }
 
 model slm {
@@ -225,6 +233,7 @@ model slm {
   work_area_code String    @id @db.VarChar(6)
   created_at     DateTime? @db.Timestamp(0)
   updated_at     DateTime? @default(now()) @db.Timestamp(0)
+  user           user      @relation(fields: [work_area_code], references: [work_area_code], onUpdate: Restrict, map: "slm_ibfk_1")
 }
 
 enum approver_type {
@@ -261,3 +270,7 @@ enum user_role {
   eo
 }
 
+enum event_consultant_preparation_time_add {
+  yes
+  no
+}

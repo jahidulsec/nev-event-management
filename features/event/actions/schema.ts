@@ -48,6 +48,7 @@ export const EventConsultantSchema = z.object({
     .min(2, "At least 2 characters"),
   honorarium: z.number("enter doctor honorarium").default(0).optional(),
   duration_h: z.number("enter consultant session duration in hours"),
+  preparation_time_add: z.enum(["yes", "no"]),
 });
 
 export const EventAttachemntSchema = z
@@ -136,7 +137,10 @@ export const EventSchema = z.object({
   eventAttachment: z.array(EventAttachemntSchema),
 });
 
-export const EventQuerySchema = QuerySchema.extend({});
+export const EventQuerySchema = QuerySchema.extend({
+  work_area_code: z.string().optional(),
+  role: userRoleSchema.optional(),
+});
 
 export type EventType = z.infer<typeof EventSchema>;
 export type EventQueryType = z.infer<typeof EventQuerySchema>;

@@ -14,6 +14,16 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
+import { Select } from "@/components/shared/select/select";
+
+const budgetType = [
+  "Venue Charge",
+  "Food",
+  "Transportation",
+  "Projector-Screen",
+  "Sound System",
+  "Logistics/Others",
+];
 
 export const EventBudgetSection = ({
   form,
@@ -79,7 +89,16 @@ export const EventBudgetSection = ({
                     <FieldLabel htmlFor={field.name}>
                       Budget Field Name
                     </FieldLabel>
-                    <Input {...field} id={field.name} placeholder="Item" />
+                    <Select
+                      data={budgetType.map((item) => ({
+                        label: item,
+                        value: item,
+                      }))}
+                      id={field.name}
+                      placeholder="Item"
+                      onValueChange={(value) => field.onChange(value)}
+                      defaultValue={eventBudget[index].item}
+                    />
 
                     {fieldState.error?.message && (
                       <FieldError errors={[fieldState.error]} />

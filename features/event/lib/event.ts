@@ -42,6 +42,9 @@ const getMulti = async (query: EventQueryType) => {
           contains: params.search,
         },
       }),
+      ...(params.work_area_code && {
+        user_id: params.work_area_code,
+      }),
     };
 
     const [data, count] = await Promise.all([

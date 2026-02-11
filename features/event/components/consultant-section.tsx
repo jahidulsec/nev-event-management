@@ -17,6 +17,17 @@ import { Input } from "@/components/ui/input";
 import { getDoctors } from "@/features/doctor/lib/doctor";
 import { formatNumber } from "@/utils/formatter";
 import Combobox from "@/components/shared/combobox/combobox";
+import { Select } from "@/components/shared/select/select";
+
+const consultantRole = [
+  "Speaker",
+  "Chairperson",
+  "Chief Guest",
+  "Panelist",
+  "Guest of Honor",
+  "Moderator",
+  "Other",
+];
 
 export default function ConsultantSection({
   form,
@@ -58,6 +69,7 @@ export default function ConsultantSection({
               role: "",
               duration_h: 1,
               honorarium: 0,
+              preparation_time_add: "no",
             })
           }
         >
@@ -85,7 +97,7 @@ export default function ConsultantSection({
                       placeholder="Select a doctor"
                       onValueChange={(value) => {
                         field.onChange(value);
-                        console.log(value)
+                        console.log(value);
                       }}
                       defaultValue={eventConsultant[index].doctor_id}
                     />
@@ -115,7 +127,22 @@ export default function ConsultantSection({
                 <Field data-invalid={fieldState.invalid} className="col-span-2">
                   <FieldLabel htmlFor={field.name}>Role</FieldLabel>
 
-                  <Input {...field} />
+                  <Select
+                    data={consultantRole.map((item) => ({
+                      label: item,
+                      value: item,
+                    }))}
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                      if (value === "Speaker") {
+                        form.setValue(
+                          `eventConsultant.${index}.preparation_time_add`,
+                          "yes",
+                        );
+                      }
+                    }}
+                    defaultValue={eventConsultant[index].role}
+                  />
 
                   {fieldState.error?.message && (
                     <FieldError errors={[fieldState.error]} />

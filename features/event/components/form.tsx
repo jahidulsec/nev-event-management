@@ -27,6 +27,7 @@ import { AuthUser } from "@/types/auth-user";
 import { EventSingleProps } from "../lib/event";
 import { formatNumber } from "@/utils/formatter";
 import { useParams } from "next/navigation";
+import { useRouter } from "@bprogress/next";
 
 export default function EventForm({
   prevData,
@@ -39,12 +40,13 @@ export default function EventForm({
   const [pending, startTransition] = React.useTransition();
 
   const params = useParams();
+  const router = useRouter()
 
   const form = useForm<EventType>({
     resolver: zodResolver(EventSchema),
     defaultValues: {
       title: prevData?.title,
-      user_id: user?.employeeId ?? prevData?.user_id,
+      user_id: user?.workAreaCode ?? prevData?.user_id,
       product_id: prevData?.product_id,
       event_date: prevData?.event_date,
       venue_name: prevData?.venue_name,
@@ -97,6 +99,7 @@ export default function EventForm({
 
     if (res.success) {
       // TODO: redirect to event list view page
+      router.push('/dashboard/events')
     }
     console.log(data);
   }
