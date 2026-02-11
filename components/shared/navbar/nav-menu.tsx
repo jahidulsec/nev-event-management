@@ -22,7 +22,7 @@ export default function NavMenu({ role }: { role: AuthUserRole }) {
     <>
       <nav className="hidden lg:block">
         <ul className="flex items-center gap-3">
-          {navlist["superadmin"].map((item) => (
+          {navlist[role as "ao"].map((item) => (
             <li key={item.title}>
               <Button
                 variant={"outline"}

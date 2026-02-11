@@ -1,11 +1,4 @@
-import {
-  Calendars,
-  FileLock,
-  Layout,
-  Pill,
-  Stethoscope,
-  Users2,
-} from "lucide-react";
+import { Calendars, FileLock, Layout, Pill, Stethoscope } from "lucide-react";
 
 export const navlist = {
   superadmin: [
@@ -39,11 +32,67 @@ export const navlist = {
       url: "/dashboard/products",
       icon: Pill,
     },
+    // {
+    //   id: 6,
+    //   title: "Employees",
+    //   url: "/dashboard/employees",
+    //   icon: Users2,
+    // },
+  ],
+  ao: [
     {
-      id: 6,
-      title: "Employees",
-      url: "/dashboard/employees",
-      icon: Users2,
+      id: 1,
+      title: "Dashboard",
+      url: "/dashboard",
+      icon: Layout,
+    },
+    {
+      id: 2,
+      title: "Events",
+      url: "/dashboard/events",
+      icon: Calendars,
+    },
+  ],
+  flm: [
+    {
+      id: 1,
+      title: "Dashboard",
+      url: "/dashboard",
+      icon: Layout,
+    },
+    {
+      id: 2,
+      title: "Events",
+      url: "/dashboard/events",
+      icon: Calendars,
+    },
+  ],
+  slm: [
+    {
+      id: 1,
+      title: "Dashboard",
+      url: "/dashboard",
+      icon: Layout,
+    },
+    {
+      id: 2,
+      title: "Events",
+      url: "/dashboard/events",
+      icon: Calendars,
+    },
+  ],
+  director: [
+    {
+      id: 1,
+      title: "Dashboard",
+      url: "/dashboard",
+      icon: Layout,
+    },
+    {
+      id: 2,
+      title: "Events",
+      url: "/dashboard/events",
+      icon: Calendars,
     },
   ],
 };
@@ -92,7 +141,7 @@ export const userRoleList = [
     label: "Marketing",
     value: "marketing",
   },
-   {
+  {
     label: "Director",
     value: "director",
   },
