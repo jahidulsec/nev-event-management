@@ -1,7 +1,12 @@
 import { navlist } from "@/lib/data";
-import { event_type } from "@/lib/generated/prisma";
+import {
+  event_budget,
+  event_consultant,
+  event_type,
+} from "@/lib/generated/prisma";
 import { AuthUserRole } from "@/types/auth-user";
 import { formatNumber } from "./formatter";
+import { EventTypeMultiProps } from "@/features/event/lib/type";
 
 export function getPageData(title: string, role: AuthUserRole) {
   return navlist[role as "superadmin"].find(
@@ -56,10 +61,10 @@ export const getCostLimitText = (value: event_type) => {
 };
 
 export function findEventTypeByCost(
-  eventTypes: event_type[],
+  eventTypes: EventTypeMultiProps[],
   title: string,
   cost: number,
-): event_type | null {
+): EventTypeMultiProps | null {
   const filtered = eventTypes.filter(
     (e) => e.title.toLowerCase() === title.toLowerCase(),
   );
@@ -72,5 +77,18 @@ export function findEventTypeByCost(
 
       return lowerOk && upperOk;
     }) ?? filtered[0]
+  );
+}
+
+export function calculateEventBudget(
+  eventBudget: event_budget[],
+  eventConsultant: event_consultant[],
+) {
+  return (
+    eventBudget.reduce(
+      (acc, sum) => acc + sum.unit * Number(sum.unit_cost),
+      0,
+    ) +
+    eventConsultant.reduce((acc, sum) => acc + Number(sum.honorarium || 0), 0)
   );
 }

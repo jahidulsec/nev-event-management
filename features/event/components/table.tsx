@@ -15,15 +15,24 @@ import { TableActionButton } from "@/components/shared/button/button";
 import { EventMultiProps } from "../lib/event";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "@bprogress/next";
-import { event_type } from "@/lib/generated/prisma";
-import { findEventTypeByCost, getCostLimitText } from "@/utils/helper";
+import { event_type, user_role } from "@/lib/generated/prisma";
+import {
+  calculateEventBudget,
+  findEventTypeByCost,
+  getCostLimitText,
+} from "@/utils/helper";
+import { EventTypeMultiProps } from "../lib/type";
+import {
+  ApproverTypeBadge,
+  UserRoleBadge,
+} from "@/components/shared/badge/badge";
 
 export default function EventTable({
   data,
   type,
 }: {
   data: EventMultiProps[];
-  type?: event_type[];
+  type?: EventTypeMultiProps[];
 }) {
   const [del, setDel] = React.useState<string | boolean>(false);
   const [pending, startTransition] = React.useTransition();
@@ -51,23 +60,19 @@ export default function EventTable({
       accessorKey: "event_type",
       header: "Type",
       cell: ({ row }) => {
-        const budget =
-          row.original.event_budget.reduce(
-            (acc, sum) => acc + sum.unit * Number(sum.unit_cost),
-            0,
-          ) +
-          row.original.event_consultant.reduce(
-            (acc, sum) => acc + Number(sum.honorarium || 0),
-            0,
-          );
+        const budget = calculateEventBudget(
+          row.original.event_budget,
+          row.original.event_consultant,
+        );
+
         const eventType = row.original.event_type;
 
         const validType = findEventTypeByCost(type ?? [], eventType, budget);
 
         return (
-          <div className="">
+          <p>
             {validType?.title} ({getCostLimitText(validType as any)})
-          </div>
+          </p>
         );
       },
     },
@@ -75,11 +80,33 @@ export default function EventTable({
       id: "status",
       header: "Status",
       cell: ({ row }) => {
-        const value = row.original.event_approver;
-
         let status = "pending";
 
-        return <Badge variant={"outline"}>{status}</Badge>;
+        const budget = calculateEventBudget(
+          row.original.event_budget,
+          row.original.event_consultant,
+        );
+
+        const eventType = row.original.event_type;
+
+        const validType = findEventTypeByCost(type ?? [], eventType, budget);
+
+        const approverList = row.original.event_approver;
+        if (approverList.length > 0) {
+          status = approverList[0].event_status_history?.[0].status;
+        }
+
+        return (
+          <p>
+            <UserRoleBadge type={validType?.approver[0].user_type as user_role}>
+              {validType?.approver[0].user_type}
+            </UserRoleBadge>
+            <ApproverTypeBadge type={validType?.approver[0].type as any}>
+              {validType?.approver[0].type}
+            </ApproverTypeBadge>
+            <Badge variant={"outline"}>{status}</Badge>
+          </p>
+        );
       },
     },
     {

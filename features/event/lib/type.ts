@@ -36,7 +36,11 @@ const getMulti = async (query: EventTypeQueryType) => {
           created_at: params.sort ?? "desc",
         },
         include: {
-          approver: true,
+          approver: {
+            orderBy: {
+              created_at: "asc",
+            },
+          },
         },
       }),
       db.event_type.count({

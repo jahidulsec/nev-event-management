@@ -64,7 +64,11 @@ const getMulti = async (query: EventQueryType) => {
           product: true,
           event_approver: {
             include: {
-              event_status_history: true,
+              event_status_history: {
+                orderBy: {
+                  created_at: "desc",
+                },
+              },
             },
             orderBy: {
               created_at: "desc",
