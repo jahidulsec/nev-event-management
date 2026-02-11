@@ -52,6 +52,30 @@ const getMulti = async (query: EventQueryType) => {
         params.role === "ao" && {
           user_id: params.work_area_code,
         }),
+      ...(params.role === "flm" &&
+        params.work_area_code && {
+          user: {
+            ao: {
+              rm_code: params.work_area_code,
+            },
+          },
+        }),
+      ...(params.role === "slm" &&
+        params.work_area_code && {
+          user: {
+            ao: {
+              zm_code: params.work_area_code,
+            },
+          },
+        }),
+      ...(params.role === "director" &&
+        params.work_area_code && {
+          user: {
+            ao: {
+              wing_code: params.work_area_code,
+            },
+          },
+        }),
     };
 
     const [data, count] = await Promise.all([

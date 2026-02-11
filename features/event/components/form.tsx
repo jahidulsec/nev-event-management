@@ -42,9 +42,12 @@ export default function EventForm({
   const params = useParams();
   const router = useRouter();
 
+  // findEventTypeByCost(type ?? [], eventType, budget)
+
   const form = useForm<EventType>({
     resolver: zodResolver(EventSchema),
     defaultValues: {
+      event_type_id: prevData?.event_type_id ?? undefined,
       title: prevData?.title,
       user_id: user?.workAreaCode ?? prevData?.user_id,
       product_id: prevData?.product_id,
@@ -56,7 +59,7 @@ export default function EventForm({
       institute_dept: prevData?.institute_dept,
       institute_unit: prevData?.institute_unit,
       objective: prevData?.objective,
-      event_type: prevData?.event_type,
+      type: prevData?.type,
       approved_material: prevData?.approved_material,
       material_code: prevData?.material_code ?? undefined,
       internal_participants: prevData?.internal_participants,
@@ -86,7 +89,7 @@ export default function EventForm({
 
   // get form value
   const objective = form.watch("objective");
-  const eventType = form.watch("event_type");
+  const eventType = form.watch("type");
   const internalParticipants = form.watch("internal_participants");
   const externalParticipants = form.watch("external_participants");
   const otherParticipants = form.watch("other_participants");
@@ -370,15 +373,15 @@ export default function EventForm({
 
         <Controller
           control={form.control}
-          name="event_type"
+          name="type"
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor={field.name}>Event Type</FieldLabel>
               <Select
                 defaultValue={
-                  prevData?.event_type
-                    ? eventTypeList.includes(prevData?.event_type)
-                      ? prevData.event_type
+                  prevData?.type
+                    ? eventTypeList.includes(prevData?.type)
+                      ? prevData.type
                       : "Other"
                     : undefined
                 }
@@ -395,7 +398,7 @@ export default function EventForm({
                   <Input
                     defaultValue={eventType}
                     onChange={(e) => {
-                      form.setValue("event_type", e.target.value);
+                      form.setValue("type", e.target.value);
                     }}
                     aria-invalid={fieldState.invalid}
                     placeholder="Others"

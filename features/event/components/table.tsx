@@ -65,7 +65,7 @@ export default function EventTable({
           row.original.event_consultant,
         );
 
-        const eventType = row.original.event_type;
+        const eventType = row.original.type;
 
         const validType = findEventTypeByCost(type ?? [], eventType, budget);
 
@@ -87,7 +87,7 @@ export default function EventTable({
           row.original.event_consultant,
         );
 
-        const eventType = row.original.event_type;
+        const eventType = row.original.type;
 
         const validType = findEventTypeByCost(type ?? [], eventType, budget);
 

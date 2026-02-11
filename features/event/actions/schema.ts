@@ -117,7 +117,7 @@ export const EventSchema = z.object({
   objective: z
     .string("Enter event objective")
     .min(3, "Objective must be more than 2 characters"),
-  event_type: z.string("Enter event type"),
+  type: z.string("Enter event type"),
   internal_participants: z
     .number("Enter internal participants number")
     .min(0, "Number must be positive value"),
@@ -130,6 +130,7 @@ export const EventSchema = z.object({
     .default(0)
     .optional(),
   approved_material: z.enum(["promotional", "non_branded"], "Select a option"),
+  event_type_id: z.string().optional(),
   material_code: z.string("Please enter material code").optional(),
   details_participants: z.string("Please enter details").optional(),
   eventBudget: z.array(EventBudgetSchema),
