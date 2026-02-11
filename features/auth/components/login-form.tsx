@@ -12,7 +12,6 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { toast } from "sonner";
-import { user } from "@/lib/generated/prisma";
 import { Form } from "@/components/shared/form/form";
 import { LogoFull } from "@/components/shared/logo/logo";
 import { PasswordInput } from "@/components/shared/inputs/password";
@@ -60,13 +59,13 @@ export default function LoginForm() {
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor={field.name}>
-                Employee ID <Asterisk size={10} className="text-destructive" />
+                Work Area Code <Asterisk size={10} className="text-destructive" />
               </FieldLabel>
               <Input
                 {...field}
                 id={field.name}
                 aria-invalid={fieldState.invalid}
-                placeholder="Employee ID"
+                placeholder="WORK AREA CODE"
                 autoComplete="off"
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}

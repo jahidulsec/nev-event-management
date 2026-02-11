@@ -7,14 +7,12 @@ import { isValidPassword } from "@/utils/password";
 import { LoginType } from "./schema";
 
 export const userLogin = async (data: LoginType) => {
+  let name = "";
   try {
     // check user
     const user = await db.user.findUnique({
       where: {
         work_area_code: data.work_area_code,
-      },
-      include: {
-        user_details: true,
       },
     });
 
@@ -24,15 +22,55 @@ export const userLogin = async (data: LoginType) => {
     if (!(await isValidPassword(data.password, user.password)))
       throw new Error("Invalid password");
 
-    const role = user.role;
+    if (user.role === "ao") {
+      const userDetails = await db.ao.findUnique({
+        where: {
+          work_area_code: user.work_area_code,
+        },
+      });
+
+      name = userDetails?.full_name ?? user.work_area_code;
+    } else if (user.role === "flm") {
+      const userDetails = await db.flm.findUnique({
+        where: {
+          work_area_code: user.work_area_code,
+        },
+      });
+
+      name = userDetails?.full_name ?? user.work_area_code;
+    } else if (user.role === "slm") {
+      const userDetails = await db.slm.findUnique({
+        where: {
+          work_area_code: user.work_area_code,
+        },
+      });
+
+      name = userDetails?.full_name ?? user.work_area_code;
+    } else if (user.role === "director") {
+      const userDetails = await db.director.findUnique({
+        where: {
+          work_area_code: user.work_area_code,
+        },
+      });
+
+      name = userDetails?.full_name ?? user.work_area_code;
+    } else {
+      const userDetails = await db.user_details.findUnique({
+        where: {
+          user_id: user.work_area_code,
+        },
+      });
+
+      name = userDetails?.full_name ?? user.work_area_code;
+    }
 
     // create session
     await createSession({
       id: user.id,
-      employeeId: user.work_area_code,
+      workAreaCode: user.work_area_code,
       role: user.role,
       mobile: "",
-      name: user.user_details?.full_name ?? user.work_area_code,
+      name: name,
     });
 
     return response({

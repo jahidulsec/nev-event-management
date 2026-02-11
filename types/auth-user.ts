@@ -2,7 +2,7 @@ import { $Enums } from "@/lib/generated/prisma";
 
 export type AuthUser = {
     id: string;
-    employeeId: string;
+    workAreaCode: string;
     name: string;
     mobile: string;
     role: AuthUserRole;
