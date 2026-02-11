@@ -1,5 +1,5 @@
 import { navlist } from "@/lib/data";
-import { event_type, Prisma } from "@/lib/generated/prisma";
+import { event_type } from "@/lib/generated/prisma";
 import { AuthUserRole } from "@/types/auth-user";
 import { formatNumber } from "./formatter";
 
@@ -54,3 +54,23 @@ export const getCostLimitText = (value: event_type) => {
 
   return limit;
 };
+
+export function findEventTypeByCost(
+  eventTypes: event_type[],
+  title: string,
+  cost: number,
+): event_type | null {
+  const filtered = eventTypes.filter(
+    (e) => e.title.toLowerCase() === title.toLowerCase(),
+  );
+
+  return (
+    filtered.find((e) => {
+      const lowerOk = e.lower_limit === null || cost >= Number(e.lower_limit);
+
+      const upperOk = e.upper_limit === null || cost <= Number(e.upper_limit);
+
+      return lowerOk && upperOk;
+    }) ?? filtered[0]
+  );
+}

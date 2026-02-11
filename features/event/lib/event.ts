@@ -11,12 +11,18 @@ export type EventMultiProps = Prisma.eventGetPayload<{
   include: {
     event_attachment: true;
     event_budget: true;
+    event_consultant: true;
     user: {
       include: {
         user_details: true;
       };
     };
     product: true;
+    event_approver: {
+      include: {
+        event_status_history: true;
+      };
+    };
   };
 }>;
 
@@ -42,9 +48,10 @@ const getMulti = async (query: EventQueryType) => {
           contains: params.search,
         },
       }),
-      ...(params.work_area_code && {
-        user_id: params.work_area_code,
-      }),
+      ...(params.work_area_code &&
+        params.role === "ao" && {
+          user_id: params.work_area_code,
+        }),
     };
 
     const [data, count] = await Promise.all([
@@ -52,8 +59,17 @@ const getMulti = async (query: EventQueryType) => {
         include: {
           event_attachment: true,
           event_budget: true,
+          event_consultant: true,
           user: { include: { user_details: true } },
           product: true,
+          event_approver: {
+            include: {
+              event_status_history: true,
+            },
+            orderBy: {
+              created_at: "desc",
+            },
+          },
         },
         where: filter,
         skip: (params.page - 1) * params.size,

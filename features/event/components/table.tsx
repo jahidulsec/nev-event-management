@@ -15,8 +15,16 @@ import { TableActionButton } from "@/components/shared/button/button";
 import { EventMultiProps } from "../lib/event";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "@bprogress/next";
+import { event_type } from "@/lib/generated/prisma";
+import { findEventTypeByCost, getCostLimitText } from "@/utils/helper";
 
-export default function EventTable({ data }: { data: EventMultiProps[] }) {
+export default function EventTable({
+  data,
+  type,
+}: {
+  data: EventMultiProps[];
+  type?: event_type[];
+}) {
   const [del, setDel] = React.useState<string | boolean>(false);
   const [pending, startTransition] = React.useTransition();
   const serialColumn = useTableSerialColumn<EventMultiProps>();
@@ -37,20 +45,41 @@ export default function EventTable({ data }: { data: EventMultiProps[] }) {
     },
     {
       accessorKey: "user_id",
-      header: "Employee ID",
+      header: "Work area code",
     },
     {
-      id: "AO",
-      header: "AO name",
+      accessorKey: "event_type",
+      header: "Type",
       cell: ({ row }) => {
-        <p>{row.original.user.user_details?.full_name ?? "-"}</p>;
+        const budget =
+          row.original.event_budget.reduce(
+            (acc, sum) => acc + sum.unit * Number(sum.unit_cost),
+            0,
+          ) +
+          row.original.event_consultant.reduce(
+            (acc, sum) => acc + Number(sum.honorarium || 0),
+            0,
+          );
+        const eventType = row.original.event_type;
+
+        const validType = findEventTypeByCost(type ?? [], eventType, budget);
+
+        return (
+          <div className="">
+            {validType?.title} ({getCostLimitText(validType as any)})
+          </div>
+        );
       },
     },
     {
       id: "status",
       header: "Status",
       cell: ({ row }) => {
-        <Badge variant={"outline"}>{row.original.current_status}</Badge>;
+        const value = row.original.event_approver;
+
+        let status = "pending";
+
+        return <Badge variant={"outline"}>{status}</Badge>;
       },
     },
     {

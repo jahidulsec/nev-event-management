@@ -40,7 +40,7 @@ export default function EventForm({
   const [pending, startTransition] = React.useTransition();
 
   const params = useParams();
-  const router = useRouter()
+  const router = useRouter();
 
   const form = useForm<EventType>({
     resolver: zodResolver(EventSchema),
@@ -99,7 +99,7 @@ export default function EventForm({
 
     if (res.success) {
       // TODO: redirect to event list view page
-      router.push('/dashboard/events')
+      router.push("/dashboard/events");
     }
     console.log(data);
   }
@@ -574,6 +574,7 @@ export default function EventForm({
         isPending={form.formState.isSubmitting}
         size={"lg"}
         className="max-w-sm"
+        disabled={!!params.id?.toString()}
       >
         Save
       </FormButton>
@@ -591,9 +592,9 @@ const objectiveList = [
 const eventTypeList = [
   "Non-paid Promotional",
   "Paid Promotional",
-  "Non-paid Medical",
-  "Paid Medical",
+  "Medical",
   "Other",
+  "Special",
 ];
 
 const approvedMaterial = [

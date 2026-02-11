@@ -12,9 +12,11 @@ import {
   SectionHeading,
   SectionHeadingIcon,
 } from "@/components/shared/typography/heading";
+import { db } from "@/config/db";
 import CreateEventButton from "@/features/event/components/create-button";
 import EventTable from "@/features/event/components/table";
 import { getEvents } from "@/features/event/lib/event";
+import { getEventTypes } from "@/features/event/lib/type";
 import { getAuthUser } from "@/lib/dal";
 import { SearchParams } from "@/types/search-params";
 import { getPageData } from "@/utils/helper";
@@ -75,9 +77,11 @@ const TableSection = async ({
     role: authUser?.role,
   });
 
+  const typeRes = await getEventTypes({ page: 1, size: 50 });
+
   return (
     <ErrorBoundary message={!res.success ? res.message : undefined}>
-      <EventTable data={res?.data ?? []} />
+      <EventTable data={res?.data ?? []} type={typeRes.data ?? []} />
       <PagePagination count={res.count} />
     </ErrorBoundary>
   );
