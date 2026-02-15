@@ -27,8 +27,10 @@ const budgetType = [
 
 export const EventBudgetSection = ({
   form,
+  userId,
 }: {
   form: UseFormReturn<EventType>;
+  userId?: string;
 }) => {
   const { fields, append, remove } = useFieldArray({
     control: form.control,
@@ -37,6 +39,8 @@ export const EventBudgetSection = ({
 
   const eventBudget = form.watch("eventBudget");
   const eventConsultant = form.watch("eventConsultant");
+
+  const isCreator = userId === form.getValues("user_id");
 
   return (
     <>
@@ -61,20 +65,22 @@ export const EventBudgetSection = ({
             </strong>
           </p>
         </div>
-        <Button
-          variant={"outline"}
-          type="button"
-          onClick={() =>
-            append({
-              item: "",
-              unit: 1,
-              unit_cost: 1,
-            })
-          }
-        >
-          <PlusCircle />
-          Add
-        </Button>
+        {isCreator && (
+          <Button
+            variant={"outline"}
+            type="button"
+            onClick={() =>
+              append({
+                item: "",
+                unit: 1,
+                unit_cost: 1,
+              })
+            }
+          >
+            <PlusCircle />
+            Add
+          </Button>
+        )}
       </div>
 
       {fields.length > 0 ? (
@@ -106,16 +112,19 @@ export const EventBudgetSection = ({
                   </Field>
                 )}
               />
-              <Button
-                variant={"outline"}
-                size={"icon"}
-                type="button"
-                onClick={() => remove(index)}
-                className="text-destructive border-destructive"
-              >
-                <X />
-                <span className="sr-only">Remove</span>
-              </Button>
+
+              {isCreator && (
+                <Button
+                  variant={"outline"}
+                  size={"icon"}
+                  type="button"
+                  onClick={() => remove(index)}
+                  className="text-destructive border-destructive"
+                >
+                  <X />
+                  <span className="sr-only">Remove</span>
+                </Button>
+              )}
             </div>
 
             <Controller
@@ -165,7 +174,11 @@ export const EventBudgetSection = ({
               <Plus />
             </EmptyMedia>
             <EmptyTitle>No budget added yet</EmptyTitle>
-            <EmptyDescription>Add your budget for this event.</EmptyDescription>
+            {isCreator && (
+              <EmptyDescription>
+                Add your budget for this event.
+              </EmptyDescription>
+            )}
           </EmptyHeader>
         </Empty>
       )}

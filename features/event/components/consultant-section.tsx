@@ -31,8 +31,10 @@ const consultantRole = [
 
 export default function ConsultantSection({
   form,
+  userId,
 }: {
   form: UseFormReturn<EventType>;
+  userId?: string;
 }) {
   const { append, remove, fields } = useFieldArray({
     control: form.control,
@@ -40,6 +42,8 @@ export default function ConsultantSection({
   });
 
   const eventConsultant = form.watch("eventConsultant");
+
+  const isCreator = userId === form.getValues("user_id");
 
   return (
     <>
@@ -60,22 +64,24 @@ export default function ConsultantSection({
           </p>
         </div>
 
-        <Button
-          variant={"outline"}
-          type="button"
-          onClick={() =>
-            append({
-              doctor_id: "",
-              role: "",
-              duration_h: 1,
-              honorarium: 0,
-              preparation_time_add: "no",
-            })
-          }
-        >
-          <PlusCircle />
-          Add
-        </Button>
+        {isCreator && (
+          <Button
+            variant={"outline"}
+            type="button"
+            onClick={() =>
+              append({
+                doctor_id: "",
+                role: "",
+                duration_h: 1,
+                honorarium: 0,
+                preparation_time_add: "no",
+              })
+            }
+          >
+            <PlusCircle />
+            Add
+          </Button>
+        )}
       </div>
 
       {fields.length > 0 ? (
@@ -108,16 +114,19 @@ export default function ConsultantSection({
                   </Field>
                 )}
               />
-              <Button
-                variant={"outline"}
-                size={"icon"}
-                type="button"
-                onClick={() => remove(index)}
-                className="text-destructive border-destructive"
-              >
-                <X />
-                <span className="sr-only">Remove</span>
-              </Button>
+
+              {isCreator && (
+                <Button
+                  variant={"outline"}
+                  size={"icon"}
+                  type="button"
+                  onClick={() => remove(index)}
+                  className="text-destructive border-destructive"
+                >
+                  <X />
+                  <span className="sr-only">Remove</span>
+                </Button>
+              )}
             </div>
 
             <Controller
@@ -196,7 +205,11 @@ export default function ConsultantSection({
               <Plus />
             </EmptyMedia>
             <EmptyTitle>No consultant added yet</EmptyTitle>
-            <EmptyDescription>Add Consultants for this event.</EmptyDescription>
+            {isCreator && (
+              <EmptyDescription>
+                Add Consultants for this event.
+              </EmptyDescription>
+            )}
           </EmptyHeader>
         </Empty>
       )}

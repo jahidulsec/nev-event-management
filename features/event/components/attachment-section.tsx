@@ -15,13 +15,17 @@ import { Input } from "@/components/ui/input";
 
 export default function AttachmentSection({
   form,
+  userId,
 }: {
   form: UseFormReturn<EventType>;
+  userId?: string;
 }) {
   const { append, remove, fields } = useFieldArray({
     control: form.control,
     name: "eventAttachment",
   });
+
+  const isCreator = userId === form.getValues("user_id");
 
   return (
     <>
@@ -30,19 +34,21 @@ export default function AttachmentSection({
           <h4 className="w-full text-2xl font-medium">Event Attachements</h4>
         </div>
 
-        <Button
-          variant={"outline"}
-          type="button"
-          onClick={() =>
-            append({
-              document_title: "",
-              file: undefined as any,
-            })
-          }
-        >
-          <PlusCircle />
-          Add
-        </Button>
+        {isCreator && (
+          <Button
+            variant={"outline"}
+            type="button"
+            onClick={() =>
+              append({
+                document_title: "",
+                file: undefined as any,
+              })
+            }
+          >
+            <PlusCircle />
+            Add
+          </Button>
+        )}
       </div>
 
       {fields.length > 0 ? (
@@ -63,18 +69,21 @@ export default function AttachmentSection({
                   </Field>
                 )}
               />
-              <Button
-                variant={"outline"}
-                size={"icon"}
-                type="button"
-                onClick={() => {
-                  remove(index);
-                }}
-                className="text-destructive border-destructive"
-              >
-                <X />
-                <span className="sr-only">Remove</span>
-              </Button>
+
+              {isCreator && (
+                <Button
+                  variant={"outline"}
+                  size={"icon"}
+                  type="button"
+                  onClick={() => {
+                    remove(index);
+                  }}
+                  className="text-destructive border-destructive"
+                >
+                  <X />
+                  <span className="sr-only">Remove</span>
+                </Button>
+              )}
             </div>
 
             <Controller
@@ -119,8 +128,12 @@ export default function AttachmentSection({
             <EmptyMedia variant={"icon"}>
               <Plus />
             </EmptyMedia>
-            <EmptyTitle>No consultant added yet</EmptyTitle>
-            <EmptyDescription>Add Consultants for this event.</EmptyDescription>
+            <EmptyTitle>No attachment added yet</EmptyTitle>
+            {isCreator && (
+              <EmptyDescription>
+                Add attachments for this event.
+              </EmptyDescription>
+            )}
           </EmptyHeader>
         </Empty>
       )}

@@ -81,7 +81,13 @@ export default function EventStatusUpdateForm({
           <EmptyTitle>
             {eventUserStatus?.[0]?.event_status_history?.[0]?.status}
           </EmptyTitle>
-          <EmptyDescription>Your response</EmptyDescription>
+          <EmptyDescription>
+            You{" "}
+            <strong>
+              {eventUserStatus?.[0]?.event_status_history?.[0]?.status}
+            </strong>{" "}
+            this event
+          </EmptyDescription>
         </EmptyHeader>
       </Empty>
     );

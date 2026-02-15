@@ -615,15 +615,15 @@ export default function EventForm({
       <Separator />
 
       {/* event budget section */}
-      <EventBudgetSection form={form} />
+      <EventBudgetSection form={form} userId={authUser?.workAreaCode} />
 
       <Separator />
 
-      <ConsultantSection form={form} />
+      <ConsultantSection form={form} userId={authUser?.workAreaCode} />
 
       <Separator />
 
-      <AttachmentSection form={form} />
+      <AttachmentSection form={form} userId={authUser?.workAreaCode} />
 
       {!!!params.id?.toString() && (
         <FormButton
