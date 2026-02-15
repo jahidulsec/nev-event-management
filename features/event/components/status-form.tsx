@@ -79,7 +79,7 @@ export default function EventStatusUpdateForm({
         <EmptyHeader>
           <EmptyMedia variant="icon"></EmptyMedia>
           <EmptyTitle>
-            {eventUserStatus[0].event_status_history[0].status}
+            {eventUserStatus?.[0]?.event_status_history?.[0]?.status}
           </EmptyTitle>
           <EmptyDescription>Your response</EmptyDescription>
         </EmptyHeader>

@@ -81,6 +81,13 @@ const getMulti = async (query: EventQueryType) => {
               rm_code: params.work_area_code,
             },
           },
+          event_type: {
+            approver: {
+              some: {
+                user_type: params.role,
+              },
+            },
+          },
         }),
       ...(params.role === "slm" &&
         params.work_area_code && {
@@ -89,12 +96,26 @@ const getMulti = async (query: EventQueryType) => {
               zm_code: params.work_area_code,
             },
           },
+          event_type: {
+            approver: {
+              some: {
+                user_type: params.role,
+              },
+            },
+          },
         }),
       ...(params.role === "director" &&
         params.work_area_code && {
           user: {
             ao: {
               wing_code: params.work_area_code,
+            },
+          },
+          event_type: {
+            approver: {
+              some: {
+                user_type: params.role,
+              },
             },
           },
         }),
