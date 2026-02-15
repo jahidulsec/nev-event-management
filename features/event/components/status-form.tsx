@@ -7,8 +7,6 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
-import { Separator } from "@/components/ui/separator";
-import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { EventStatusSchema, EventStatusSchemaType } from "../actions/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -51,8 +49,15 @@ export default function EventStatusUpdateForm({
     (item) => item.user_role === authUser.role,
   );
 
-  const currentUserSubmission =
-    eventUserStatus?.[0]?.event_status_history?.[0]?.status ?? "pending";
+  // if previous approver rejectes
+  const prevRejected = event.event_approver.filter(
+    (i) => i.event_status_history[0].status === "rejected",
+  );
+
+  const currentUserSubmission: any =
+    prevRejected.length > 0
+      ? "rejected"
+      : (eventUserStatus?.[0]?.event_status_history?.[0]?.status ?? "pending");
 
   const router = useRouter();
 
@@ -91,7 +96,11 @@ export default function EventStatusUpdateForm({
           ></EmptyMedia>
           <EmptyTitle>{currentUserSubmission}</EmptyTitle>
           <EmptyDescription>
-            You <strong>{currentUserSubmission}</strong> this event
+            {currentUserSubmission === "rejected"
+              ? "Other approver rejected this event"
+              : currentUserSubmission === "pending"
+                ? "Waiting for other approver approval."
+                : `You ${currentUserSubmission} this event.`}
           </EmptyDescription>
         </EmptyHeader>
       </Empty>
