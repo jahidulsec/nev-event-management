@@ -25,6 +25,7 @@ import {
 import { FormDialog } from "@/components/shared/modal/modal";
 import { ApproverFlowChart } from "@/components/shared/flowchart/approver";
 import { AuthUser } from "@/types/auth-user";
+import { cn } from "@/lib/utils";
 
 export default function EventTable({
   data,
@@ -72,8 +73,29 @@ export default function EventTable({
       },
     },
     {
+      id: "current_status",
+      header: "Event Status",
+      cell: ({ row }) => {
+        const status = row.original.current_status;
+        return (
+          <Badge
+            variant={"outline"}
+            className={cn(
+              status === "approved"
+                ? "bg-green-100 text-green-500"
+                : status === "rejected"
+                  ? "text-destructive bg-destructive/10"
+                  : "bg-yellow-50 text-yellow-700",
+            )}
+          >
+            {status}
+          </Badge>
+        );
+      },
+    },
+    {
       id: "status",
-      header: "Status",
+      header: "Approval Status",
       cell: ({ row }) => {
         let status = "pending";
 
