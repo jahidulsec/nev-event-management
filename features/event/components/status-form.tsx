@@ -16,6 +16,9 @@ import { EventSingleProps } from "../lib/event";
 import { AuthUser } from "@/types/auth-user";
 import { Select } from "@/components/shared/select/select";
 import { FormButton } from "@/components/shared/button/button";
+import { createEventStatus } from "../actions/event";
+import { toast } from "sonner";
+import { useRouter } from "@bprogress/next";
 
 export default function EventStatusUpdateForm({
   authUser,
@@ -25,6 +28,7 @@ export default function EventStatusUpdateForm({
   event: EventSingleProps;
 }) {
   const eventType = event.event_type?.approver?.[0].type;
+  const router = useRouter();
 
   const form = useForm<EventStatusSchemaType>({
     resolver: zodResolver(EventStatusSchema),
@@ -38,6 +42,14 @@ export default function EventStatusUpdateForm({
   const onSubmit = async (data: EventStatusSchemaType) => {
     console.log(data);
     data.remarks = `${eventType}: ${data.status}`;
+
+    const res = await createEventStatus(data);
+
+    toast[res.success ? "success" : "error"](res.message);
+
+    if (res.success) {
+      router.replace("/dashboard/events");
+    }
   };
 
   return (

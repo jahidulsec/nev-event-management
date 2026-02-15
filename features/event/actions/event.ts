@@ -4,7 +4,7 @@ import { db } from "@/config/db";
 import { handleError } from "@/lib/error";
 import { response } from "@/lib/response";
 import { revalidatePath } from "next/cache";
-import { EventType } from "./schema";
+import { EventStatusSchemaType, EventType } from "./schema";
 import fs from "fs/promises";
 import fs2 from "fs";
 
@@ -134,6 +134,53 @@ export const deleteEvent = async (id: string) => {
     });
   } catch (error) {
     console.error(error);
+    const err = handleError(error);
+    return response({
+      success: false,
+      message: err.message ?? "Something went wrong",
+    });
+  }
+};
+
+export const createEventStatus = async (data: EventStatusSchemaType) => {
+  try {
+    const { status, remarks, ...rest } = data;
+    const res = await db.event_approver.upsert({
+      where: {
+        event_id_user_id: {
+          event_id: data.event_id,
+          user_id: data.user_id,
+        },
+      },
+      create: {
+        ...rest,
+        event_status_history: {
+          create: {
+            status,
+            remarks,
+          },
+        },
+      },
+      update: {
+        event_status_history: {
+          create: {
+            status,
+            remarks,
+          },
+        },
+      },
+    });
+
+    revalidatePath("/dashboard");
+    revalidatePath("/dashboard/events");
+
+    return response({
+      success: true,
+      message: "Event status is submitted successfully",
+      data: res,
+    });
+
+  } catch (error) {
     const err = handleError(error);
     return response({
       success: false,
