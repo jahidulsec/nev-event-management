@@ -7,9 +7,12 @@ import { toast } from "sonner";
 import { Form } from "@/components/shared/form/form";
 import {
   Field,
+  FieldContent,
+  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
+  FieldTitle,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { FormButton } from "@/components/shared/button/button";
@@ -35,10 +38,12 @@ export default function EventForm({
   prevData,
   user,
   eventTypes,
+  authUser,
 }: {
   prevData?: EventSingleProps;
   user?: AuthUser;
   eventTypes: EventTypeMultiProps[];
+  authUser?: AuthUser;
 }) {
   const [products, setProducts] = React.useState<product[]>([]);
   const [pending, startTransition] = React.useTransition();
@@ -142,6 +147,40 @@ export default function EventForm({
       <h3 className="text-2xl font-bold text-primary mb-6">
         {params.id ? "Event Details" : "Create Event"}
       </h3>
+
+      {/* user */}
+      {authUser?.workAreaCode !== prevData?.user_id && (
+        <>
+          <div className="flex flex-col gap-3">
+            <Field>
+              <FieldLabel>AO full name</FieldLabel>
+              <FieldDescription>
+                {prevData?.user.ao?.full_name}
+              </FieldDescription>
+            </Field>
+            <FieldGroup className="md:grid-cols-3 md:grid">
+              <Field>
+                <FieldLabel>Territory ID</FieldLabel>
+                <FieldDescription>{prevData?.user_id}</FieldDescription>
+              </Field>
+              <Field>
+                <FieldLabel>Employee ID</FieldLabel>
+                <FieldDescription>
+                  {prevData?.user.ao?.employee_id}
+                </FieldDescription>
+              </Field>
+              <Field>
+                <FieldLabel>Designation</FieldLabel>
+                <FieldDescription>
+                  {prevData?.user.ao?.designation}
+                </FieldDescription>
+              </Field>
+            </FieldGroup>
+          </div>
+          <Separator />
+        </>
+      )}
+
       <FieldGroup>
         <Controller
           control={form.control}
@@ -588,14 +627,16 @@ export default function EventForm({
 
       <AttachmentSection form={form} />
 
-      <FormButton
-        isPending={form.formState.isSubmitting}
-        size={"lg"}
-        className="max-w-sm"
-        disabled={!!params.id?.toString()}
-      >
-        Save
-      </FormButton>
+      {!!!params.id?.toString() && (
+        <FormButton
+          isPending={form.formState.isSubmitting}
+          size={"lg"}
+          className="max-w-sm"
+          disabled={!!params.id?.toString()}
+        >
+          Save
+        </FormButton>
+      )}
     </Form>
   );
 }
