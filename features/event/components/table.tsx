@@ -76,6 +76,14 @@ export default function EventTable({
         let status = "pending";
 
         const eventType = row.original.event_type;
+        const eventStatus = row.original.event_approver;
+        const eventApproverCount =
+          row.original.event_type?.approver.length || 0;
+
+        const getApproverIndex =
+          eventStatus.length - 1 < eventApproverCount
+            ? eventStatus.length - 1
+            : eventApproverCount;
 
         const approverList = row.original.event_approver;
         if (approverList.length > 0) {
@@ -84,11 +92,17 @@ export default function EventTable({
 
         return (
           <p>
-            <UserRoleBadge type={eventType?.approver[0].user_type as user_role}>
-              {eventType?.approver[0].user_type}
+            <UserRoleBadge
+              type={
+                eventType?.approver[getApproverIndex].user_type as user_role
+              }
+            >
+              {eventType?.approver[getApproverIndex].user_type}
             </UserRoleBadge>
-            <ApproverTypeBadge type={eventType?.approver[0].type as any}>
-              {eventType?.approver[0].type}
+            <ApproverTypeBadge
+              type={eventType?.approver[getApproverIndex].type as any}
+            >
+              {eventType?.approver[getApproverIndex].type}
             </ApproverTypeBadge>
             <Badge variant={"outline"}>{status}</Badge>
           </p>
