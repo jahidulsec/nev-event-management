@@ -8,7 +8,7 @@ import {
 import { deleteToastTemplate } from "@/lib/template";
 import { formatDate } from "@/utils/formatter";
 import { ColumnDef } from "@tanstack/react-table";
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, Trash2, Workflow } from "lucide-react";
 import React from "react";
 import { deleteEvent } from "../actions/event";
 import { TableActionButton } from "@/components/shared/button/button";
@@ -26,6 +26,8 @@ import {
   ApproverTypeBadge,
   UserRoleBadge,
 } from "@/components/shared/badge/badge";
+import { FormDialog } from "@/components/shared/modal/modal";
+import { ApproverFlowChart } from "@/components/shared/flowchart/approver";
 
 export default function EventTable({
   data,
@@ -36,6 +38,9 @@ export default function EventTable({
 }) {
   const [del, setDel] = React.useState<string | boolean>(false);
   const [pending, startTransition] = React.useTransition();
+  const [flowchart, setFlowchart] = React.useState<
+    EventTypeMultiProps | boolean
+  >(false);
   const serialColumn = useTableSerialColumn<EventMultiProps>();
 
   const router = useRouter();
@@ -81,9 +86,11 @@ export default function EventTable({
           row.original.event_type?.approver.length || 0;
 
         const getApproverIndex =
-          eventStatus.length - 1 < eventApproverCount
-            ? eventStatus.length - 1
-            : eventApproverCount;
+          eventStatus.length === 0
+            ? 0
+            : eventStatus.length - 1 < eventApproverCount
+              ? eventStatus.length - 1
+              : eventApproverCount;
 
         const approverList = row.original.event_approver;
         if (approverList.length > 0) {
@@ -126,6 +133,12 @@ export default function EventTable({
         return (
           <div className="flex justify-end items-center gap-1">
             <TableActionButton
+              tooltip="Flowchart"
+              onClick={() => setFlowchart(value.event_type?.approver as any)}
+            >
+              <Workflow /> <span className="sr-only">Workflow</span>
+            </TableActionButton>
+            <TableActionButton
               tooltip="Edit"
               variant={"edit"}
               onClick={() => router.push(`/dashboard/events/${value.id}`)}
@@ -161,6 +174,16 @@ export default function EventTable({
           });
         }}
       />
+
+      <FormDialog
+        open={!!flowchart}
+        onOpenChange={setFlowchart}
+        formTitle="View approver flow"
+      >
+        {typeof flowchart !== "boolean" && (
+          <ApproverFlowChart data={flowchart as any} />
+        )}
+      </FormDialog>
     </>
   );
 }

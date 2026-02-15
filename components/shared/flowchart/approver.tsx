@@ -32,10 +32,11 @@ export const getApproverListRankValue = (value: approver_type) => {
 };
 
 export function ApproverFlowChart({ data }: { data: approver[] }) {
-  const res = data.map((item) => ({
+  const res = data?.map((item) => ({
     ...item,
     rank: getApproverListRankValue(item.type),
   }));
+
   return (
     <div className="flex flex-col justify-center gap-6 min-h-50">
       {res && res.length > 0 ? (

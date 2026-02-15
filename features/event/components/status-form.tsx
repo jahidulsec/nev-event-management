@@ -26,6 +26,7 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
+import { cn } from "@/lib/utils";
 
 export default function EventStatusUpdateForm({
   authUser,
@@ -49,6 +50,9 @@ export default function EventStatusUpdateForm({
   const eventUserStatus = event.event_approver.filter(
     (item) => item.user_role === authUser.role,
   );
+
+  const currentUserSubmission =
+    eventUserStatus?.[0]?.event_status_history?.[0]?.status ?? "pending";
 
   const router = useRouter();
 
@@ -77,16 +81,17 @@ export default function EventStatusUpdateForm({
     return (
       <Empty>
         <EmptyHeader>
-          <EmptyMedia variant="icon"></EmptyMedia>
-          <EmptyTitle>
-            {eventUserStatus?.[0]?.event_status_history?.[0]?.status}
-          </EmptyTitle>
+          <EmptyMedia
+            variant="icon"
+            className={cn(
+              currentUserSubmission === "approved"
+                ? "bg-green-100"
+                : "bg-yellow-100",
+            )}
+          ></EmptyMedia>
+          <EmptyTitle>{currentUserSubmission}</EmptyTitle>
           <EmptyDescription>
-            You{" "}
-            <strong>
-              {eventUserStatus?.[0]?.event_status_history?.[0]?.status}
-            </strong>{" "}
-            this event
+            You <strong>{currentUserSubmission}</strong> this event
           </EmptyDescription>
         </EmptyHeader>
       </Empty>

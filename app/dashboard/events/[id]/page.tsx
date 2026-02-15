@@ -111,7 +111,7 @@ const Step = ({
 }) => {
   return (
     <div className="flex gap-6 overflow-hidden min-h-20 py-3">
-      <p className="text-sm hidden lg:block">{formatDate(createdAt)}</p>
+      <p className="text-sm hidden lg:block mt-1.5">{formatDate(createdAt)}</p>
 
       {/* icon */}
       <div className="relative">
