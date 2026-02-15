@@ -9,13 +9,13 @@ datasource db {
 }
 
 model approver {
-  id            String             @id @default(nanoid()) @db.VarChar(21)
-  event_type_id String             @db.VarChar(21)
+  id            String        @id @default(nanoid()) @db.VarChar(21)
+  event_type_id String        @db.VarChar(21)
   user_type     user_role
   type          approver_type
-  created_at    DateTime?          @default(now()) @db.Timestamp(0)
-  updated_at    DateTime?          @default(now()) @db.Timestamp(0)
-  event_type    event_type         @relation(fields: [event_type_id], references: [id], onUpdate: Restrict, map: "approver_ibfk_1")
+  created_at    DateTime?     @default(now()) @db.Timestamp(0)
+  updated_at    DateTime?     @default(now()) @db.Timestamp(0)
+  event_type    event_type    @relation(fields: [event_type_id], references: [id], onUpdate: Restrict, map: "approver_ibfk_1")
 
   @@index([event_type_id], map: "event_type_id")
 }
@@ -53,7 +53,7 @@ model event {
   details_participants  String?                     @db.Text
   approved_material     event_approved_material
   material_code         String?                     @db.VarChar(10)
-  current_status        event_current_status?
+  current_status        current_status?             @default(processing)
   created_at            DateTime?                   @default(now()) @db.Timestamp(0)
   updated_at            DateTime?                   @default(now()) @db.Timestamp(0)
   other_participants    Int?
@@ -284,3 +284,8 @@ enum event_consultant_preparation_time_add {
   no
 }
 
+enum current_status {
+  approved
+  rejected
+  processing
+}
