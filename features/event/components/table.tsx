@@ -15,12 +15,8 @@ import { TableActionButton } from "@/components/shared/button/button";
 import { EventMultiProps } from "../lib/event";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "@bprogress/next";
-import { event_type, user_role } from "@/lib/generated/prisma";
-import {
-  calculateEventBudget,
-  findEventTypeByCost,
-  getCostLimitText,
-} from "@/utils/helper";
+import { user_role } from "@/lib/generated/prisma";
+import { getCostLimitText } from "@/utils/helper";
 import { EventTypeMultiProps } from "../lib/type";
 import {
   ApproverTypeBadge,
@@ -28,13 +24,14 @@ import {
 } from "@/components/shared/badge/badge";
 import { FormDialog } from "@/components/shared/modal/modal";
 import { ApproverFlowChart } from "@/components/shared/flowchart/approver";
+import { AuthUser } from "@/types/auth-user";
 
 export default function EventTable({
   data,
-  type,
+  authUser,
 }: {
   data: EventMultiProps[];
-  type?: EventTypeMultiProps[];
+  authUser?: AuthUser;
 }) {
   const [del, setDel] = React.useState<string | boolean>(false);
   const [pending, startTransition] = React.useTransition();
@@ -145,14 +142,16 @@ export default function EventTable({
             >
               <Edit /> <span className="sr-only">Edit</span>
             </TableActionButton>
-            <TableActionButton
-              tooltip="delete"
-              variant={"delete"}
-              disabled={pending}
-              onClick={() => setDel(value.id)}
-            >
-              <Trash2 /> <span className="sr-only">Delete</span>
-            </TableActionButton>
+            {authUser?.workAreaCode === value.user_id && (
+              <TableActionButton
+                tooltip="delete"
+                variant={"delete"}
+                disabled={pending}
+                onClick={() => setDel(value.id)}
+              >
+                <Trash2 /> <span className="sr-only">Delete</span>
+              </TableActionButton>
+            )}
           </div>
         );
       },

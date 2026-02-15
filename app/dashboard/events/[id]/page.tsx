@@ -19,6 +19,7 @@ import { SquareCheck, SquareX } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/utils/formatter";
 import { event_current_status } from "@/lib/generated/prisma";
+import { SectionSpinner } from "@/components/shared/spinner/section";
 
 export default async function EventDetailsPage({ params }: { params: Params }) {
   return (
@@ -29,10 +30,10 @@ export default async function EventDetailsPage({ params }: { params: Params }) {
           subtitle="dashboard / event / edit"
         />
       </SectionHeader>
-      <Suspense>
+      <Suspense fallback={<SectionSpinner />}>
         <EventFormSection params={params} />
       </Suspense>
-      <Suspense>
+      <Suspense fallback={<SectionSpinner />}>
         <EventStatusHistorySection params={params} />
       </Suspense>
     </Section>
