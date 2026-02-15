@@ -158,3 +158,11 @@ export const EventStatusSchema = z.object({
 export type EventType = z.infer<typeof EventSchema>;
 export type EventQueryType = z.infer<typeof EventQuerySchema>;
 export type EventStatusSchemaType = z.infer<typeof EventStatusSchema>;
+
+export const EventStatusHistoryQuerySchema = QuerySchema.omit({}).extend({
+  event_id: z.string().optional(),
+});
+
+export type EventStatusHistoryQueryType = z.infer<
+  typeof EventStatusHistoryQuerySchema
+>;

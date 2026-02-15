@@ -19,6 +19,13 @@ import { FormButton } from "@/components/shared/button/button";
 import { createEventStatus } from "../actions/event";
 import { toast } from "sonner";
 import { useRouter } from "@bprogress/next";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
 
 export default function EventStatusUpdateForm({
   authUser,
@@ -27,7 +34,22 @@ export default function EventStatusUpdateForm({
   authUser: AuthUser;
   event: EventSingleProps;
 }) {
-  const eventType = event.event_type?.approver?.[0].type;
+  // get event status current approver stage
+  const eventStatus = event.event_approver;
+  const eventApproverCount = event.event_type?.approver.length || 0;
+  const getApproverIndex =
+    eventStatus.length < eventApproverCount
+      ? eventStatus.length
+      : eventApproverCount;
+  const eventType = event.event_type?.approver?.[getApproverIndex].type;
+  const eventTypeRole =
+    event.event_type?.approver?.[getApproverIndex].user_type;
+
+  // get user status submission
+  const eventUserStatus = event.event_approver.filter(
+    (item) => item.user_role === authUser.role,
+  );
+
   const router = useRouter();
 
   const form = useForm<EventStatusSchemaType>({
@@ -40,7 +62,6 @@ export default function EventStatusUpdateForm({
   });
 
   const onSubmit = async (data: EventStatusSchemaType) => {
-    console.log(data);
     data.remarks = `${eventType}: ${data.status}`;
 
     const res = await createEventStatus(data);
@@ -52,14 +73,21 @@ export default function EventStatusUpdateForm({
     }
   };
 
-  return (
-    <Form
-      className="max-w-2xl mx-auto py-10"
-      onSubmit={form.handleSubmit(onSubmit)}
-    >
-      <Separator />
-      <h4 className="w-full text-2xl font-medium">Approval Section</h4>
+  if (authUser.role !== eventTypeRole)
+    return (
+      <Empty>
+        <EmptyHeader>
+          <EmptyMedia variant="icon"></EmptyMedia>
+          <EmptyTitle>
+            {eventUserStatus[0].event_status_history[0].status}
+          </EmptyTitle>
+          <EmptyDescription>Your response</EmptyDescription>
+        </EmptyHeader>
+      </Empty>
+    );
 
+  return (
+    <Form className="w-full max-w-2xl" onSubmit={form.handleSubmit(onSubmit)}>
       <FieldGroup>
         <Controller
           control={form.control}
