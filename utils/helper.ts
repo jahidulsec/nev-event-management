@@ -66,7 +66,7 @@ export function findEventTypeByCost(
   cost: number,
 ): EventTypeMultiProps | null {
   const filtered = eventTypes.filter(
-    (e) => e.title.toLowerCase() === title.toLowerCase(),
+    (e) => e.title?.toLowerCase() === title?.toLowerCase(),
   );
 
   return (
@@ -85,10 +85,10 @@ export function calculateEventBudget(
   eventConsultant: event_consultant[],
 ) {
   return (
-    eventBudget.reduce(
+    eventBudget?.reduce(
       (acc, sum) => acc + sum.unit * Number(sum.unit_cost),
       0,
     ) +
-    eventConsultant.reduce((acc, sum) => acc + Number(sum.honorarium || 0), 0)
+    eventConsultant?.reduce((acc, sum) => acc + Number(sum.honorarium || 0), 0)
   );
 }

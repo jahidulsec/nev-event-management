@@ -12,6 +12,15 @@ export type EventMultiProps = Prisma.eventGetPayload<{
     event_attachment: true;
     event_budget: true;
     event_consultant: true;
+    event_type: {
+      include: {
+        approver: {
+          orderBy: {
+            created_at: "asc";
+          };
+        };
+      };
+    };
     user: {
       include: {
         user_details: true;
@@ -86,6 +95,15 @@ const getMulti = async (query: EventQueryType) => {
           event_consultant: true,
           user: { include: { user_details: true } },
           product: true,
+          event_type: {
+            include: {
+              approver: {
+                orderBy: {
+                  created_at: "asc",
+                },
+              },
+            },
+          },
           event_approver: {
             include: {
               event_status_history: {

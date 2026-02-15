@@ -65,13 +65,11 @@ export default function EventTable({
           row.original.event_consultant,
         );
 
-        const eventType = row.original.type;
-
-        const validType = findEventTypeByCost(type ?? [], eventType, budget);
+        const eventType = row.original.event_type;
 
         return (
           <p>
-            {validType?.title} ({getCostLimitText(validType as any)})
+            {eventType?.title} ({getCostLimitText(eventType as any)})
           </p>
         );
       },
@@ -87,9 +85,8 @@ export default function EventTable({
           row.original.event_consultant,
         );
 
-        const eventType = row.original.type;
+        const eventType = row.original.event_type;
 
-        const validType = findEventTypeByCost(type ?? [], eventType, budget);
 
         const approverList = row.original.event_approver;
         if (approverList.length > 0) {
@@ -98,11 +95,12 @@ export default function EventTable({
 
         return (
           <p>
-            <UserRoleBadge type={validType?.approver[0].user_type as user_role}>
-              {validType?.approver[0].user_type}
+            {/* {JSON.stringify(eventType)} */}
+            <UserRoleBadge type={eventType?.approver[0].user_type as user_role}>
+              {eventType?.approver[0].user_type}
             </UserRoleBadge>
-            <ApproverTypeBadge type={validType?.approver[0].type as any}>
-              {validType?.approver[0].type}
+            <ApproverTypeBadge type={eventType?.approver[0].type as any}>
+              {eventType?.approver[0].type}
             </ApproverTypeBadge>
             <Badge variant={"outline"}>{status}</Badge>
           </p>

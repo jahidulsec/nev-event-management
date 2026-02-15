@@ -28,21 +28,23 @@ import { EventSingleProps } from "../lib/event";
 import { formatNumber } from "@/utils/formatter";
 import { useParams } from "next/navigation";
 import { useRouter } from "@bprogress/next";
+import { calculateEventBudget, findEventTypeByCost } from "@/utils/helper";
+import { EventTypeMultiProps } from "../lib/type";
 
 export default function EventForm({
   prevData,
   user,
+  eventTypes,
 }: {
   prevData?: EventSingleProps;
   user?: AuthUser;
+  eventTypes: EventTypeMultiProps[];
 }) {
   const [products, setProducts] = React.useState<product[]>([]);
   const [pending, startTransition] = React.useTransition();
 
   const params = useParams();
   const router = useRouter();
-
-  // findEventTypeByCost(type ?? [], eventType, budget)
 
   const form = useForm<EventType>({
     resolver: zodResolver(EventSchema),
@@ -93,6 +95,12 @@ export default function EventForm({
   const internalParticipants = form.watch("internal_participants");
   const externalParticipants = form.watch("external_participants");
   const otherParticipants = form.watch("other_participants");
+  const budget = form.watch("eventBudget");
+  const consultant = form.watch("eventConsultant");
+
+  const totalBudget = calculateEventBudget(budget as any, consultant as any);
+
+  const validType = findEventTypeByCost(eventTypes, eventType, totalBudget);
 
   async function onSubmit(data: EventType) {
     const res = prevData
@@ -101,10 +109,8 @@ export default function EventForm({
     toast[res.success ? "success" : "error"](res.message);
 
     if (res.success) {
-      // TODO: redirect to event list view page
       router.push("/dashboard/events");
     }
-    console.log(data);
   }
 
   // get products
@@ -120,6 +126,13 @@ export default function EventForm({
 
     handleEventTypes();
   }, []);
+
+  // set event type
+  React.useEffect(() => {
+    if (validType) {
+      form.setValue("event_type_id", validType.id);
+    }
+  }, [validType]);
 
   return (
     <Form
@@ -531,13 +544,15 @@ export default function EventForm({
         />
       </FieldGroup>
 
-      <p className="font-semibold">
-        Total:{" "}
-        {formatNumber(
-          internalParticipants +
-            externalParticipants +
-            (otherParticipants || 0),
-        )}
+      <p className="border-y py-3 font-medium">
+        Total Participants:{" "}
+        <strong className="text-secondary text-lg">
+          {formatNumber(
+            internalParticipants +
+              externalParticipants +
+              (otherParticipants || 0) || 0,
+          )}
+        </strong>
       </p>
 
       <FieldGroup>
