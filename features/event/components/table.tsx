@@ -60,11 +60,6 @@ export default function EventTable({
       accessorKey: "event_type",
       header: "Type",
       cell: ({ row }) => {
-        const budget = calculateEventBudget(
-          row.original.event_budget,
-          row.original.event_consultant,
-        );
-
         const eventType = row.original.event_type;
 
         return (
@@ -80,13 +75,7 @@ export default function EventTable({
       cell: ({ row }) => {
         let status = "pending";
 
-        const budget = calculateEventBudget(
-          row.original.event_budget,
-          row.original.event_consultant,
-        );
-
         const eventType = row.original.event_type;
-
 
         const approverList = row.original.event_approver;
         if (approverList.length > 0) {
@@ -95,7 +84,6 @@ export default function EventTable({
 
         return (
           <p>
-            {/* {JSON.stringify(eventType)} */}
             <UserRoleBadge type={eventType?.approver[0].user_type as user_role}>
               {eventType?.approver[0].user_type}
             </UserRoleBadge>

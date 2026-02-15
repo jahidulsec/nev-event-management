@@ -12,6 +12,7 @@ import { notFound } from "next/navigation";
 import { getEventTypes } from "@/features/event/lib/type";
 import { getAuthUser } from "@/lib/dal";
 import { AuthUser } from "@/types/auth-user";
+import EventStatusUpdateForm from "@/features/event/components/status-form";
 
 export default async function EventDetailsPage({ params }: { params: Params }) {
   const { id } = await params;
@@ -31,7 +32,14 @@ export default async function EventDetailsPage({ params }: { params: Params }) {
       </SectionHeader>
 
       <SectionContent className="border p-6 rounded-md">
-        <EventForm authUser={user as AuthUser} eventTypes={eventTypeRes.data ?? []} prevData={res.data} />
+        <EventForm
+          authUser={user as AuthUser}
+          eventTypes={eventTypeRes.data ?? []}
+          prevData={res.data}
+        />
+        {user?.role !== "ao" && (
+          <EventStatusUpdateForm authUser={user as AuthUser} event={res.data} />
+        )}
       </SectionContent>
     </Section>
   );

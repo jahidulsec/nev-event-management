@@ -120,6 +120,7 @@ model event_status_history {
   status            event_current_status
   created_at        DateTime?            @default(now()) @db.Timestamp(0)
   updated_at        DateTime?            @default(now()) @db.Timestamp(0)
+  remarks           String?              @db.Text
   event_approver    event_approver       @relation(fields: [event_approver_id], references: [id], onUpdate: Restrict, map: "event_status_history_ibfk_1")
 
   @@index([event_approver_id], map: "event_approver_id")
@@ -282,3 +283,4 @@ enum event_consultant_preparation_time_add {
   yes
   no
 }
+

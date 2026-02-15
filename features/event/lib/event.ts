@@ -40,6 +40,16 @@ export type EventSingleProps = Prisma.eventGetPayload<{
     event_attachment: true;
     event_budget: true;
     event_consultant: true;
+    event_type: {
+      include: {
+        approver: true;
+      };
+    };
+    event_approver: {
+      include: {
+        event_status_history: true;
+      };
+    };
     user: {
       include: { ao: true };
     };
@@ -154,6 +164,27 @@ const getSingle = async (id: string) => {
         user: {
           include: {
             ao: true,
+          },
+        },
+        event_type: {
+          include: {
+            approver: {
+              orderBy: {
+                created_at: "asc",
+              },
+            },
+          },
+        },
+        event_approver: {
+          include: {
+            event_status_history: {
+              orderBy: {
+                created_at: "desc",
+              },
+            },
+          },
+          orderBy: {
+            created_at: "desc",
           },
         },
       },

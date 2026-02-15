@@ -9,3 +9,8 @@ export const eventApproverTypeEnum = z.enum(
   ["first", "second", "third", "final", "budget"],
   "Select a type",
 );
+
+export const eventApproverStatusEnum = z.enum(
+  ["approved", "rejected", "rewrite"],
+  "Select a type",
+);
