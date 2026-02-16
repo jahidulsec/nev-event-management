@@ -55,4 +55,26 @@ const UserRoleBadge = ({
   );
 };
 
-export { ApproverTypeBadge, UserRoleBadge };
+const StatusBadge = ({
+  variant = "outline",
+  className,
+  type,
+  ...props
+}: BadgeProps & { type: string }) => {
+  return (
+    <Badge
+      variant={variant}
+      className={cn(
+        type === "approved"
+          ? "bg-green-50 text-green-800"
+          : type == "rejected"
+            ? "text-destructive bg-destructive/10"
+            : "text-yellow-800 bg-yellow-100",
+        className,
+      )}
+      {...props}
+    />
+  );
+};
+
+export { ApproverTypeBadge, UserRoleBadge, StatusBadge };

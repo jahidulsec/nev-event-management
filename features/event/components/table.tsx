@@ -20,6 +20,7 @@ import { getCostLimitText } from "@/utils/helper";
 import { EventTypeMultiProps } from "../lib/type";
 import {
   ApproverTypeBadge,
+  StatusBadge,
   UserRoleBadge,
 } from "@/components/shared/badge/badge";
 import { FormDialog } from "@/components/shared/modal/modal";
@@ -72,7 +73,7 @@ export default function EventTable({
         );
       },
     },
-    {accessorKey: 'product_id', header: "Product"},
+    { accessorKey: "product_id", header: "Product" },
     {
       id: "current_status",
       header: "Event Status",
@@ -83,7 +84,7 @@ export default function EventTable({
             variant={"outline"}
             className={cn(
               status === "approved"
-                ? "bg-green-100 text-green-500"
+                ? "bg-green-50 text-green-700"
                 : status === "rejected"
                   ? "text-destructive bg-destructive/10"
                   : "bg-yellow-50 text-yellow-700",
@@ -114,7 +115,8 @@ export default function EventTable({
 
         const approverList = row.original.event_approver;
         if (approverList.length > 0) {
-          status = approverList[0]?.event_status_history?.[0]?.status ?? 'pending';
+          status =
+            approverList[0]?.event_status_history?.[0]?.status ?? "pending";
         }
 
         return (
@@ -131,7 +133,7 @@ export default function EventTable({
             >
               {eventType?.approver[getApproverIndex].type}
             </ApproverTypeBadge>
-            <Badge variant={"outline"}>{status}</Badge>
+            <StatusBadge type={status}>{status}</StatusBadge>
           </p>
         );
       },
