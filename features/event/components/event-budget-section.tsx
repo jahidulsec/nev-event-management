@@ -15,6 +15,7 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { Select } from "@/components/shared/select/select";
+import { AuthUser } from "@/types/auth-user";
 
 const budgetType = [
   "Venue Charge",
@@ -27,10 +28,10 @@ const budgetType = [
 
 export const EventBudgetSection = ({
   form,
-  userId,
+  user,
 }: {
   form: UseFormReturn<EventType>;
-  userId?: string;
+  user?: AuthUser;
 }) => {
   const { fields, append, remove } = useFieldArray({
     control: form.control,
@@ -39,8 +40,9 @@ export const EventBudgetSection = ({
 
   const eventBudget = form.watch("eventBudget");
   const eventConsultant = form.watch("eventConsultant");
+  const eventCreator = form.watch("user_id");
 
-  const isCreator = userId === form.getValues("user_id");
+  const isCreator = user?.workAreaCode === eventCreator || !eventCreator;
 
   return (
     <>

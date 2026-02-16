@@ -12,20 +12,26 @@ import {
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { FileText, Plus, PlusCircle, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { AuthUser } from "@/types/auth-user";
+import { useParams } from "next/navigation";
 
 export default function AttachmentSection({
   form,
-  userId,
+  user,
 }: {
   form: UseFormReturn<EventType>;
-  userId?: string;
+  user?: AuthUser;
 }) {
   const { append, remove, fields } = useFieldArray({
     control: form.control,
     name: "eventAttachment",
   });
 
-  const isCreator = userId === form.getValues("user_id");
+  const params = useParams();
+
+  const eventCreator = form.watch("user_id");
+
+  const isCreator = params.id && user?.workAreaCode === eventCreator;
 
   return (
     <>
@@ -91,19 +97,21 @@ export default function AttachmentSection({
               name={`eventAttachment.${index}.file`}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid} className="col-span-2">
-                  <FieldLabel htmlFor={field.name}>Upload</FieldLabel>
-
-                  <Input
-                    type="file"
-                    onChange={(e) => {
-                      if (e.target.files) {
-                        field.onChange(e.target.files[0]);
-                      }
-                    }}
-                  />
-
-                  {fieldState.error?.message && (
-                    <FieldError errors={[fieldState.error]} />
+                  {isCreator && (
+                    <>
+                      <FieldLabel htmlFor={field.name}>Upload</FieldLabel>
+                      <Input
+                        type="file"
+                        onChange={(e) => {
+                          if (e.target.files) {
+                            field.onChange(e.target.files[0]);
+                          }
+                        }}
+                      />
+                      {fieldState.error?.message && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </>
                   )}
                 </Field>
               )}

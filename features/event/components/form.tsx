@@ -34,12 +34,10 @@ import { EventTypeMultiProps } from "../lib/type";
 
 export default function EventForm({
   prevData,
-  user,
   eventTypes,
   authUser,
 }: {
   prevData?: EventSingleProps;
-  user?: AuthUser;
   eventTypes: EventTypeMultiProps[];
   authUser?: AuthUser;
 }) {
@@ -54,7 +52,7 @@ export default function EventForm({
     defaultValues: {
       event_type_id: prevData?.event_type_id ?? undefined,
       title: prevData?.title,
-      user_id: user?.workAreaCode ?? prevData?.user_id,
+      user_id: params.id ? prevData?.user_id : authUser?.workAreaCode,
       product_id: prevData?.product_id,
       event_date: prevData?.event_date,
       venue_name: prevData?.venue_name,
@@ -116,6 +114,10 @@ export default function EventForm({
     }
   }
 
+  React.useEffect(() => {
+    console.log(form.formState.errors)
+  }, [form.formState.errors])
+
   // get products
   React.useEffect(() => {
     const handleEventTypes = () => {
@@ -147,7 +149,7 @@ export default function EventForm({
       </h3>
 
       {/* user */}
-      {authUser?.workAreaCode !== prevData?.user_id && (
+      {params.id && (
         <>
           <div className="flex flex-col gap-3">
             <Field>
@@ -402,19 +404,20 @@ export default function EventForm({
                   field.onChange(value);
                 }}
               />
-              {objective &&
-                objectiveList.slice(0, 3).includes(objective) === false && (
-                  <Input
-                    defaultValue={objective}
-                    onChange={(e) => {
-                      form.setValue("objective", e.target.value);
-                    }}
-                    aria-invalid={fieldState.invalid}
-                    placeholder="Others"
-                    autoComplete="off"
-                    className="max-w-sm"
-                  />
-                )}
+              {((objective &&
+                objectiveList.slice(0, 3).includes(objective) === false) ||
+                objective?.length === 0) && (
+                <Input
+                  defaultValue={objective}
+                  onChange={(e) => {
+                    form.setValue("objective", e.target.value);
+                  }}
+                  aria-invalid={fieldState.invalid}
+                  placeholder="Others"
+                  autoComplete="off"
+                  className="max-w-sm"
+                />
+              )}
 
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
@@ -443,19 +446,20 @@ export default function EventForm({
                   field.onChange(value);
                 }}
               />
-              {eventType &&
-                eventTypeList.slice(0, 4).includes(eventType) === false && (
-                  <Input
-                    defaultValue={eventType}
-                    onChange={(e) => {
-                      form.setValue("type", e.target.value);
-                    }}
-                    aria-invalid={fieldState.invalid}
-                    placeholder="Others"
-                    autoComplete="off"
-                    className="max-w-sm"
-                  />
-                )}
+              {((eventType &&
+                eventTypeList.slice(0, 4).includes(eventType) === false) ||
+                eventType?.length === 0) && (
+                <Input
+                  defaultValue={eventType}
+                  onChange={(e) => {
+                    form.setValue("type", e.target.value);
+                  }}
+                  aria-invalid={fieldState.invalid}
+                  placeholder="Others"
+                  autoComplete="off"
+                  className="max-w-sm"
+                />
+              )}
 
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
@@ -615,15 +619,15 @@ export default function EventForm({
       <Separator />
 
       {/* event budget section */}
-      <EventBudgetSection form={form} userId={authUser?.workAreaCode} />
+      <EventBudgetSection form={form} user={authUser} />
 
       <Separator />
 
-      <ConsultantSection form={form} userId={authUser?.workAreaCode} />
+      <ConsultantSection form={form} user={authUser} />
 
       <Separator />
 
-      <AttachmentSection form={form} userId={authUser?.workAreaCode} />
+      <AttachmentSection form={form} user={authUser} />
 
       {!!!params.id?.toString() && (
         <FormButton
@@ -650,8 +654,8 @@ const eventTypeList = [
   "Non-paid Promotional",
   "Paid Promotional",
   "Medical",
-  "Other",
   "Special",
+  "Other",
 ];
 
 const approvedMaterial = [

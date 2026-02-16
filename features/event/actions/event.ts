@@ -17,24 +17,29 @@ export const createEvent = async (data: EventType) => {
     if (!eventBudget) throw new Error("Add event budget");
 
     // get file path
-    if (eventAttachment.length > 0) {
-      for (let i = 0; i < eventAttachment.length; i++) {
-        if (eventAttachment[0].file) {
-          const filePath = `storage/events/${eventAttachment[i].document_title.replaceAll(" ", "_")}-${rest.user_id}-${crypto.randomUUID()}.${eventAttachment[i]?.file?.name.split(".").pop()}`;
+    if (eventAttachment?.length) {
+      await fs.mkdir("storage/events", { recursive: true });
 
-          // storage document
-          fs.mkdir("storage/events", { recursive: true });
-          await fs.writeFile(
-            filePath,
-            Buffer.from(await eventAttachment[0].file.arrayBuffer()),
-          );
+      for (const attachment of eventAttachment) {
+        if (!attachment?.file) continue;
 
-          // add to files variable
-          files.push({
-            document_title: eventAttachment[i].document_title,
-            file_path: filePath,
-          });
-        }
+        const extension = attachment.file.name.split(".").pop();
+
+        const safeTitle = attachment.document_title
+          ?.replace(/[^a-zA-Z0-9]/g, "_")
+          .toLowerCase();
+
+        const filePath = `storage/events/${safeTitle}-${rest.user_id}-${Date.now()}.${extension}`;
+
+        await fs.writeFile(
+          filePath,
+          Buffer.from(await attachment.file.arrayBuffer()),
+        );
+
+        files.push({
+          document_title: attachment.document_title,
+          file_path: filePath,
+        });
       }
     }
 

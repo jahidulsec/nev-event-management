@@ -24,7 +24,7 @@ export default async function EventCreatePage() {
       </SectionHeader>
 
       <SectionContent className="border p-6 rounded-md">
-        <EventForm user={authUser as AuthUser} eventTypes={res.data ?? []} />
+        <EventForm authUser={authUser as AuthUser} eventTypes={res.data ?? []} />
       </SectionContent>
     </Section>
   );

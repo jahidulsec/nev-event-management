@@ -18,6 +18,7 @@ import { getDoctors } from "@/features/doctor/lib/doctor";
 import { formatNumber } from "@/utils/formatter";
 import Combobox from "@/components/shared/combobox/combobox";
 import { Select } from "@/components/shared/select/select";
+import { AuthUser } from "@/types/auth-user";
 
 const consultantRole = [
   "Speaker",
@@ -31,10 +32,10 @@ const consultantRole = [
 
 export default function ConsultantSection({
   form,
-  userId,
+  user,
 }: {
   form: UseFormReturn<EventType>;
-  userId?: string;
+  user?: AuthUser;
 }) {
   const { append, remove, fields } = useFieldArray({
     control: form.control,
@@ -43,7 +44,9 @@ export default function ConsultantSection({
 
   const eventConsultant = form.watch("eventConsultant");
 
-  const isCreator = userId === form.getValues("user_id");
+  const eventCreator = form.watch("user_id");
+
+  const isCreator = user?.workAreaCode === eventCreator || !eventCreator;
 
   return (
     <>
