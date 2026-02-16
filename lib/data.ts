@@ -95,6 +95,34 @@ export const navlist = {
       icon: Calendars,
     },
   ],
+  eo: [
+    {
+      id: 1,
+      title: "Dashboard",
+      url: "/dashboard",
+      icon: Layout,
+    },
+    {
+      id: 2,
+      title: "Events",
+      url: "/dashboard/events",
+      icon: Calendars,
+    },
+  ],
+  marketing: [
+    {
+      id: 1,
+      title: "Dashboard",
+      url: "/dashboard",
+      icon: Layout,
+    },
+    {
+      id: 2,
+      title: "Events",
+      url: "/dashboard/events",
+      icon: Calendars,
+    },
+  ],
 };
 
 export const approverTypeList = [

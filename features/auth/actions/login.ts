@@ -54,6 +54,22 @@ export const userLogin = async (data: LoginType) => {
       });
 
       name = userDetails?.full_name ?? user.work_area_code;
+    } else if (user.role === "marketing") {
+      const userDetails = await db.marketing.findUnique({
+        where: {
+          work_area_code: user.work_area_code,
+        },
+      });
+
+      name = userDetails?.full_name ?? user.work_area_code;
+    } else if (user.role === "eo") {
+      const userDetails = await db.eo.findUnique({
+        where: {
+          work_area_code: user.work_area_code,
+        },
+      });
+
+      name = userDetails?.full_name ?? user.work_area_code;
     } else {
       const userDetails = await db.user_details.findUnique({
         where: {
