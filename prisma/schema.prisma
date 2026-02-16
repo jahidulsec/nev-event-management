@@ -9,13 +9,13 @@ datasource db {
 }
 
 model approver {
-  id            String             @id @default(nanoid()) @db.VarChar(21)
-  event_type_id String             @db.VarChar(21)
+  id            String        @id @default(nanoid()) @db.VarChar(21)
+  event_type_id String        @db.VarChar(21)
   user_type     user_role
   type          approver_type
-  created_at    DateTime?          @default(now()) @db.Timestamp(0)
-  updated_at    DateTime?          @default(now()) @db.Timestamp(0)
-  event_type    event_type         @relation(fields: [event_type_id], references: [id], onUpdate: Restrict, map: "approver_ibfk_1")
+  created_at    DateTime?     @default(now()) @db.Timestamp(0)
+  updated_at    DateTime?     @default(now()) @db.Timestamp(0)
+  event_type    event_type    @relation(fields: [event_type_id], references: [id], onUpdate: Restrict, map: "approver_ibfk_1")
 
   @@index([event_type_id], map: "event_type_id")
 }
@@ -75,14 +75,14 @@ model event {
 }
 
 model event_approver {
-  id                   String                   @id @default(nanoid()) @db.VarChar(21)
-  event_id             String                   @db.VarChar(21)
-  user_id              String                   @db.VarChar(21)
+  id                   String                 @id @default(nanoid()) @db.VarChar(21)
+  event_id             String                 @db.VarChar(21)
+  user_id              String                 @db.VarChar(21)
   user_role            user_role
-  created_at           DateTime?                @default(now()) @db.Timestamp(0)
-  updated_at           DateTime?                @default(now()) @db.Timestamp(0)
-  event                event                    @relation(fields: [event_id], references: [id], onDelete: Cascade, map: "event_approver_ibfk_1")
-  user                 user                     @relation(fields: [user_id], references: [work_area_code], onDelete: Cascade, map: "event_approver_ibfk_2")
+  created_at           DateTime?              @default(now()) @db.Timestamp(0)
+  updated_at           DateTime?              @default(now()) @db.Timestamp(0)
+  event                event                  @relation(fields: [event_id], references: [id], onDelete: Cascade, map: "event_approver_ibfk_1")
+  user                 user                   @relation(fields: [user_id], references: [work_area_code], onDelete: Cascade, map: "event_approver_ibfk_2")
   event_status_history event_status_history[]
 
   @@unique([event_id, user_id], map: "event_id")
@@ -138,11 +138,12 @@ model event_type {
 }
 
 model product {
-  id         String    @id @default(nanoid()) @db.VarChar(21)
-  name       String    @db.VarChar(150)
-  created_at DateTime? @default(now()) @db.Timestamp(0)
-  updated_at DateTime? @default(now()) @db.Timestamp(0)
-  event      event[]
+  id           String         @id @default(nanoid()) @db.VarChar(21)
+  name         String         @db.VarChar(150)
+  created_at   DateTime?      @default(now()) @db.Timestamp(0)
+  updated_at   DateTime?      @default(now()) @db.Timestamp(0)
+  event        event[]
+  product_user product_user[]
 }
 
 model user {
@@ -159,6 +160,7 @@ model user {
   event_approver event_approver[]
   flm            flm?
   marketing      marketing?
+  product_user   product_user[]
   slm            slm?
   user_details   user_details?
 }
@@ -277,8 +279,11 @@ model product_user {
   id             String    @id @db.VarChar(21)
   created_at     DateTime? @default(now()) @db.Timestamp(0)
   updated_at     DateTime? @default(now()) @db.Timestamp(0)
+  user           user      @relation(fields: [work_area_code], references: [work_area_code], onUpdate: Restrict, map: "product_user_ibfk_1")
+  product        product   @relation(fields: [product_slug], references: [id], onUpdate: Restrict, map: "product_user_ibfk_2")
 
   @@unique([product_slug, work_area_code], map: "product_slug")
+  @@index([work_area_code], map: "work_area_code")
 }
 
 enum approver_type {

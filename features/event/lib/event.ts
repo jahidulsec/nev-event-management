@@ -119,6 +119,34 @@ const getMulti = async (query: EventQueryType) => {
             },
           },
         }),
+      ...(params.role === "marketing" &&
+        params.work_area_code && {
+          product: {
+            product_user: {
+              some: {
+                work_area_code: params.work_area_code,
+              },
+            },
+          },
+          event_type: {
+            approver: {
+              some: {
+                user_type: params.role,
+              },
+            },
+          },
+        }),
+      ...(params.role === "eo" &&
+        params.work_area_code && {
+          product: {
+            product_user: {
+              some: {
+                work_area_code: params.work_area_code,
+              },
+            },
+          },
+          current_status: "approved",
+        }),
     };
 
     const [data, count] = await Promise.all([
