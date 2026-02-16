@@ -83,7 +83,7 @@ const ProfileButton = ({ user }: { user: AuthUser }) => {
       >
         <ResetPasswordForm
           onClose={() => setResetPassword(false)}
-          id={user.employeeId}
+          id={user.workAreaCode}
         />
       </FormSheet>
     </>

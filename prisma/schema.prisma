@@ -9,13 +9,13 @@ datasource db {
 }
 
 model approver {
-  id            String        @id @default(nanoid()) @db.VarChar(21)
-  event_type_id String        @db.VarChar(21)
+  id            String             @id @default(nanoid()) @db.VarChar(21)
+  event_type_id String             @db.VarChar(21)
   user_type     user_role
   type          approver_type
-  created_at    DateTime?     @default(now()) @db.Timestamp(0)
-  updated_at    DateTime?     @default(now()) @db.Timestamp(0)
-  event_type    event_type    @relation(fields: [event_type_id], references: [id], onUpdate: Restrict, map: "approver_ibfk_1")
+  created_at    DateTime?          @default(now()) @db.Timestamp(0)
+  updated_at    DateTime?          @default(now()) @db.Timestamp(0)
+  event_type    event_type         @relation(fields: [event_type_id], references: [id], onUpdate: Restrict, map: "approver_ibfk_1")
 
   @@index([event_type_id], map: "event_type_id")
 }
@@ -154,9 +154,11 @@ model user {
   id             String           @id @unique(map: "id") @default(nanoid()) @db.VarChar(21)
   ao             ao?
   director       director?
+  eo             eo?
   event          event[]
   event_approver event_approver[]
   flm            flm?
+  marketing      marketing?
   slm            slm?
   user_details   user_details?
 }
@@ -243,6 +245,40 @@ model slm {
   created_at     DateTime? @db.Timestamp(0)
   updated_at     DateTime? @default(now()) @db.Timestamp(0)
   user           user      @relation(fields: [work_area_code], references: [work_area_code], onUpdate: Restrict, map: "slm_ibfk_1")
+}
+
+model eo {
+  work_area_code String    @id @db.VarChar(10)
+  full_name      String    @db.VarChar(150)
+  designation    String    @db.VarChar(100)
+  email          String?   @db.VarChar(200)
+  group_name     String    @db.VarChar(10)
+  mobile         String?   @db.VarChar(14)
+  created_at     DateTime? @default(now()) @db.Timestamp(0)
+  updated_at     DateTime? @default(now()) @db.Timestamp(0)
+  user           user      @relation(fields: [work_area_code], references: [work_area_code], onUpdate: Restrict, map: "eo_ibfk_1")
+}
+
+model marketing {
+  work_area_code String    @id @db.VarChar(20)
+  full_name      String    @db.VarChar(150)
+  designation    String    @db.VarChar(100)
+  email          String    @db.VarChar(200)
+  group_name     String    @db.VarChar(10)
+  mobile         String?   @db.VarChar(14)
+  created_at     DateTime? @default(now()) @db.Timestamp(0)
+  updated_at     DateTime? @default(now()) @db.Timestamp(0)
+  user           user      @relation(fields: [work_area_code], references: [work_area_code], map: "marketing_ibfk_1")
+}
+
+model product_user {
+  work_area_code String    @db.VarChar(6)
+  product_slug   String    @db.VarChar(150)
+  id             String    @id @db.VarChar(21)
+  created_at     DateTime? @default(now()) @db.Timestamp(0)
+  updated_at     DateTime? @default(now()) @db.Timestamp(0)
+
+  @@unique([product_slug, work_area_code], map: "product_slug")
 }
 
 enum approver_type {

@@ -57,7 +57,7 @@ export const updateUserProfile = async (id: string, data: ProfileType) => {
     // update session
     await deleteSession();
     await createSession({
-      employeeId: user.user_id,
+      workAreaCode: user.user_id,
       id: user.user.id,
       name: user?.full_name ?? user.user_id,
       mobile: user?.mobile ?? "",
