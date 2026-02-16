@@ -32,7 +32,7 @@ export default function UserProfileForm({
   });
 
   async function onSubmit(data: ProfileType) {
-    const res = await updateUserProfile(prevData.employeeId, data);
+    const res = await updateUserProfile(prevData.workAreaCode, data);
     toast[res.success ? "success" : "error"](res.message);
 
     if (res.success) {
