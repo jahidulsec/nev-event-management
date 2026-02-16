@@ -4,6 +4,10 @@ export function formatDate(date: Date) {
   return format(date, "LLL dd, yyyy");
 }
 
+export function formatDateTime(date: Date) {
+  return format(date, "LLL dd, yyyy - h:mm aaa");
+}
+
 export const formatNumber = (number: number) => {
   if (typeof number !== "number") return 0;
 

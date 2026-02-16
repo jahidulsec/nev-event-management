@@ -57,7 +57,7 @@ const EventFormSection = async ({ params }: { params: Params }) => {
         prevData={res.data}
       />
 
-      {user?.role !== "ao" && (
+      {!["ao", "eo"].includes(user?.role as string) && (
         <div className="max-w-2xl mx-auto flex flex-col w-full py-10 gap-6">
           <Separator />
           <h4 className="w-full text-2xl font-medium">Approval Section</h4>

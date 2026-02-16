@@ -2,7 +2,7 @@
 
 import { event_current_status } from "@/lib/generated/prisma";
 import { cn } from "@/lib/utils";
-import { formatDate } from "@/utils/formatter";
+import { formatDate, formatDateTime } from "@/utils/formatter";
 import { SquareCheck, SquareX } from "lucide-react";
 
 const Step = ({
@@ -18,7 +18,7 @@ const Step = ({
 }) => {
   return (
     <div className="flex gap-6 overflow-hidden min-h-20 py-3">
-      <p className="text-sm hidden lg:block mt-1.5">{formatDate(createdAt)}</p>
+      <p className="text-sm hidden lg:block mt-1.5">{formatDateTime(createdAt)}</p>
 
       {/* icon */}
       <div className="relative">
@@ -48,7 +48,7 @@ const Step = ({
           {" "}
           <strong>{status.replaceAll("_", " ")}:</strong> {description}
         </p>
-        <p className="text-sm block lg:hidden">{formatDate(createdAt)}</p>
+        <p className="text-sm block lg:hidden">{formatDateTime(createdAt)}</p>
       </div>
     </div>
   );
