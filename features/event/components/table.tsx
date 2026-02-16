@@ -72,6 +72,7 @@ export default function EventTable({
         );
       },
     },
+    {accessorKey: 'product_id', header: "Product"},
     {
       id: "current_status",
       header: "Event Status",
@@ -113,7 +114,7 @@ export default function EventTable({
 
         const approverList = row.original.event_approver;
         if (approverList.length > 0) {
-          status = approverList[0].event_status_history?.[0].status;
+          status = approverList[0]?.event_status_history?.[0]?.status ?? 'pending';
         }
 
         return (

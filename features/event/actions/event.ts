@@ -144,7 +144,7 @@ export const deleteEvent = async (id: string) => {
 
 export const createEventStatus = async (data: EventStatusSchemaType) => {
   try {
-    const { status, remarks, ...rest } = data;
+    const { status, remarks, eventUserType, ...rest } = data;
     const res = await db.event_approver.upsert({
       where: {
         event_id_user_id: {
@@ -171,6 +171,30 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
       },
     });
 
+    // if event rejected, update event current status
+    if (status === "rejected") {
+      await db.event.update({
+        where: {
+          id: data.event_id,
+        },
+        data: {
+          current_status: "rejected",
+        },
+      });
+    }
+
+    // if approved by last approver, set event current status approver
+    if (eventUserType === "budget" && status === "approved") {
+      await db.event.update({
+        where: {
+          id: data.event_id,
+        },
+        data: {
+          current_status: "approved",
+        },
+      });
+    }
+
     revalidatePath("/dashboard");
     revalidatePath("/dashboard/events");
 
@@ -179,7 +203,6 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
       message: "Event status is submitted successfully",
       data: res,
     });
-
   } catch (error) {
     const err = handleError(error);
     return response({

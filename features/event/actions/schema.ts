@@ -153,6 +153,7 @@ export const EventStatusSchema = z.object({
   user_role: userRoleSchema,
   status: eventApproverStatusEnum,
   remarks: z.string("enter remarks").optional(),
+  eventUserType: z.string().optional()
 });
 
 export type EventType = z.infer<typeof EventSchema>;

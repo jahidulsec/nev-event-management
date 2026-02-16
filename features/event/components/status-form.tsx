@@ -25,6 +25,7 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { cn } from "@/lib/utils";
+import { ApproverTypeBadge } from "@/components/shared/badge/badge";
 
 export default function EventStatusUpdateForm({
   authUser,
@@ -40,9 +41,9 @@ export default function EventStatusUpdateForm({
     eventStatus.length < eventApproverCount
       ? eventStatus.length
       : eventApproverCount;
-  const eventType = event.event_type?.approver?.[getApproverIndex].type;
+  const eventType = event.event_type?.approver?.[getApproverIndex]?.type;
   const eventTypeRole =
-    event.event_type?.approver?.[getApproverIndex].user_type;
+    event.event_type?.approver?.[getApproverIndex]?.user_type;
 
   // get user status submission
   const eventUserStatus = event.event_approver.filter(
@@ -51,7 +52,7 @@ export default function EventStatusUpdateForm({
 
   // if previous approver rejectes
   const prevRejected = event.event_approver.filter(
-    (i) => i.event_status_history[0].status === "rejected",
+    (i) => i.event_status_history[0]?.status === "rejected",
   );
 
   const currentUserSubmission: any =
@@ -67,6 +68,7 @@ export default function EventStatusUpdateForm({
       user_id: authUser.workAreaCode,
       user_role: authUser.role,
       event_id: event.id,
+      eventUserType: eventType
     },
   });
 
@@ -82,7 +84,7 @@ export default function EventStatusUpdateForm({
     }
   };
 
-  if (authUser.role !== eventTypeRole)
+  if (authUser.role !== eventTypeRole || currentUserSubmission === "rejected")
     return (
       <Empty>
         <EmptyHeader>
@@ -91,7 +93,9 @@ export default function EventStatusUpdateForm({
             className={cn(
               currentUserSubmission === "approved"
                 ? "bg-green-100"
-                : "bg-yellow-100",
+                : currentUserSubmission === "rejected"
+                  ? "bg-red-100"
+                  : "bg-yellow-100",
             )}
           ></EmptyMedia>
           <EmptyTitle>{currentUserSubmission}</EmptyTitle>
@@ -108,6 +112,12 @@ export default function EventStatusUpdateForm({
 
   return (
     <Form className="w-full max-w-2xl" onSubmit={form.handleSubmit(onSubmit)}>
+      <p className="text-mguted-foreground">
+        Approve as <strong className="text-foreground">{eventTypeRole}</strong>{" "}
+        <ApproverTypeBadge type={eventType as any}>
+          {eventType}
+        </ApproverTypeBadge>
+      </p>
       <FieldGroup>
         <Controller
           control={form.control}
