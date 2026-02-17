@@ -60,6 +60,8 @@ export default function EventStatusUpdateForm({
       ? "rejected"
       : (eventUserStatus?.[0]?.event_status_history?.[0]?.status ?? "pending");
 
+  const currentUserLastStatus = eventUserStatus?.[0]?.event_status_history?.[0];
+
   const router = useRouter();
 
   const form = useForm<EventStatusSchemaType>({
@@ -68,7 +70,7 @@ export default function EventStatusUpdateForm({
       user_id: authUser.workAreaCode,
       user_role: authUser.role,
       event_id: event.id,
-      eventUserType: eventType
+      eventUserType: eventType,
     },
   });
 
@@ -84,7 +86,13 @@ export default function EventStatusUpdateForm({
     }
   };
 
-  if (authUser.role !== eventTypeRole || currentUserSubmission === "rejected")
+  if (
+    authUser.role !== eventTypeRole ||
+    (authUser.role === eventTypeRole &&
+      currentUserLastStatus?.remarks?.includes(eventType as string) &&
+      currentUserSubmission === "approved") ||
+    currentUserSubmission === "rejected"
+  )
     return (
       <Empty>
         <EmptyHeader>
@@ -141,7 +149,6 @@ export default function EventStatusUpdateForm({
           )}
         />
       </FieldGroup>
-
       <FormButton
         isPending={form.formState.isSubmitting}
         size={"lg"}
