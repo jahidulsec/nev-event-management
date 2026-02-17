@@ -100,7 +100,7 @@ export default function ConsultantSection({
                     <Combobox
                       getKey={(p: any) => p.id}
                       getLabel={(p: any) =>
-                        `${p.full_name} (${p.dr_master_id}) - ${p.area_name}`
+                        `${p.full_name} (${p.dr_child_id}) - ${p.area_name}`
                       }
                       fetcher={getDoctors as any}
                       placeholder="Select a doctor"

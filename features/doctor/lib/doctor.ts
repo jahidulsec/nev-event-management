@@ -33,6 +33,11 @@ const getMulti = async (query: QuerySchemaType) => {
             },
           },
           {
+            area_name: {
+              startsWith: params.search,
+            },
+          },
+          {
             id: {
               startsWith: params.search,
             },

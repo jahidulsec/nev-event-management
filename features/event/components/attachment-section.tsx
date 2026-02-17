@@ -31,7 +31,7 @@ export default function AttachmentSection({
 
   const eventCreator = form.watch("user_id");
 
-  const isCreator = params.id && user?.workAreaCode === eventCreator;
+  const isCreator = user?.workAreaCode === eventCreator || !eventCreator;
 
   return (
     <>
