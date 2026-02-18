@@ -52,7 +52,7 @@ model event {
   external_participants Int
   details_participants  String?                     @db.Text
   approved_material     event_approved_material
-  material_code         String?                     @db.VarChar(10)
+  material_code         String?                     @db.VarChar(200)
   current_status        current_status?             @default(processing)
   created_at            DateTime?                   @default(now()) @db.Timestamp(0)
   updated_at            DateTime?                   @default(now()) @db.Timestamp(0)
@@ -60,15 +60,15 @@ model event {
   venue_appropriateness event_venue_appropriateness
   track_no              String?                     @db.VarChar(20)
   event_type_id         String?                     @db.VarChar(21)
-  user                  user                        @relation(fields: [user_id], references: [work_area_code], onDelete: Cascade, map: "event_ibfk_1")
   product               product                     @relation(fields: [product_id], references: [id], onUpdate: Restrict, map: "event_ibfk_2")
   event_type            event_type?                 @relation(fields: [event_type_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "event_ibfk_3")
+  user                  user                        @relation(fields: [user_id], references: [work_area_code], onUpdate: Restrict, map: "event_ibfk_1")
   event_approver        event_approver[]
   event_attachment      event_attachment[]
   event_budget          event_budget[]
   event_consultant      event_consultant[]
 
-  @@unique([user_id, product_id], map: "user_id")
+  @@index([user_id], map: "user_id")
   @@index([type], map: "event_type_id")
   @@index([product_id], map: "product_id")
   @@index([event_type_id], map: "event_type_id_2")
@@ -286,14 +286,6 @@ model product_user {
   @@index([work_area_code], map: "work_area_code")
 }
 
-enum approver_type {
-  first
-  second
-  third
-  final
-  budget
-}
-
 enum event_approved_material {
   promotional
   non_branded
@@ -329,4 +321,14 @@ enum current_status {
   approved
   rejected
   processing
+}
+
+enum approver_type {
+  first
+  second
+  third
+  forth
+  fifth
+  final
+  budget
 }

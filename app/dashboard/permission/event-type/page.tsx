@@ -17,7 +17,6 @@ import EventTypeTable from "@/features/event/components/type/table";
 import PagePagination from "@/components/shared/pagination/pagination";
 import { getEventTypes } from "@/features/event/lib/type";
 import { SearchParams } from "@/types/search-params";
-import { Prisma } from "@/lib/generated/prisma";
 
 export default function PermissionEventTypePage({
   searchParams,

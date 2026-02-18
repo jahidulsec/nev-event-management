@@ -139,6 +139,14 @@ export const approverTypeList = [
     value: "third",
   },
   {
+    label: "Forth",
+    value: "forth",
+  },
+  {
+    label: "Fifth",
+    value: "Fifth",
+  },
+  {
     label: "Final",
     value: "final",
   },
@@ -172,5 +180,9 @@ export const userRoleList = [
   {
     label: "Director",
     value: "director",
+  },
+  {
+    label: "Event Coordinator",
+    value: "eo",
   },
 ];

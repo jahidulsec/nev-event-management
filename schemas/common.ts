@@ -6,7 +6,7 @@ export const userRoleSchema = z.enum(
 );
 
 export const eventApproverTypeEnum = z.enum(
-  ["first", "second", "third", "final", "budget"],
+  ["first", "second", "third", "forth", "fifth", "final", "budget"],
   "Select a type",
 );
 

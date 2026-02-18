@@ -12,13 +12,11 @@ import { getPageData } from "@/utils/helper";
 import TabSection from "@/components/permission/tab-section";
 import { ErrorBoundary } from "@/components/shared/boundary/error-boundary";
 import PagePagination from "@/components/shared/pagination/pagination";
-import EventTypeTable from "@/features/event/components/type/table";
 import { getEventTypeApprovers } from "@/features/event/lib/type-approver";
 import { SearchParams } from "@/types/search-params";
 import { TableSkeleton } from "@/components/shared/skeleton/table";
 import EventTypeApproverTable from "@/features/event/components/type-approver/table";
 import CreatEventTypeApproverButton from "@/features/event/components/type-approver/create-button";
-import { db } from "@/config/db";
 
 export default function PermissionApproverPage({
   searchParams,

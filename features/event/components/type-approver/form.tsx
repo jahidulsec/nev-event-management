@@ -106,7 +106,7 @@ export default function EventTypeApproverForm({
               <Select
                 placeholder="Select a type"
                 defaultValue={prevData?.user_type}
-                data={userRoleList}
+                data={userRoleList.slice(2)}
                 onValueChange={(value) => {
                   field.onChange(value);
                 }}
