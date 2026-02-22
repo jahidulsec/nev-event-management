@@ -16,7 +16,6 @@ import { Input } from "@/components/ui/input";
 import { FormButton } from "@/components/shared/button/button";
 import { EventSchema, EventType } from "../actions/schema";
 import { createEvent, updateEvent } from "../actions/event";
-import { DatePicker } from "@/components/shared/date-picker/date-picker";
 import React from "react";
 import { Select } from "@/components/shared/select/select";
 import { getProducts } from "@/features/product/lib/product";
@@ -31,6 +30,7 @@ import { useParams } from "next/navigation";
 import { useRouter } from "@bprogress/next";
 import { calculateEventBudget, findEventTypeByCost } from "@/utils/helper";
 import { EventTypeMultiProps } from "../lib/type";
+import { DatePickerTime } from "@/components/shared/date-picker/date-time-picker";
 
 export default function EventForm({
   prevData,
@@ -188,7 +188,6 @@ export default function EventForm({
           <Separator />
         </>
       )}
-
       <FieldGroup>
         <Controller
           control={form.control}
@@ -216,10 +215,9 @@ export default function EventForm({
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor={field.name}>Proposed Date</FieldLabel>
-              <DatePicker
-                className="w-full"
+              <DatePickerTime
                 defaultValue={prevData?.event_date}
-                onChange={(value) => field.onChange(value)}
+                onValueChange={(value) => field.onChange(value)}
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>

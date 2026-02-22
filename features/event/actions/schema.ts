@@ -98,7 +98,7 @@ export const EventSchema = z.object({
   title: z
     .string("Enter event title")
     .min(3, "Title must be more than 2 characters"),
-  event_date: z.date(),
+  event_date: z.date("Enter a proposed date"),
   user_id: z.string("Select a user"),
   product_id: z.string("Select a product"),
   venue_name: z
