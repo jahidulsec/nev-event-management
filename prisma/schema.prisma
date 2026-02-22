@@ -11,7 +11,7 @@ datasource db {
 model approver {
   id            String        @id @default(nanoid()) @db.VarChar(21)
   event_type_id String        @db.VarChar(21)
-  user_type     user_role
+  user_type     user_roles
   type          approver_type
   created_at    DateTime?     @default(now()) @db.Timestamp(0)
   updated_at    DateTime?     @default(now()) @db.Timestamp(0)
@@ -78,7 +78,7 @@ model event_approver {
   id                   String                 @id @default(nanoid()) @db.VarChar(21)
   event_id             String                 @db.VarChar(21)
   user_id              String                 @db.VarChar(21)
-  user_role            user_role
+  user_role            user_roles
   created_at           DateTime?              @default(now()) @db.Timestamp(0)
   updated_at           DateTime?              @default(now()) @db.Timestamp(0)
   event                event                  @relation(fields: [event_id], references: [id], onDelete: Cascade, map: "event_approver_ibfk_1")
@@ -151,18 +151,19 @@ model user {
   created_at     DateTime?        @default(now()) @db.Timestamp(0)
   updated_at     DateTime?        @default(now()) @db.Timestamp(0)
   password       String           @db.VarChar(150)
-  role           user_role
+  role           user_roles
   id             String           @id @unique(map: "id") @default(nanoid()) @db.VarChar(21)
   ao             ao?
-  director       director?
-  eo             eo?
+  ec             ec?
   event          event[]
   event_approver event_approver[]
   flm            flm?
+  franchise_head franchise_head?
   marketing      marketing?
   product_user   product_user[]
   slm            slm?
   user_details   user_details?
+  user_role      user_role[]
 }
 
 model user_details {
@@ -214,14 +215,13 @@ model ao {
 }
 
 model director {
-  full_name      String    @db.VarChar(150)
-  designation    String?   @db.VarChar(100)
-  email          String    @db.VarChar(200)
-  group_name     String    @db.VarChar(10)
   work_area_code String    @id @db.VarChar(6)
-  created_at     DateTime? @db.Timestamp(0)
+  full_name      String    @db.VarChar(150)
+  email          String?   @db.VarChar(150)
+  mobile         String?   @db.VarChar(14)
+  designation    String?   @db.VarChar(150)
+  created_at     DateTime? @default(now()) @db.Timestamp(0)
   updated_at     DateTime? @default(now()) @db.Timestamp(0)
-  user           user      @relation(fields: [work_area_code], references: [work_area_code], onUpdate: Restrict, map: "director_ibfk_1")
 }
 
 model flm {
@@ -249,18 +249,6 @@ model slm {
   user           user      @relation(fields: [work_area_code], references: [work_area_code], onUpdate: Restrict, map: "slm_ibfk_1")
 }
 
-model eo {
-  work_area_code String    @id @db.VarChar(10)
-  full_name      String    @db.VarChar(150)
-  designation    String    @db.VarChar(100)
-  email          String?   @db.VarChar(200)
-  group_name     String    @db.VarChar(10)
-  mobile         String?   @db.VarChar(14)
-  created_at     DateTime? @default(now()) @db.Timestamp(0)
-  updated_at     DateTime? @default(now()) @db.Timestamp(0)
-  user           user      @relation(fields: [work_area_code], references: [work_area_code], onUpdate: Restrict, map: "eo_ibfk_1")
-}
-
 model marketing {
   work_area_code String    @id @db.VarChar(20)
   full_name      String    @db.VarChar(150)
@@ -286,6 +274,48 @@ model product_user {
   @@index([work_area_code], map: "work_area_code")
 }
 
+model ec {
+  work_area_code String    @id @db.VarChar(10)
+  full_name      String    @db.VarChar(150)
+  designation    String    @db.VarChar(100)
+  email          String?   @db.VarChar(200)
+  group_name     String    @db.VarChar(10)
+  mobile         String?   @db.VarChar(14)
+  created_at     DateTime? @default(now()) @db.Timestamp(0)
+  updated_at     DateTime? @default(now()) @db.Timestamp(0)
+  user           user      @relation(fields: [work_area_code], references: [work_area_code], onUpdate: Restrict, map: "ec_ibfk_1")
+}
+
+model franchise_head {
+  full_name      String    @db.VarChar(150)
+  designation    String?   @db.VarChar(100)
+  email          String    @db.VarChar(200)
+  group_name     String    @db.VarChar(10)
+  work_area_code String    @id @db.VarChar(6)
+  created_at     DateTime? @db.Timestamp(0)
+  updated_at     DateTime? @default(now()) @db.Timestamp(0)
+  user           user      @relation(fields: [work_area_code], references: [work_area_code], onUpdate: Restrict, map: "franchise_head_ibfk_1")
+}
+
+model role {
+  role       String      @id @db.VarChar(25)
+  created_at DateTime?   @default(now()) @db.Timestamp(0)
+  updated_at DateTime?   @default(now()) @db.Timestamp(0)
+  user_roles user_role[] @relation("user_roles")
+}
+
+model user_role {
+  work_area_code String    @db.VarChar(6)
+  role           String    @db.VarChar(20)
+  created_at     DateTime? @default(now()) @db.Timestamp(0)
+  updated_at     DateTime? @default(now()) @db.Timestamp(0)
+  user_roles     role      @relation("user_roles", fields: [role], references: [role], map: "user_role_ibfk_2")
+  user           user      @relation(fields: [work_area_code], references: [work_area_code], onDelete: Cascade, map: "user_role_ibfk_3")
+
+  @@unique([work_area_code, role], map: "work_area_code")
+  @@index([role], map: "role")
+}
+
 enum event_approved_material {
   promotional
   non_branded
@@ -302,7 +332,7 @@ enum event_venue_appropriateness {
   no
 }
 
-enum user_role {
+enum user_roles {
   ao
   flm
   slm
