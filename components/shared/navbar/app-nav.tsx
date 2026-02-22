@@ -2,7 +2,7 @@ import NavUser from "./nav-user";
 import NavMenu from "./nav-menu";
 import NavTitle from "./nav-title";
 import { getAuthUser, getDashboardRole } from "@/lib/dal";
-import { AuthUser, AuthUserRole } from "@/types/auth-user";
+import { AuthUser } from "@/types/auth-user";
 
 export default async function AppNav() {
   const authUser = await getAuthUser();

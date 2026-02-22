@@ -121,11 +121,6 @@ const getMulti = async (query: EventQueryType) => {
         }),
       ...(params.role?.includes("director_sales") &&
         params.work_area_code && {
-          user: {
-            ao: {
-              wing_code: params.work_area_code,
-            },
-          },
           event_type: {
             approver: {
               some: {

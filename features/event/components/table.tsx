@@ -123,15 +123,15 @@ export default function EventTable({
           <p>
             <UserRoleBadge
               type={
-                eventType?.approver[getApproverIndex].user_type as user_role
+                eventType?.approver?.[getApproverIndex]?.user_type ?? ''
               }
             >
-              {eventType?.approver[getApproverIndex].user_type}
+              {eventType?.approver?.[getApproverIndex]?.user_type}
             </UserRoleBadge>
             <ApproverTypeBadge
-              type={eventType?.approver[getApproverIndex].type as any}
+              type={eventType?.approver?.[getApproverIndex]?.type as any}
             >
-              {eventType?.approver[getApproverIndex].type}
+              {eventType?.approver?.[getApproverIndex]?.type}
             </ApproverTypeBadge>
             <StatusBadge type={status}>{status}</StatusBadge>
           </p>

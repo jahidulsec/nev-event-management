@@ -17,7 +17,7 @@ import CreateEventButton from "@/features/event/components/create-button";
 import EventTable from "@/features/event/components/table";
 import { getEvents } from "@/features/event/lib/event";
 import { getEventTypes } from "@/features/event/lib/type";
-import { getAuthUser } from "@/lib/dal";
+import { getAuthUser, getDashboardRole } from "@/lib/dal";
 import { AuthUser } from "@/types/auth-user";
 import { SearchParams } from "@/types/search-params";
 import { getPageData } from "@/utils/helper";
@@ -69,13 +69,14 @@ const TableSection = async ({
   const { page, size, search } = await searchParams;
 
   const authUser = await getAuthUser();
+  const dashboardRole = await getDashboardRole();
 
   const res = await getEvents({
     page: Number(page),
     size: Number(size),
     search: search?.toString().trim(),
     work_area_code: authUser?.workAreaCode,
-    role: authUser?.role,
+    role: dashboardRole as any,
   });
 
   return (

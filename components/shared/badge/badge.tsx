@@ -9,6 +9,8 @@ const ApproverTypeBadge = ({
   type,
   ...props
 }: BadgeProps & { type: approver_type }) => {
+  if (!type) return null;
+
   return (
     <Badge
       variant={variant}
@@ -34,7 +36,9 @@ const UserRoleBadge = ({
   className,
   type,
   ...props
-}: BadgeProps & { type: user_role }) => {
+}: BadgeProps & { type: string }) => {
+  if (!type) return null;
+
   return (
     <Badge
       variant={variant}
