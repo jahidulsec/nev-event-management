@@ -37,8 +37,12 @@ const getMulti = async (query: EventTypeQueryType) => {
         },
         include: {
           approver: {
+            select: {
+              user_type: true,
+              type: true,
+            },
             orderBy: {
-              created_at: "asc",
+              type: "asc",
             },
           },
         },

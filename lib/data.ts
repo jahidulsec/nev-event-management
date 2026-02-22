@@ -192,12 +192,16 @@ export const userRoleList = [
     value: "marketing",
   },
   {
-    label: "Director",
-    value: "director",
+    label: "Director Sales",
+    value: "director_sales",
+  },
+  {
+    label: "Franchise Head",
+    value: "franchise_head",
   },
   {
     label: "Event Coordinator",
-    value: "eo",
+    value: "ec",
   },
 ];
 

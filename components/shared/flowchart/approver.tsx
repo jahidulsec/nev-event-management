@@ -40,24 +40,22 @@ export function ApproverFlowChart({ data }: { data: approver[] }) {
   return (
     <div className="flex flex-col justify-center gap-6 min-h-50">
       {res && res.length > 0 ? (
-        res
-          .sort((a, b) => a.rank - b.rank)
-          .map((item, index) => (
-            <div
-              className="relative border border-primary/25 flex justify-center items-center gap-6 p-4 rounded-md"
-              key={item.id}
-            >
-              <div className="flex items-center gap-3">
-                {item.user_type.toUpperCase()}
-                <ApproverTypeBadge type={item.type}>
-                  <p>{item.type}</p>
-                </ApproverTypeBadge>
-              </div>
-              {index !== 0 && (
-                <div className="absolute -top-6 h-6 w-px bg-primary/25"></div>
-              )}
+        res.map((item, index) => (
+          <div
+            className="relative border border-primary/25 flex justify-center items-center gap-6 p-4 rounded-md"
+            key={item.id}
+          >
+            <div className="flex items-center gap-3">
+              {item.user_type.toUpperCase()}
+              <ApproverTypeBadge type={item.type}>
+                <p>{item.type}</p>
+              </ApproverTypeBadge>
             </div>
-          ))
+            {index !== 0 && (
+              <div className="absolute -top-6 h-6 w-px bg-primary/25"></div>
+            )}
+          </div>
+        ))
       ) : (
         <NoData />
       )}

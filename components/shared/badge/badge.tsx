@@ -51,7 +51,9 @@ const UserRoleBadge = ({
             : type === "slm"
               ? "text-orange-800 bg-orange-50"
               : type === "flm"
-                ? "text-yellow-800 bg-yellow-50"
+                ? "text-yellow-800 bg-yellow-50" :
+                type === 'franchise_head' ? "bg-violet-100/50 text-violet-700" :
+                type === 'director_sales' ? "bg-blue-100/50 text-blue-700"
                 : "text-rose-800 bg-rose-50",
         className,
       )}
