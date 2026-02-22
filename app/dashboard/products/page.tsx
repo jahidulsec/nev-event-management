@@ -18,7 +18,7 @@ import { createProducts } from "@/features/product/actions/product";
 import CreateProductButton from "@/features/product/components/create-button";
 import ProductTable from "@/features/product/components/table";
 import { getProducts } from "@/features/product/lib/product";
-import { getAuthUser } from "@/lib/dal";
+import { getDashboardRole } from "@/lib/dal";
 import { SearchParams } from "@/types/search-params";
 import { getPageData } from "@/utils/helper";
 import { notFound } from "next/navigation";
@@ -33,8 +33,9 @@ export default async function ProductsPage({
 
   const pageData = getPageData(pageTitle, "superadmin");
 
-  const authUser = await getAuthUser();
-  if (authUser?.role !== "superadmin") return notFound();
+  const role = await getDashboardRole();
+
+  if (role !== "superadmin") return notFound();
 
   return (
     <>

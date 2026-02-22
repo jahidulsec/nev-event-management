@@ -18,7 +18,7 @@ import { createDoctors } from "@/features/doctor/actions/doctor";
 import CreateDoctorButton from "@/features/doctor/components/create-button";
 import DoctorTable from "@/features/doctor/components/table";
 import { getDoctors } from "@/features/doctor/lib/doctor";
-import { getAuthUser } from "@/lib/dal";
+import { getDashboardRole } from "@/lib/dal";
 import { SearchParams } from "@/types/search-params";
 import { getPageData } from "@/utils/helper";
 import { notFound } from "next/navigation";
@@ -33,8 +33,9 @@ export default async function DoctorsPage({
 
   const pageData = getPageData(pageTitle, "superadmin");
 
-  const authUser = await getAuthUser();
-  if (authUser?.role !== "superadmin") return notFound();
+  const role = await getDashboardRole();
+
+  if (role !== "superadmin") return notFound();
 
   return (
     <>
