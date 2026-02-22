@@ -8,7 +8,7 @@ import { ProfileButton } from "../button/profile-button";
 export default function NavUser({ user }: { user: AuthUser }) {
   return (
     <div className="flex items-center gap-3">
-      {user.role === "superadmin" && (
+      {user.role.includes("superadmin") && (
         <Button
           variant={"outline"}
           size={"icon"}

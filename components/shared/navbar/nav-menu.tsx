@@ -8,7 +8,7 @@ import { navlist } from "@/lib/data";
 import { AuthUserRole } from "@/types/auth-user";
 import { Button } from "@/components/ui/button";
 
-export default function NavMenu({ role }: { role: AuthUserRole }) {
+export default function NavMenu({ role }: { role: AuthUserRole[] }) {
   const pathname = usePathname();
 
   const dashboardUrl = "/dashboard";
@@ -18,11 +18,14 @@ export default function NavMenu({ role }: { role: AuthUserRole }) {
       ? pathname === url
       : url !== dashboardUrl && pathname.includes(url);
 
+  // TODO: have work with multiple role in future
+  const validatedRole = role[0]
+
   return (
     <>
       <nav className="hidden lg:block">
         <ul className="flex items-center gap-3">
-          {navlist[role as "ao"].map((item) => (
+          {navlist[validatedRole as "ao"].map((item) => (
             <li key={item.title}>
               <Button
                 variant={"outline"}

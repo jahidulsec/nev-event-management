@@ -81,7 +81,7 @@ export const navlist = {
       icon: Calendars,
     },
   ],
-  director: [
+  director_sales: [
     {
       id: 1,
       title: "Dashboard",
@@ -95,7 +95,21 @@ export const navlist = {
       icon: Calendars,
     },
   ],
-  eo: [
+   franchise_head: [
+    {
+      id: 1,
+      title: "Dashboard",
+      url: "/dashboard",
+      icon: Layout,
+    },
+    {
+      id: 2,
+      title: "Events",
+      url: "/dashboard/events",
+      icon: Calendars,
+    },
+  ],
+  ec: [
     {
       id: 1,
       title: "Dashboard",

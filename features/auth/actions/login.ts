@@ -14,15 +14,24 @@ export const userLogin = async (data: LoginType) => {
       where: {
         work_area_code: data.work_area_code,
       },
+      include: {
+        user_role: {
+          select: {
+            role: true,
+          },
+        },
+      },
     });
 
     if (!user) throw new Error("User does not exist");
+
+    const userRoles = user.user_role.map((i) => i.role);
 
     // check password
     if (!(await isValidPassword(data.password, user.password)))
       throw new Error("Invalid password");
 
-    if (user.role === "ao") {
+    if (userRoles.includes("ao")) {
       const userDetails = await db.ao.findUnique({
         where: {
           work_area_code: user.work_area_code,
@@ -30,7 +39,7 @@ export const userLogin = async (data: LoginType) => {
       });
 
       name = userDetails?.full_name ?? user.work_area_code;
-    } else if (user.role === "flm") {
+    } else if (userRoles.includes("flm")) {
       const userDetails = await db.flm.findUnique({
         where: {
           work_area_code: user.work_area_code,
@@ -38,7 +47,7 @@ export const userLogin = async (data: LoginType) => {
       });
 
       name = userDetails?.full_name ?? user.work_area_code;
-    } else if (user.role === "slm") {
+    } else if (userRoles.includes("slm")) {
       const userDetails = await db.slm.findUnique({
         where: {
           work_area_code: user.work_area_code,
@@ -46,15 +55,23 @@ export const userLogin = async (data: LoginType) => {
       });
 
       name = userDetails?.full_name ?? user.work_area_code;
-    } else if (user.role === "director") {
-      const userDetails = await db.director.findUnique({
+    } else if (userRoles.includes("franchise_head")) {
+      const userDetails = await db.franchise_head.findUnique({
         where: {
           work_area_code: user.work_area_code,
         },
       });
 
       name = userDetails?.full_name ?? user.work_area_code;
-    } else if (user.role === "marketing") {
+    } else if (userRoles.includes("director")) {
+      const userDetails = await db.franchise_head.findUnique({
+        where: {
+          work_area_code: user.work_area_code,
+        },
+      });
+
+      name = userDetails?.full_name ?? user.work_area_code;
+    } else if (userRoles.includes("marketing")) {
       const userDetails = await db.marketing.findUnique({
         where: {
           work_area_code: user.work_area_code,
@@ -62,8 +79,8 @@ export const userLogin = async (data: LoginType) => {
       });
 
       name = userDetails?.full_name ?? user.work_area_code;
-    } else if (user.role === "eo") {
-      const userDetails = await db.eo.findUnique({
+    } else if (userRoles.includes("ec")) {
+      const userDetails = await db.ec.findUnique({
         where: {
           work_area_code: user.work_area_code,
         },
@@ -84,7 +101,7 @@ export const userLogin = async (data: LoginType) => {
     await createSession({
       id: user.id,
       workAreaCode: user.work_area_code,
-      role: user.role,
+      role: userRoles,
       mobile: "",
       name: name,
     });

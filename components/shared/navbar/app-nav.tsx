@@ -7,7 +7,7 @@ import { AuthUser, AuthUserRole } from "@/types/auth-user";
 export default async function AppNav() {
   const authUser = await getAuthUser();
 
-  const role = authUser?.role as AuthUserRole;
+  const role = authUser?.role as AuthUserRole[];
 
   return (
     <header className="sticky top-0 z-10 h-16 flex items-center justify-between container mx-auto px-6 bg-background">
