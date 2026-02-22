@@ -71,10 +71,10 @@ const getMulti = async (query: EventQueryType) => {
         },
       }),
       ...(params.work_area_code &&
-        params.role === "ao" && {
+        params.role?.includes("ao") && {
           user_id: params.work_area_code,
         }),
-      ...(params.role === "flm" &&
+      ...(params.role?.includes("flm") &&
         params.work_area_code && {
           user: {
             ao: {
@@ -89,7 +89,7 @@ const getMulti = async (query: EventQueryType) => {
             },
           },
         }),
-      ...(params.role === "slm" &&
+      ...(params.role?.includes("slm") &&
         params.work_area_code && {
           user: {
             ao: {
@@ -104,7 +104,7 @@ const getMulti = async (query: EventQueryType) => {
             },
           },
         }),
-      ...(params.role === "director" &&
+      ...(params.role?.includes("franchise_head") &&
         params.work_area_code && {
           user: {
             ao: {
@@ -119,7 +119,22 @@ const getMulti = async (query: EventQueryType) => {
             },
           },
         }),
-      ...(params.role === "marketing" &&
+      ...(params.role?.includes("director_sales") &&
+        params.work_area_code && {
+          user: {
+            ao: {
+              wing_code: params.work_area_code,
+            },
+          },
+          event_type: {
+            approver: {
+              some: {
+                user_type: params.role,
+              },
+            },
+          },
+        }),
+      ...(params.role?.includes("marketing") &&
         params.work_area_code && {
           product: {
             product_user: {
@@ -136,7 +151,7 @@ const getMulti = async (query: EventQueryType) => {
             },
           },
         }),
-      ...(params.role === "eo" &&
+      ...(params.role?.includes("ec") &&
         params.work_area_code && {
           product: {
             product_user: {
