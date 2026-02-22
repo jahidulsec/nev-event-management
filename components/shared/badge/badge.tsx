@@ -1,5 +1,5 @@
 import { Badge, BadgeProps } from "@/components/ui/badge";
-import { approver_type, user_role } from "@/lib/generated/prisma";
+import { approver_type } from "@/lib/generated/prisma";
 import { cn } from "@/lib/utils";
 import React from "react";
 

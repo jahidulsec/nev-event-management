@@ -71,12 +71,20 @@ export default function EventForm({
       details_participants: prevData?.details_participants ?? undefined,
       eventAttachment: prevData?.event_attachment,
       eventConsultant: prevData?.event_consultant.map((item) => {
-        const { duration_h, honorarium, ...rest } = item;
+        const {
+          duration_h,
+          honorarium,
+          in_different_district,
+          night_stay,
+          ...rest
+        } = item;
 
         return {
           ...rest,
           duration_h: Number(duration_h),
           honorarium: Number(honorarium),
+          in_different_district: in_different_district ?? "no",
+          night_stay: night_stay ?? "no",
         };
       }),
       eventBudget: prevData?.event_budget.map((item) => {
@@ -115,8 +123,8 @@ export default function EventForm({
   }
 
   React.useEffect(() => {
-    console.log(form.formState.errors)
-  }, [form.formState.errors])
+    console.log(form.formState.errors);
+  }, [form.formState.errors]);
 
   // get products
   React.useEffect(() => {

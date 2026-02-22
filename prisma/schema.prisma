@@ -183,17 +183,18 @@ model user_details {
 }
 
 model event_consultant {
-  id                   String                                @id @default(nanoid()) @db.VarChar(21)
-  doctor_id            String                                @db.VarChar(21)
-  event_id             String                                @db.VarChar(21)
-  duration_h           Decimal                               @db.Decimal(5, 2)
-  role                 String                                @db.VarChar(100)
-  honorarium           Decimal?                              @default(0.00) @db.Decimal(8, 2)
-  created_at           DateTime?                             @default(now()) @db.Timestamp(0)
-  updated_at           DateTime?                             @default(now()) @db.Timestamp(0)
-  preparation_time_add event_consultant_preparation_time_add
-  doctor               doctor                                @relation(fields: [doctor_id], references: [id], map: "event_consultant_ibfk_1")
-  event                event                                 @relation(fields: [event_id], references: [id], onDelete: Cascade, map: "event_consultant_ibfk_2")
+  id                    String                                  @id @default(nanoid()) @db.VarChar(21)
+  doctor_id             String                                  @db.VarChar(21)
+  event_id              String                                  @db.VarChar(21)
+  duration_h            Decimal                                 @db.Decimal(5, 2)
+  role                  String                                  @db.VarChar(100)
+  honorarium            Decimal?                                @default(0.00) @db.Decimal(10, 2)
+  created_at            DateTime?                               @default(now()) @db.Timestamp(0)
+  updated_at            DateTime?                               @default(now()) @db.Timestamp(0)
+  in_different_district event_consultant_in_different_district? @default(yes)
+  night_stay            event_consultant_night_stay?            @default(no)
+  doctor                doctor                                  @relation(fields: [doctor_id], references: [id], map: "event_consultant_ibfk_1")
+  event                 event                                   @relation(fields: [event_id], references: [id], onDelete: Cascade, map: "event_consultant_ibfk_2")
 
   @@unique([doctor_id, event_id], map: "doctor_id")
   @@index([event_id], map: "event_id")
@@ -332,11 +333,6 @@ enum event_venue_appropriateness {
   no
 }
 
-enum event_consultant_preparation_time_add {
-  yes
-  no
-}
-
 enum current_status {
   approved
   rejected
@@ -351,4 +347,14 @@ enum approver_type {
   fifth
   final
   budget
+}
+
+enum event_consultant_in_different_district {
+  yes
+  no
+}
+
+enum event_consultant_night_stay {
+  yes
+  no
 }

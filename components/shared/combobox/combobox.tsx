@@ -49,6 +49,7 @@ export default function Combobox<T>({
   placeholder = "Select an option",
   defaultValue,
 }: AsyncComboboxProps<T>) {
+  const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState(defaultValue ?? "");
   const [select, setSelect] = React.useState<T>();
   const [data, setData] = React.useState<T[]>([]);
@@ -76,7 +77,7 @@ export default function Combobox<T>({
   }, [search, fetcher]);
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
@@ -103,7 +104,8 @@ export default function Combobox<T>({
                   onSelect={(value) => {
                     setValue(value);
                     setSelect(item);
-                    onValueChange?.(value)
+                    onValueChange?.(value);
+                    setOpen(false)
                   }}
                   key={getKey(item)}
                   value={getKey(item) as string}

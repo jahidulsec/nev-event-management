@@ -52,7 +52,8 @@ export const EventConsultantSchema = z.object({
     .min(2, "At least 2 characters"),
   honorarium: z.number("enter doctor honorarium").default(0).optional(),
   duration_h: z.number("enter consultant session duration in hours"),
-  preparation_time_add: z.enum(["yes", "no"]),
+  in_different_district: z.enum(["yes", "no"]),
+  night_stay: z.enum(["yes", "no"]),
 });
 
 export const EventAttachemntSchema = z
@@ -66,9 +67,13 @@ export const EventAttachemntSchema = z
       .instanceof(File, { message: "Upload a valid file" })
       .refine(
         (file) =>
-          ["application/pdf", "image/jpeg", "image/png", "image/webp"].includes(
-            file.type,
-          ),
+          [
+            "application/pdf",
+            "image/jpeg",
+            "image/jpg",
+            "image/png",
+            "image/webp",
+          ].includes(file.type),
         "Upload pdf, image only",
       )
       .refine((file) => file.size <= 5 * 1024 * 1024, {
@@ -153,7 +158,7 @@ export const EventStatusSchema = z.object({
   user_role: userRoleSchema,
   status: eventApproverStatusEnum,
   remarks: z.string("enter remarks").optional(),
-  eventUserType: z.string().optional()
+  eventUserType: z.string().optional(),
 });
 
 export type EventType = z.infer<typeof EventSchema>;

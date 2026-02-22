@@ -19,6 +19,7 @@ import { formatNumber } from "@/utils/formatter";
 import Combobox from "@/components/shared/combobox/combobox";
 import { Select } from "@/components/shared/select/select";
 import { AuthUser } from "@/types/auth-user";
+import { yesNoList } from "@/lib/data";
 
 const consultantRole = [
   "Speaker",
@@ -77,7 +78,8 @@ export default function ConsultantSection({
                 role: "",
                 duration_h: 1,
                 honorarium: 0,
-                preparation_time_add: "no",
+                in_different_district: "no",
+                night_stay: "no",
               })
             }
           >
@@ -146,12 +148,6 @@ export default function ConsultantSection({
                     }))}
                     onValueChange={(value) => {
                       field.onChange(value);
-                      if (value === "Speaker") {
-                        form.setValue(
-                          `eventConsultant.${index}.preparation_time_add`,
-                          "yes",
-                        );
-                      }
                     }}
                     defaultValue={eventConsultant[index].role}
                   />
@@ -191,6 +187,50 @@ export default function ConsultantSection({
                     type="number"
                     {...field}
                     onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                  />
+
+                  {fieldState.error?.message && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+
+            <Controller
+              control={form.control}
+              name={`eventConsultant.${index}.in_different_district`}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor={field.name}>
+                    Is in different district?
+                  </FieldLabel>
+                  <Select
+                    {...field}
+                    name="in_different_district"
+                    data={yesNoList}
+                    onValueChange={(value) => field.onChange(value)}
+                  />
+
+                  {fieldState.error?.message && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+
+            <Controller
+              control={form.control}
+              name={`eventConsultant.${index}.night_stay`}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor={field.name}>
+                    Will stay at night?
+                  </FieldLabel>
+                  <Select
+                    {...field}
+                    name="night_stay"
+                    data={yesNoList}
+                    onValueChange={(value) => field.onChange(value)}
                   />
 
                   {fieldState.error?.message && (

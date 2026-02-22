@@ -95,7 +95,7 @@ export const navlist = {
       icon: Calendars,
     },
   ],
-   franchise_head: [
+  franchise_head: [
     {
       id: 1,
       title: "Dashboard",
@@ -198,5 +198,16 @@ export const userRoleList = [
   {
     label: "Event Coordinator",
     value: "eo",
+  },
+];
+
+export const yesNoList = [
+  {
+    label: "Yes",
+    value: "yes",
+  },
+  {
+    label: "No",
+    value: "no",
   },
 ];
