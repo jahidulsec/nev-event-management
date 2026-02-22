@@ -8,7 +8,7 @@ import { navlist } from "@/lib/data";
 import { AuthUserRole } from "@/types/auth-user";
 import { Button } from "@/components/ui/button";
 
-export default function NavMenu({ role }: { role: AuthUserRole[] }) {
+export default function NavMenu({ role }: { role: AuthUserRole }) {
   const pathname = usePathname();
 
   const dashboardUrl = "/dashboard";
@@ -19,7 +19,7 @@ export default function NavMenu({ role }: { role: AuthUserRole[] }) {
       : url !== dashboardUrl && pathname.includes(url);
 
   // TODO: have work with multiple role in future
-  const validatedRole = role[0]
+  const validatedRole = role
 
   return (
     <>

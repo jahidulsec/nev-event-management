@@ -9,4 +9,4 @@ export type AuthUser = {
 };
 
 
-export type AuthUserRole = user_role['role']
+export type AuthUserRole = string

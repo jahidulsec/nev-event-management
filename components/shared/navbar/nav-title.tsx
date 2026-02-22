@@ -11,7 +11,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { LogoFull } from "../logo/logo";
 import { navlist } from "@/lib/data";
 
-export default function NavTitle({ role }: { role: AuthUserRole[] }) {
+export default function NavTitle({ role }: { role: AuthUserRole }) {
   const [open, setOpen] = React.useState(false);
   const pathname = usePathname();
 

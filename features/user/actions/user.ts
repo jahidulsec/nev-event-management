@@ -51,7 +51,15 @@ export const updateUserProfile = async (id: string, data: ProfileType) => {
           mobile: data.mobile,
         }),
       },
-      include: { user: true },
+      include: {
+        user: {
+          include: {
+            user_role: {
+              select: { role: true },
+            },
+          },
+        },
+      },
     });
 
     // update session
@@ -61,7 +69,7 @@ export const updateUserProfile = async (id: string, data: ProfileType) => {
       id: user.user.id,
       name: user?.full_name ?? user.user_id,
       mobile: user?.mobile ?? "",
-      role: user.user.role as AuthUserRole,
+      role: user.user.user_role.map((i) => i.role) as any[],
     });
 
     revalidatePath("/dashboard");

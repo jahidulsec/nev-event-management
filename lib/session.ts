@@ -42,8 +42,24 @@ export async function createSession(user: AuthUser) {
   });
 }
 
+export async function saveRole(role: string) {
+  const expiresAt = new Date(Date.now() + 1 * 24 * 60 * 60 * 1000);
+  const session = await encrypt({ role, expiresAt });
+
+  const cookie = await cookies()
+
+  cookie.set('role', session, {
+    httpOnly: true,
+    secure: process.env.COOKIE_SECURE === '1',
+    expires: expiresAt,
+    sameSite: 'lax',
+    path: '/',
+  });
+}
+
 export async function deleteSession() {
   const cookie = await cookies()
 
   cookie.delete('session')
+  cookie.delete('role')
 }

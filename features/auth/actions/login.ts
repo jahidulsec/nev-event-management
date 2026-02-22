@@ -2,7 +2,7 @@
 
 import { db } from "@/config/db";
 import { response } from "@/lib/response";
-import { createSession, deleteSession } from "@/lib/session";
+import { createSession, deleteSession, saveRole } from "@/lib/session";
 import { isValidPassword } from "@/utils/password";
 import { LoginType } from "./schema";
 
@@ -106,6 +106,9 @@ export const userLogin = async (data: LoginType) => {
       name: name,
     });
 
+    // set default role for dashboard
+    await saveRole(userRoles[0]);
+
     return response({
       success: true,
       message: "You are logged in successfully",
@@ -124,6 +127,21 @@ export const userLogout = async () => {
   try {
     await deleteSession();
     return response({ success: true, message: "You are logged out" });
+  } catch (error) {
+    return response({
+      success: false,
+      message: (error as Error).message ?? "Something went wrong",
+    });
+  }
+};
+
+export const setDashboardRole = async (role: string) => {
+  try {
+    await saveRole(role);
+    return response({
+      success: true,
+      message: "Dashboard role is switch to " + role,
+    });
   } catch (error) {
     return response({
       success: false,

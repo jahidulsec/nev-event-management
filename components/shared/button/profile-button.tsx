@@ -11,7 +11,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { LogOut, User, User2, UserLock } from "lucide-react";
+import { ChevronsUpDown, LogOut, User, UserLock } from "lucide-react";
 import { toast } from "sonner";
 import { FormSheet } from "../sheet/sheet";
 import { AuthUser } from "@/types/auth-user";
@@ -35,9 +35,6 @@ const ProfileButton = ({ user }: { user: AuthUser }) => {
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
 
           <DropdownMenuGroup>
-            <DropdownMenuItem onClick={() => setOpenProfile(true)}>
-              <User2 /> Profile
-            </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setResetPassword(true)}>
               <UserLock /> Reset Password
             </DropdownMenuItem>
