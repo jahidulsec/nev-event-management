@@ -18,7 +18,7 @@ import { createEmployees } from "@/features/employee/actions/employee";
 import CreateEmployeeButton from "@/features/employee/components/create-button";
 import EmployeeTable from "@/features/employee/components/table";
 import { getEmployees } from "@/features/employee/lib/employee";
-import { getAuthUser } from "@/lib/dal";
+import { getAuthUser, getDashboardRole } from "@/lib/dal";
 import { SearchParams } from "@/types/search-params";
 import { getPageData } from "@/utils/helper";
 import { notFound } from "next/navigation";
@@ -33,8 +33,8 @@ export default async function DoctorsPage({
 
   const pageData = getPageData(pageTitle, "superadmin");
 
-    const authUser = await getAuthUser();
-    if (authUser?.role !== "superadmin") return notFound();
+    const role = await getDashboardRole();
+    if (role !== "superadmin") return notFound();
 
   return (
     <>
