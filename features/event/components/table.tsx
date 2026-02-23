@@ -8,7 +8,7 @@ import {
 import { deleteToastTemplate } from "@/lib/template";
 import { formatDate } from "@/utils/formatter";
 import { ColumnDef } from "@tanstack/react-table";
-import { Edit, Trash2, Workflow } from "lucide-react";
+import { Edit, Eye, Trash2, Workflow } from "lucide-react";
 import React from "react";
 import { deleteEvent } from "../actions/event";
 import { TableActionButton } from "@/components/shared/button/button";
@@ -122,9 +122,7 @@ export default function EventTable({
         return (
           <p>
             <UserRoleBadge
-              type={
-                eventType?.approver?.[getApproverIndex]?.user_type ?? ''
-              }
+              type={eventType?.approver?.[getApproverIndex]?.user_type ?? ""}
             >
               {eventType?.approver?.[getApproverIndex]?.user_type}
             </UserRoleBadge>
@@ -177,6 +175,13 @@ export default function EventTable({
                 <Trash2 /> <span className="sr-only">Delete</span>
               </TableActionButton>
             )}
+            <TableActionButton
+              tooltip="Preview"
+              variant={"edit"}
+              onClick={() => router.push(`/dashboard/events/${value.id}/preview`)}
+            >
+              <Eye /> <span className="sr-only">Preview</span>
+            </TableActionButton>
           </div>
         );
       },
