@@ -317,6 +317,19 @@ model user_role {
   @@index([role], map: "role")
 }
 
+model event_consultant_approval {
+  id                String                                      @id @default(nanoid()) @db.VarChar(21)
+  consultant_Id     String                                      @db.VarChar(21)
+  topic_expert      event_consultant_approval_topic_expert
+  is_suitable       event_consultant_approval_is_suitable
+  honorarium_check  event_consultant_approval_honorarium_check?
+  nth_engagement    Int?                                        @default(0)
+  created_at        DateTime?                                   @default(now()) @db.Timestamp(0)
+  updated_at        DateTime?                                   @default(now()) @db.Timestamp(0)
+  first_approver_id String                                      @db.VarChar(8)
+  ec_id             String?                                     @db.VarChar(8)
+}
+
 enum event_approved_material {
   promotional
   non_branded
@@ -355,6 +368,21 @@ enum event_consultant_in_different_district {
 }
 
 enum event_consultant_night_stay {
+  yes
+  no
+}
+
+enum event_consultant_approval_topic_expert {
+  yes
+  no
+}
+
+enum event_consultant_approval_is_suitable {
+  yes
+  no
+}
+
+enum event_consultant_approval_honorarium_check {
   yes
   no
 }

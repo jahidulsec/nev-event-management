@@ -46,6 +46,8 @@ const EventFormSection = async ({ params }: { params: Params }) => {
 
   if (!res.data) return notFound();
 
+  if(res.data.user_id !== user?.workAreaCode) return notFound()
+
   return (
     <>
       <SectionContent className="border p-6 rounded-md">
