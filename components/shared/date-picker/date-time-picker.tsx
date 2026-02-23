@@ -44,7 +44,7 @@ export function DatePickerTime({
     if (onValueChange && combinedDateTime) {
       onValueChange(combinedDateTime);
     }
-  }, [combinedDateTime]);
+  }, [date, time]);
 
   return (
     <FieldGroup className="mx-auto max-w-xs flex-row gap-2">

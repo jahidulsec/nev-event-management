@@ -10,15 +10,11 @@ import { getEvent } from "@/features/event/lib/event";
 import { Params } from "@/types/search-params";
 import { notFound } from "next/navigation";
 import { getEventTypes } from "@/features/event/lib/type";
-import { getAuthUser } from "@/lib/dal";
+import { getAuthUser, getDashboardRole } from "@/lib/dal";
 import { AuthUser } from "@/types/auth-user";
 import EventStatusUpdateForm from "@/features/event/components/status-form";
 import { Separator } from "@/components/ui/separator";
 import { getEventStatusHistories } from "@/features/event/lib/status-history";
-import { SquareCheck, SquareX } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { formatDate } from "@/utils/formatter";
-import { event_current_status } from "@/lib/generated/prisma";
 import { SectionSpinner } from "@/components/shared/spinner/section";
 import { Step, StepContainer } from "@/components/shared/progress/step";
 
@@ -46,6 +42,7 @@ const EventFormSection = async ({ params }: { params: Params }) => {
   const res = await getEvent(id?.toString() ?? "");
   const eventTypeRes = await getEventTypes({ page: 1, size: 100 });
   const user = await getAuthUser();
+  const role = await getDashboardRole();
 
   if (!res.data) return notFound();
 
@@ -57,11 +54,15 @@ const EventFormSection = async ({ params }: { params: Params }) => {
         prevData={res.data}
       />
 
-      {!["ao", "eo"].includes(user?.role as string) && (
-        <div className="max-w-2xl mx-auto flex flex-col w-full py-10 gap-6">
+      {!["ao"].includes(role as string) && (
+        <div className="max-w-2xl mx-auto flex flex-col w-full pb-10 gap-6">
           <Separator />
           <h4 className="w-full text-2xl font-medium">Approval Section</h4>
-          <EventStatusUpdateForm authUser={user as AuthUser} event={res.data} />
+          <EventStatusUpdateForm
+            role={role as string}
+            authUser={user as AuthUser}
+            event={res.data}
+          />
         </div>
       )}
     </SectionContent>

@@ -101,10 +101,10 @@ export const EventSchema = z.object({
   event_date: z.date("Enter a proposed date"),
   user_id: z.string("Select a user"),
   product_id: z.string("Select a product"),
-  venue_name: z
-    .string("Enter event venue name")
-    .min(3, "Venue name must be more than 2 characters"),
-  venue_address: z
+  venue: z
+    .string("Enter event venue name and address")
+    .min(3, "Venue name and address must be more than 2 characters"),
+  food_supplier: z
     .string("Enter event venue address")
     .min(3, "Venue address must be more than 2 characters"),
   venue_appropriateness: z.enum(["yes", "no"], "Please fill this field"),

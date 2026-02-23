@@ -229,7 +229,7 @@ const getSingle = async (id: string) => {
           include: {
             approver: {
               orderBy: {
-                created_at: "asc",
+                type: "asc",
               },
             },
           },

@@ -11,7 +11,7 @@ import { Controller, useForm } from "react-hook-form";
 import { EventStatusSchema, EventStatusSchemaType } from "../actions/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { EventSingleProps } from "../lib/event";
-import { AuthUser } from "@/types/auth-user";
+import { AuthUser, AuthUserRole } from "@/types/auth-user";
 import { Select } from "@/components/shared/select/select";
 import { FormButton } from "@/components/shared/button/button";
 import { createEventStatus } from "../actions/event";
@@ -30,9 +30,11 @@ import { ApproverTypeBadge } from "@/components/shared/badge/badge";
 export default function EventStatusUpdateForm({
   authUser,
   event,
+  role
 }: {
   authUser: AuthUser;
   event: EventSingleProps;
+  role: AuthUserRole
 }) {
   // get event status current approver stage
   const eventStatus = event.event_approver;
@@ -47,7 +49,7 @@ export default function EventStatusUpdateForm({
 
   // get user status submission
   const eventUserStatus = event.event_approver.filter(
-    (item) => item.user_role === authUser.role,
+    (item) => item.user_role === role,
   );
 
   // if previous approver rejectes
@@ -68,7 +70,7 @@ export default function EventStatusUpdateForm({
     resolver: zodResolver(EventStatusSchema),
     defaultValues: {
       user_id: authUser.workAreaCode,
-      user_role: authUser.role,
+      user_role: role as any,
       event_id: event.id,
       eventUserType: eventType,
     },
@@ -87,8 +89,8 @@ export default function EventStatusUpdateForm({
   };
 
   if (
-    authUser.role !== eventTypeRole ||
-    (authUser.role === eventTypeRole &&
+    role !== eventTypeRole ||
+    (role === eventTypeRole &&
       currentUserLastStatus?.remarks?.includes(eventType as string) &&
       currentUserSubmission === "approved") ||
     currentUserSubmission === "rejected"

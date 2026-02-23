@@ -55,8 +55,8 @@ export default function EventForm({
       user_id: params.id ? prevData?.user_id : authUser?.workAreaCode,
       product_id: prevData?.product_id,
       event_date: prevData?.event_date,
-      venue_name: prevData?.venue_name,
-      venue_address: prevData?.venue_address,
+      venue: prevData?.venue,
+      food_supplier: prevData?.food_supplier,
       venue_appropriateness: prevData?.venue_appropriateness,
       institute: prevData?.institute,
       institute_dept: prevData?.institute_dept,
@@ -254,15 +254,15 @@ export default function EventForm({
       <FieldGroup>
         <Controller
           control={form.control}
-          name="venue_name"
+          name="venue"
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Venue Name</FieldLabel>
+              <FieldLabel htmlFor={field.name}>Venue Name & address</FieldLabel>
               <Input
                 {...field}
                 id={field.name}
                 aria-invalid={fieldState.invalid}
-                placeholder="Venue name"
+                placeholder="Venue name, address"
                 autoComplete="off"
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -273,15 +273,15 @@ export default function EventForm({
       <FieldGroup className="lg:flex-row">
         <Controller
           control={form.control}
-          name="venue_address"
+          name="food_supplier"
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Venue Address</FieldLabel>
+              <FieldLabel htmlFor={field.name}>Food Supplier</FieldLabel>
               <Input
                 {...field}
                 id={field.name}
                 aria-invalid={fieldState.invalid}
-                placeholder="Venue Address"
+                placeholder="Food Supplier"
                 autoComplete="off"
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
