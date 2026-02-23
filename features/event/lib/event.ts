@@ -155,7 +155,7 @@ const getMulti = async (query: EventQueryType) => {
               },
             },
           },
-          current_status: "approved",
+          // current_status: "approved",
         }),
     };
 

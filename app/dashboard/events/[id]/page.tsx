@@ -47,25 +47,28 @@ const EventFormSection = async ({ params }: { params: Params }) => {
   if (!res.data) return notFound();
 
   return (
-    <SectionContent className="border p-6 rounded-md">
-      <EventForm
-        authUser={user as AuthUser}
-        eventTypes={eventTypeRes.data ?? []}
-        prevData={res.data}
-      />
-
+    <>
+      <SectionContent className="border p-6 rounded-md">
+        <EventForm
+          authUser={user as AuthUser}
+          eventTypes={eventTypeRes.data ?? []}
+          prevData={res.data}
+        />
+      </SectionContent>
       {!["ao"].includes(role as string) && (
-        <div className="max-w-2xl mx-auto flex flex-col w-full pb-10 gap-6">
-          <Separator />
-          <h4 className="w-full text-2xl font-medium">Approval Section</h4>
-          <EventStatusUpdateForm
-            role={role as string}
-            authUser={user as AuthUser}
-            event={res.data}
-          />
-        </div>
+        <SectionContent className="border rounded-md">
+          <div className="max-w-2xl mx-auto flex flex-col w-full py-10 gap-6">
+            <h4 className="w-full text-2xl font-medium">Approval Section</h4>
+            <Separator/>
+            <EventStatusUpdateForm
+              role={role as string}
+              authUser={user as AuthUser}
+              event={res.data}
+            />
+          </div>
+        </SectionContent>
       )}
-    </SectionContent>
+    </>
   );
 };
 

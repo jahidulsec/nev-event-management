@@ -26,15 +26,16 @@ import {
 } from "@/components/ui/empty";
 import { cn } from "@/lib/utils";
 import { ApproverTypeBadge } from "@/components/shared/badge/badge";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function EventStatusUpdateForm({
   authUser,
   event,
-  role
+  role,
 }: {
   authUser: AuthUser;
   event: EventSingleProps;
-  role: AuthUserRole
+  role: AuthUserRole;
 }) {
   // get event status current approver stage
   const eventStatus = event.event_approver;
@@ -77,7 +78,11 @@ export default function EventStatusUpdateForm({
   });
 
   const onSubmit = async (data: EventStatusSchemaType) => {
-    data.remarks = `${eventType}: ${data.status}`;
+    if (!data.remarks) {
+      data.remarks = `${eventType}: ${data.status}`;
+    } else {
+      data.remarks = `${eventType}: ${data.remarks}`
+    }
 
     const res = await createEventStatus(data);
 
@@ -145,6 +150,23 @@ export default function EventStatusUpdateForm({
                 onValueChange={(value) => {
                   field.onChange(value);
                 }}
+              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+      </FieldGroup>
+      <FieldGroup>
+        <Controller
+          control={form.control}
+          name="remarks"
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel>Remarks (optional)</FieldLabel>
+              <Textarea
+                {...field}
+                id={field.name}
+                placeholder="Enter remarks (optional)"
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
