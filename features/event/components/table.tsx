@@ -158,27 +158,31 @@ export default function EventTable({
             >
               <Workflow /> <span className="sr-only">Workflow</span>
             </TableActionButton>
-            <TableActionButton
-              tooltip="Edit"
-              variant={"edit"}
-              onClick={() => router.push(`/dashboard/events/${value.id}`)}
-            >
-              <Edit /> <span className="sr-only">Edit</span>
-            </TableActionButton>
             {authUser?.workAreaCode === value.user_id && (
-              <TableActionButton
-                tooltip="delete"
-                variant={"delete"}
-                disabled={pending}
-                onClick={() => setDel(value.id)}
-              >
-                <Trash2 /> <span className="sr-only">Delete</span>
-              </TableActionButton>
+              <>
+                <TableActionButton
+                  tooltip="Edit"
+                  variant={"edit"}
+                  onClick={() => router.push(`/dashboard/events/${value.id}`)}
+                >
+                  <Edit /> <span className="sr-only">Edit</span>
+                </TableActionButton>
+                <TableActionButton
+                  tooltip="delete"
+                  variant={"delete"}
+                  disabled={pending}
+                  onClick={() => setDel(value.id)}
+                >
+                  <Trash2 /> <span className="sr-only">Delete</span>
+                </TableActionButton>
+              </>
             )}
             <TableActionButton
               tooltip="Preview"
               variant={"edit"}
-              onClick={() => router.push(`/dashboard/events/${value.id}/preview`)}
+              onClick={() =>
+                router.push(`/dashboard/events/${value.id}/preview`)
+              }
             >
               <Eye /> <span className="sr-only">Preview</span>
             </TableActionButton>
