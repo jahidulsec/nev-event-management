@@ -120,11 +120,8 @@ export default function EventForm({
     if (res.success) {
       router.push("/dashboard/events");
     }
+    console.log(data);
   }
-
-  React.useEffect(() => {
-    console.log(form.formState.errors);
-  }, [form.formState.errors]);
 
   // get products
   React.useEffect(() => {
@@ -635,16 +632,13 @@ export default function EventForm({
 
       <AttachmentSection form={form} user={authUser} />
 
-      {!!!params.id?.toString() && (
-        <FormButton
-          isPending={form.formState.isSubmitting}
-          size={"lg"}
-          className="max-w-sm"
-          disabled={!!params.id?.toString()}
-        >
-          Save
-        </FormButton>
-      )}
+      <FormButton
+        isPending={form.formState.isSubmitting}
+        size={"lg"}
+        className="max-w-sm"
+      >
+        Save
+      </FormButton>
     </Form>
   );
 }

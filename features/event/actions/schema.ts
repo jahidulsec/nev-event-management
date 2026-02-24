@@ -5,7 +5,7 @@ import {
   yesNoEnum,
 } from "@/schemas/common";
 import { QuerySchema } from "@/schemas/query";
-import z from "zod";
+import z, { TypeOf } from "zod";
 
 export const EventTypeSchema = z.object({
   title: z
@@ -93,6 +93,8 @@ export const EventAttachemntSchema = z
       });
     }
   });
+
+export type EventAttachmentType = z.infer<typeof EventAttachemntSchema>;
 
 export const EventSchema = z.object({
   track_no: z.string().optional(),
@@ -189,10 +191,6 @@ export const EventECApprovalSchema = z.object({
   ec_id: z.string(),
 });
 
-export type EventFirstApprovalType = z.infer<
-  typeof EventFirstApprovalSchema
->;
+export type EventFirstApprovalType = z.infer<typeof EventFirstApprovalSchema>;
 
-export type EventECApprovalType = z.infer<
-  typeof EventECApprovalSchema
->;
+export type EventECApprovalType = z.infer<typeof EventECApprovalSchema>;

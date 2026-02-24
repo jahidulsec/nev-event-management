@@ -169,7 +169,9 @@ export default function EventTable({
             </TableActionButton>
             {authUser?.workAreaCode === value.user_id && (
               <>
-                {row.original.current_status === "processing" && (
+                {["processing", "rework"].includes(
+                  row.original.current_status ?? "",
+                ) && (
                   <TableActionButton
                     tooltip="Edit"
                     variant={"edit"}

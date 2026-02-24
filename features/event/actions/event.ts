@@ -7,6 +7,7 @@ import { revalidatePath } from "next/cache";
 import { EventStatusSchemaType, EventType } from "./schema";
 import fs from "fs/promises";
 import fs2 from "fs";
+import { deleteFile } from "@/utils/file";
 
 export const createEvent = async (data: EventType) => {
   const files: any[] = [];
@@ -103,8 +104,146 @@ export const updateEvent = async (id: string, data: EventType) => {
     const etype = await db.event.update({
       where: { id },
       data: eventData,
+      include: {
+        event_attachment: true,
+        event_consultant: true,
+        event_budget: true,
+      },
     });
 
+    // update budget
+    if (eventBudget.length > 0) {
+      for (const item of eventBudget) {
+        const { id: budgetId, event_id, ...rest } = item;
+
+        await db.event_budget.upsert({
+          where: { id: budgetId ?? "" },
+          create: {
+            event_id: event_id ?? id,
+            ...rest,
+          },
+          update: rest,
+        });
+      }
+    }
+
+    // delete budget
+    const existingBudgetIds = etype.event_budget.map((item) => item.id);
+    const incomingBudgetIds = eventBudget
+      .filter((item) => item.id)
+      .map((item) => item.id);
+
+    // Find IDs that exist in DB but not in request
+    const idsToDelete = existingBudgetIds.filter(
+      (id) => !incomingBudgetIds.includes(id),
+    );
+
+    if (idsToDelete.length > 0) {
+      await db.event_budget.deleteMany({
+        where: {
+          id: { in: idsToDelete },
+        },
+      });
+    }
+
+    // update consultant
+    if (eventConsultant.length > 0) {
+      for (const item of eventConsultant) {
+        const { id: cId, event_id, ...rest } = item;
+
+        await db.event_consultant.upsert({
+          where: { id: cId ?? "" },
+          create: {
+            event_id: event_id ?? id,
+            ...rest,
+          },
+          update: rest,
+        });
+      }
+    }
+
+    // delete Consultant
+    const existingConsultantIds = etype.event_consultant.map((item) => item.id);
+    const incomingConsultantIds = eventConsultant
+      .filter((item) => item.id)
+      .map((item) => item.id);
+
+    // Find IDs that exist in DB but not in request
+    const cIdsToDelete = existingConsultantIds.filter(
+      (id) => !incomingConsultantIds.includes(id),
+    );
+
+    if (cIdsToDelete.length > 0) {
+      await db.event_consultant.deleteMany({
+        where: {
+          id: { in: cIdsToDelete },
+        },
+      });
+    }
+
+    // update attachment
+    if (eventAttachment.length > 0) {
+      await fs.mkdir("storage/events", { recursive: true });
+
+      for (const item of eventAttachment) {
+        const { id: aId, event_id, file, file_path: prevPath, ...rest } = item;
+
+        if (!item?.file) continue;
+
+        const extension = item.file.name.split(".").pop();
+
+        const safeTitle = item.document_title
+          ?.replace(/[^a-zA-Z0-9]/g, "_")
+          .toLowerCase();
+
+        const filePath = `storage/events/${safeTitle}-${etype.user_id}-${Date.now()}.${extension}`;
+
+        await fs.writeFile(
+          filePath,
+          Buffer.from(await item.file.arrayBuffer()),
+        );
+
+        await db.event_attachment.upsert({
+          where: { id: aId ?? "" },
+          create: {
+            event_id: event_id ?? id,
+            file_path: filePath,
+            ...rest,
+          },
+          update: { file_path: filePath, ...rest },
+        });
+
+        // delete previous file
+        if (item.file_path && item.file) {
+          await deleteFile(item.file_path);
+        }
+      }
+    }
+
+    // delete attachment
+    const existingAttchementIds = etype.event_attachment.map((item) => item.id);
+    const incomingAttchementIds = eventAttachment
+      .filter((item) => item.id)
+      .map((item) => item.id);
+
+    // Find IDs that exist in DB but not in request
+    const aIdsToDelete = existingAttchementIds.filter(
+      (id) => !incomingAttchementIds.includes(id),
+    );
+
+    if (aIdsToDelete.length > 0) {
+      for (const i in aIdsToDelete) {
+        const data = await db.event_attachment.delete({
+          where: {
+            id: aIdsToDelete[i],
+          },
+        });
+
+        await deleteFile(data.file_path);
+      }
+    }
+
+    // revalidate cache
     revalidatePath("/dashboard");
     revalidatePath("/dashboard/events");
 
@@ -114,7 +253,7 @@ export const updateEvent = async (id: string, data: EventType) => {
       data: etype,
     });
   } catch (error) {
-    console.error(error);
+    console.error(JSON.stringify(error, null, 4));
     const err = handleError(error);
     return response({
       success: false,
@@ -197,6 +336,15 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
         },
         data: {
           current_status: "rejected",
+        },
+      });
+    } else if (status === "rework") {
+      await db.event.update({
+        where: {
+          id: data.event_id,
+        },
+        data: {
+          current_status: "rework",
         },
       });
     }

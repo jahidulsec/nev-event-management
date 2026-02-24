@@ -53,7 +53,7 @@ model event {
   details_participants  String?                     @db.Text
   approved_material     event_approved_material
   material_code         String?                     @db.VarChar(200)
-  current_status        current_status?             @default(processing)
+  current_status        event_current_status?       @default(processing)
   created_at            DateTime?                   @default(now()) @db.Timestamp(0)
   updated_at            DateTime?                   @default(now()) @db.Timestamp(0)
   other_participants    Int?
@@ -115,13 +115,13 @@ model event_budget {
 }
 
 model event_status_history {
-  id                String               @id @default(nanoid()) @db.VarChar(21)
-  event_approver_id String               @db.VarChar(21)
-  status            event_current_status
-  created_at        DateTime?            @default(now()) @db.Timestamp(0)
-  updated_at        DateTime?            @default(now()) @db.Timestamp(0)
-  remarks           String?              @db.Text
-  event_approver    event_approver       @relation(fields: [event_approver_id], references: [id], onUpdate: Restrict, map: "event_status_history_ibfk_1")
+  id                String                      @id @default(nanoid()) @db.VarChar(21)
+  event_approver_id String                      @db.VarChar(21)
+  status            event_status_history_status
+  created_at        DateTime?                   @default(now()) @db.Timestamp(0)
+  updated_at        DateTime?                   @default(now()) @db.Timestamp(0)
+  remarks           String?                     @db.Text
+  event_approver    event_approver              @relation(fields: [event_approver_id], references: [id], onUpdate: Restrict, map: "event_status_history_ibfk_1")
 
   @@index([event_approver_id], map: "event_approver_id")
 }
@@ -338,21 +338,9 @@ enum event_approved_material {
   non_branded
 }
 
-enum event_current_status {
-  approved
-  rejected
-  rewrite
-}
-
 enum event_venue_appropriateness {
   yes
   no
-}
-
-enum current_status {
-  approved
-  rejected
-  processing
 }
 
 enum approver_type {
@@ -393,4 +381,17 @@ enum event_consultant_approval_honorarium_check {
 enum event_consultant_approval_consultant_form_attached {
   yes
   no
+}
+
+enum event_status_history_status {
+  approved
+  rejected
+  rework
+}
+
+enum event_current_status {
+  approved
+  rejected
+  processing
+  rework
 }
