@@ -5,18 +5,21 @@ import {
   SectionHeader,
 } from "@/components/shared/section/section";
 import { SectionSpinner } from "@/components/shared/spinner/section";
-import { SectionHeadingWithBackButton } from "@/components/shared/typography/heading";
+import {
+  SectionHeading2,
+  SectionHeadingWithBackButton,
+} from "@/components/shared/typography/heading";
 import { Separator } from "@/components/ui/separator";
 import EventSection from "@/features/event/components/event-section";
+import FirstApproverForm from "@/features/event/components/first-approver-form";
 import EventStatusUpdateForm from "@/features/event/components/status-form";
 import { getEvent } from "@/features/event/lib/event";
 import { getEventStatusHistories } from "@/features/event/lib/status-history";
-import { getEventTypes } from "@/features/event/lib/type";
 import { getAuthUser, getDashboardRole } from "@/lib/dal";
 import { AuthUser } from "@/types/auth-user";
 import { Params } from "@/types/search-params";
 import { notFound } from "next/navigation";
-import React, { Suspense } from "react";
+import { Suspense } from "react";
 
 export default async function EventPreviewPage({ params }: { params: Params }) {
   return (
@@ -42,7 +45,6 @@ export default async function EventPreviewPage({ params }: { params: Params }) {
 const EventDetailsSection = async ({ params }: { params: Params }) => {
   const { id } = await params;
   const res = await getEvent(id?.toString() ?? "");
-  const eventTypeRes = await getEventTypes({ page: 1, size: 100 });
   const user = await getAuthUser();
   const role = await getDashboardRole();
 
@@ -51,16 +53,22 @@ const EventDetailsSection = async ({ params }: { params: Params }) => {
   return (
     <>
       <SectionContent className="border p-6 rounded-md">
-        <EventSection
+        <EventSection prevData={res.data} />
+      </SectionContent>
+      <SectionContent className="border rounded-md">
+        <FirstApproverForm
           authUser={user as AuthUser}
-          eventTypes={eventTypeRes.data ?? []}
-          prevData={res.data}
+          role={role as string}
+          eventData={res.data}
         />
       </SectionContent>
+      {role === "ec" && (
+        <SectionContent className="border rounded-md"></SectionContent>
+      )}
       {!["ao"].includes(role as string) && (
         <SectionContent className="border rounded-md">
           <div className="max-w-2xl mx-auto flex flex-col w-full py-10 gap-6">
-            <h4 className="w-full text-2xl font-medium">Approval Section</h4>
+            <SectionHeading2>Approval Section</SectionHeading2>
             <Separator />
             <EventStatusUpdateForm
               role={role as string}
@@ -88,7 +96,7 @@ const EventStatusHistorySection = async ({ params }: { params: Params }) => {
   return (
     <div className="border rounded-md p-4 mt-6 py-10">
       <div className="max-w-2xl mx-auto w-full flex flex-col gap-6">
-        <h4 className="w-full text-2xl font-medium">Event Approval History</h4>
+        <SectionHeading2>Event Approval History</SectionHeading2>
         <Separator />
         <StepContainer>
           {res.data?.map((item, index) => (

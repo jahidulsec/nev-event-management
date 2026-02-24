@@ -42,6 +42,7 @@ export type EventSingleProps = Prisma.eventGetPayload<{
     event_consultant: {
       include: {
         doctor: true;
+        event_consultant_approval: true;
       };
     };
     event_type: {
@@ -226,6 +227,7 @@ const getSingle = async (id: string) => {
         event_consultant: {
           include: {
             doctor: true,
+            event_consultant_approval: true,
           },
         },
         user: {

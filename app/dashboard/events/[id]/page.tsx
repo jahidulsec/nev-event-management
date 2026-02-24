@@ -46,7 +46,7 @@ const EventFormSection = async ({ params }: { params: Params }) => {
 
   if (!res.data) return notFound();
 
-  if(res.data.user_id !== user?.workAreaCode) return notFound()
+  if (res.data.user_id !== user?.workAreaCode) return notFound();
 
   return (
     <>
@@ -61,7 +61,7 @@ const EventFormSection = async ({ params }: { params: Params }) => {
         <SectionContent className="border rounded-md">
           <div className="max-w-2xl mx-auto flex flex-col w-full py-10 gap-6">
             <h4 className="w-full text-2xl font-medium">Approval Section</h4>
-            <Separator/>
+            <Separator />
             <EventStatusUpdateForm
               role={role as string}
               authUser={user as AuthUser}

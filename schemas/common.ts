@@ -20,6 +20,8 @@ export const eventApproverTypeEnum = z.enum(
 );
 
 export const eventApproverStatusEnum = z.enum(
-  ["approved", "rejected", "rewrite"],
+  ["approved", "rejected", "rewrite"], // rework
   "Select a type",
 );
+
+export const yesNoEnum = z.enum(["yes", "no"], "Select a option");

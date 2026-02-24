@@ -22,7 +22,7 @@ const SectionHeadingIcon = ({
     <div
       className={cn(
         "h-8 aspect-square [&>svg]:size-5 [&>svg]:fill-secondary/15 flex justify-center items-center bg-secondary-foreground text-secondary rounded-full",
-        className
+        className,
       )}
       {...props}
     />
@@ -55,8 +55,18 @@ const SectionHeadingWithBackButton = ({
   );
 };
 
+const SectionHeading2 = ({
+  className,
+  ...props
+}: React.ComponentProps<"h2">) => {
+  return (
+    <h2 className={cn("w-full text-2xl font-medium", className)} {...props} />
+  );
+};
+
 export {
   SectionHeading,
+  SectionHeading2,
   SectionSubTitle,
   SectionHeadingIcon,
   SectionHeadingWithBackButton,

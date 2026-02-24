@@ -28,12 +28,8 @@ import { FileText } from "lucide-react";
 
 export default function EventSection({
   prevData,
-  eventTypes,
-  authUser,
 }: {
   prevData: EventSingleProps;
-  eventTypes: EventTypeMultiProps[];
-  authUser?: AuthUser;
 }) {
   const totalBudget = prevData.event_budget?.reduce(
     (acc, sum) => acc + Number(sum.unit_cost) * sum.unit,
@@ -238,8 +234,6 @@ export default function EventSection({
               <TableHead>Role</TableHead>
               <TableHead>Duration (hours)</TableHead>
               <TableHead>Honorarium</TableHead>
-              <TableHead>Different District?</TableHead>
-              <TableHead>Night Stay?</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -257,8 +251,6 @@ export default function EventSection({
                   <TableCell>{item.role}</TableCell>
                   <TableCell>{formatNumber(Number(item.duration_h))}</TableCell>
                   <TableCell>{formatNumber(Number(item.honorarium))}</TableCell>
-                  <TableCell>{item.in_different_district}</TableCell>
-                  <TableCell>{item.night_stay}</TableCell>
                 </TableRow>
               ))
             ) : (

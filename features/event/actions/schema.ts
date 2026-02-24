@@ -2,6 +2,7 @@ import {
   eventApproverStatusEnum,
   eventApproverTypeEnum,
   userRoleSchema,
+  yesNoEnum,
 } from "@/schemas/common";
 import { QuerySchema } from "@/schemas/query";
 import z from "zod";
@@ -171,4 +172,18 @@ export const EventStatusHistoryQuerySchema = QuerySchema.omit({}).extend({
 
 export type EventStatusHistoryQueryType = z.infer<
   typeof EventStatusHistoryQuerySchema
+>;
+
+export const EventConsultantApprovalSchema = z.object({
+  consultant_id: z.string(),
+  topic_expert: yesNoEnum,
+  is_suitable: yesNoEnum,
+  hororarium_check: yesNoEnum.optional(),
+  nth_engagement: z.number().positive().optional(),
+  first_approver_id: z.string(),
+  ec_id: z.string().optional(),
+});
+
+export type EventConsultantApprovalType = z.infer<
+  typeof EventConsultantApprovalSchema
 >;
