@@ -72,7 +72,7 @@ const EventDetailsSection = async ({ params }: { params: Params }) => {
       </SectionContent>
       {!["ao"].includes(role as string) && (
         <SectionContent className="border rounded-md">
-          <div className="max-w-4xl mx-auto flex flex-col w-full py-10 gap-6">
+          <div className="max-w-4xl mx-auto flex flex-col w-full py-10 gap-6 p-6">
             <SectionHeading2>Approval Section</SectionHeading2>
             <Separator />
             <EventStatusUpdateForm

@@ -158,15 +158,26 @@ export default function EventTable({
             >
               <Workflow /> <span className="sr-only">Workflow</span>
             </TableActionButton>
+            <TableActionButton
+              tooltip="Preview"
+              variant={"edit"}
+              onClick={() =>
+                router.push(`/dashboard/events/${value.id}/preview`)
+              }
+            >
+              <Eye /> <span className="sr-only">Preview</span>
+            </TableActionButton>
             {authUser?.workAreaCode === value.user_id && (
               <>
-                <TableActionButton
-                  tooltip="Edit"
-                  variant={"edit"}
-                  onClick={() => router.push(`/dashboard/events/${value.id}`)}
-                >
-                  <Edit /> <span className="sr-only">Edit</span>
-                </TableActionButton>
+                {row.original.current_status === "processing" && (
+                  <TableActionButton
+                    tooltip="Edit"
+                    variant={"edit"}
+                    onClick={() => router.push(`/dashboard/events/${value.id}`)}
+                  >
+                    <Edit /> <span className="sr-only">Edit</span>
+                  </TableActionButton>
+                )}
                 <TableActionButton
                   tooltip="delete"
                   variant={"delete"}
@@ -177,15 +188,6 @@ export default function EventTable({
                 </TableActionButton>
               </>
             )}
-            <TableActionButton
-              tooltip="Preview"
-              variant={"edit"}
-              onClick={() =>
-                router.push(`/dashboard/events/${value.id}/preview`)
-              }
-            >
-              <Eye /> <span className="sr-only">Preview</span>
-            </TableActionButton>
           </div>
         );
       },

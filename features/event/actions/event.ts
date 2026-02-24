@@ -125,9 +125,22 @@ export const updateEvent = async (id: string, data: EventType) => {
 
 export const deleteEvent = async (id: string) => {
   try {
-    const type = await db.event.delete({
+    const event = await db.event.delete({
       where: { id },
+      include: {
+        event_attachment: true,
+      },
     });
+
+    // delete files
+    const files = event.event_attachment;
+    if (files.length > 0) {
+      for (const i of files) {
+        if (fs2.existsSync(i.file_path)) {
+          await fs.unlink(i.file_path);
+        }
+      }
+    }
 
     revalidatePath("/dashboard");
     revalidatePath("/dashboard/events");
@@ -135,7 +148,7 @@ export const deleteEvent = async (id: string) => {
     return response({
       success: true,
       message: "Event is deleted successfully",
-      data: type,
+      data: event,
     });
   } catch (error) {
     console.error(error);
