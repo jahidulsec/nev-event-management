@@ -76,10 +76,10 @@ const getMulti = async (query: EventQueryType) => {
         },
       }),
       ...(params.work_area_code &&
-        params.role?.includes("ao") && {
+        params.role === "ao" && {
           user_id: params.work_area_code,
         }),
-      ...(params.role?.includes("flm") &&
+      ...(params.role === "flm" &&
         params.work_area_code && {
           user: {
             ao: {
@@ -94,7 +94,7 @@ const getMulti = async (query: EventQueryType) => {
             },
           },
         }),
-      ...(params.role?.includes("slm") &&
+      ...(params.role === "slm" &&
         params.work_area_code && {
           user: {
             ao: {
@@ -109,7 +109,7 @@ const getMulti = async (query: EventQueryType) => {
             },
           },
         }),
-      ...(params.role?.includes("franchise_head") &&
+      ...(params.role === "franchise_head" &&
         params.work_area_code && {
           user: {
             ao: {
@@ -124,7 +124,7 @@ const getMulti = async (query: EventQueryType) => {
             },
           },
         }),
-      ...(params.role?.includes("director_sales") &&
+      ...(params.role === "director_sales" &&
         params.work_area_code && {
           event_type: {
             approver: {
@@ -151,7 +151,7 @@ const getMulti = async (query: EventQueryType) => {
             },
           },
         }),
-      ...(params.role?.includes("ec") &&
+      ...(params.role === "ec" &&
         params.work_area_code && {
           product: {
             product_user: {
@@ -163,7 +163,8 @@ const getMulti = async (query: EventQueryType) => {
           // current_status: "approved",
         }),
     };
-
+    console.log(params.role);
+    console.log(JSON.stringify(filter));
     const [data, count] = await Promise.all([
       db.event.findMany({
         include: {

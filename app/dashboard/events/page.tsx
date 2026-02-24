@@ -81,6 +81,7 @@ const TableSection = async ({
 
   return (
     <ErrorBoundary message={!res.success ? res.message : undefined}>
+      {dashboardRole}
       <EventTable data={res?.data ?? []} authUser={authUser as AuthUser} />
       <PagePagination count={res.count} />
     </ErrorBoundary>
