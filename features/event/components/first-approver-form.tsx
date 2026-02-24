@@ -12,17 +12,15 @@ import {
 } from "@/components/ui/field";
 import { formatNumber } from "@/utils/formatter";
 import { Controller, useForm } from "react-hook-form";
-import {
-  EventConsultantApprovalSchema,
-  EventConsultantApprovalType,
-} from "../actions/schema";
+import { EventFirstApprovalSchema, EventFirstApprovalType } from "../actions/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Select } from "@/components/shared/select/select";
 import { yesNoList } from "@/lib/data";
 import { FormButton } from "@/components/shared/button/button";
 import { AuthUser, AuthUserRole } from "@/types/auth-user";
-import { createConsultantApproval } from "../actions/consultant-approval";
+import { createFirstApproverApproval } from "../actions/consultant-approval";
 import { toast } from "sonner";
+import { CustomField } from "@/components/shared/field/field";
 
 export default function FirstApproverForm({
   eventData,
@@ -39,7 +37,7 @@ export default function FirstApproverForm({
 
   return (
     <div className="max-w-4xl mx-auto w-full flex flex-col gap-6">
-      <h2 className="w-full text-2xl font-medium">Consultant</h2>
+      <h2 className="w-full text-2xl font-medium">Consultant Approval</h2>
       <Separator />
 
       {consultants.map((item) => (
@@ -70,7 +68,7 @@ export default function FirstApproverForm({
           <Separator className="my-3" />
 
           {eventData.event_type?.approver?.[0]?.user_type === role &&
-          !item.event_consultant_approval ? (
+          !item.event_consultant_approval?.first_approver_id ? (
             <ApprovalForm consultant_id={item.id} authUser={authUser} />
           ) : (
             <div className="grid grid-cols-2 gap-3">
@@ -103,17 +101,17 @@ const ApprovalForm = ({
   authUser: AuthUser;
   consultant_id: string;
 }) => {
-  const form = useForm<EventConsultantApprovalType>({
-    resolver: zodResolver(EventConsultantApprovalSchema),
+  const form = useForm<EventFirstApprovalType>({
+    resolver: zodResolver(EventFirstApprovalSchema),
     defaultValues: {
       consultant_id: consultant_id,
       first_approver_id: authUser.workAreaCode,
     },
   });
 
-  const onSubmit = async (data: EventConsultantApprovalType) => {
+  const onSubmit = async (data: EventFirstApprovalType) => {
     console.log(data);
-    const res = await createConsultantApproval(data);
+    const res = await createFirstApproverApproval(data);
 
     toast[res.success ? "success" : "error"](res.message);
   };
@@ -168,13 +166,4 @@ const ApprovalForm = ({
   );
 };
 
-const CustomField = ({ title, value }: { title: string; value?: string }) => {
-  return (
-    <Field>
-      <FieldLabel className="text-muted-foreground font-medium">
-        {title}
-      </FieldLabel>
-      <FieldTitle>{value}</FieldTitle>
-    </Field>
-  );
-};
+

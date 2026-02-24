@@ -174,16 +174,25 @@ export type EventStatusHistoryQueryType = z.infer<
   typeof EventStatusHistoryQuerySchema
 >;
 
-export const EventConsultantApprovalSchema = z.object({
+export const EventFirstApprovalSchema = z.object({
   consultant_id: z.string(),
   topic_expert: yesNoEnum,
   is_suitable: yesNoEnum,
-  hororarium_check: yesNoEnum.optional(),
-  nth_engagement: z.number().positive().optional(),
   first_approver_id: z.string(),
-  ec_id: z.string().optional(),
 });
 
-export type EventConsultantApprovalType = z.infer<
-  typeof EventConsultantApprovalSchema
+export const EventECApprovalSchema = z.object({
+  consultant_id: z.string(),
+  hororarium_check: yesNoEnum,
+  consultant_form_attached: yesNoEnum,
+  nth_engagement: z.number().positive(),
+  ec_id: z.string(),
+});
+
+export type EventFirstApprovalType = z.infer<
+  typeof EventFirstApprovalSchema
+>;
+
+export type EventECApprovalType = z.infer<
+  typeof EventECApprovalSchema
 >;
