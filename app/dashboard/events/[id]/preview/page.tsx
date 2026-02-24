@@ -55,7 +55,7 @@ const EventDetailsSection = async ({ params }: { params: Params }) => {
       <SectionContent className="border p-6 rounded-md">
         <EventSection prevData={res.data} />
       </SectionContent>
-      <SectionContent className="border rounded-md">
+      <SectionContent className="border rounded-md p-6">
         <FirstApproverForm
           authUser={user as AuthUser}
           role={role as string}
@@ -67,7 +67,7 @@ const EventDetailsSection = async ({ params }: { params: Params }) => {
       )}
       {!["ao"].includes(role as string) && (
         <SectionContent className="border rounded-md">
-          <div className="max-w-2xl mx-auto flex flex-col w-full py-10 gap-6">
+          <div className="max-w-4xl mx-auto flex flex-col w-full py-10 gap-6">
             <SectionHeading2>Approval Section</SectionHeading2>
             <Separator />
             <EventStatusUpdateForm
@@ -95,7 +95,7 @@ const EventStatusHistorySection = async ({ params }: { params: Params }) => {
 
   return (
     <div className="border rounded-md p-4 mt-6 py-10">
-      <div className="max-w-2xl mx-auto w-full flex flex-col gap-6">
+      <div className="max-w-4xl mx-auto w-full flex flex-col gap-6">
         <SectionHeading2>Event Approval History</SectionHeading2>
         <Separator />
         <StepContainer>

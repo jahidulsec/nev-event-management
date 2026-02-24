@@ -21,7 +21,6 @@ import { Select } from "@/components/shared/select/select";
 import { yesNoList } from "@/lib/data";
 import { FormButton } from "@/components/shared/button/button";
 import { AuthUser, AuthUserRole } from "@/types/auth-user";
-import { event_consultant_approval } from "@/lib/generated/prisma";
 import { createConsultantApproval } from "../actions/consultant-approval";
 import { toast } from "sonner";
 
@@ -39,7 +38,7 @@ export default function FirstApproverForm({
   if (consultants.length === 0) return null;
 
   return (
-    <div className="max-w-4xl mx-auto p-6 w-full flex flex-col gap-6">
+    <div className="max-w-4xl mx-auto w-full flex flex-col gap-6">
       <h2 className="w-full text-2xl font-medium">Consultant</h2>
       <Separator />
 
