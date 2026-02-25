@@ -22,6 +22,7 @@ import { AuthUser } from "@/types/auth-user";
 import { yesNoList } from "@/lib/data";
 import {
   getHonorariumCalculations,
+  getHonorariumDesignations,
   HonorariumCalculationMultiProps,
 } from "@/features/honorarium/lib/honorarium";
 import { calculateHonorarium } from "@/utils/helper";
@@ -67,6 +68,9 @@ export default function ConsultantSection({
   // get total honorarium
   const handleHonorarium = (index: number) => {
     const consultant = form.getValues(`eventConsultant.${index}`);
+    const tierId = form.getValues(`eventConsultant.${index}.tier_id`);
+
+    const filteredTier = hList.find((i) => i.id === tierId);
 
     if (filteredTier) {
       const totalHonorarium = calculateHonorarium(filteredTier, {
@@ -125,7 +129,7 @@ export default function ConsultantSection({
                 honorarium: 0,
                 in_different_district: "no",
                 night_stay: "no",
-                tier: "",
+                tier_id: "",
               })
             }
           >
@@ -182,7 +186,7 @@ export default function ConsultantSection({
 
             <Controller
               control={form.control}
-              name={`eventConsultant.${index}.tier`}
+              name={`eventConsultant.${index}.tier_id`}
               render={({ field, fieldState }) => (
                 <Field
                   data-invalid={fieldState.invalid}
@@ -224,7 +228,7 @@ export default function ConsultantSection({
                         );
                       }
                     }}
-                    defaultValue={eventConsultant[index].tier}
+                    defaultValue={eventConsultant[index].tier_id}
                   />
 
                   {fieldState.error?.message && (
@@ -297,7 +301,10 @@ export default function ConsultantSection({
               control={form.control}
               name={`eventConsultant.${index}.night_stay`}
               render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid} className="col-span-2 md:col-span-1">
+                <Field
+                  data-invalid={fieldState.invalid}
+                  className="col-span-2 md:col-span-1"
+                >
                   <FieldLabel htmlFor={field.name}>
                     Will stay at night?
                   </FieldLabel>

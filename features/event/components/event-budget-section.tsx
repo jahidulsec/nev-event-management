@@ -87,7 +87,7 @@ export const EventBudgetSection = ({
 
       {fields.length > 0 ? (
         fields.map((item, index) => (
-          <div key={item.id} className="grid grid-cols-2 gap-2 border-b pb-6">
+          <div key={item.id} className="grid grid-cols-2 gap-6 border-b pb-6">
             <div className="col-span-2 flex items-end gap-3">
               <Controller
                 control={form.control}

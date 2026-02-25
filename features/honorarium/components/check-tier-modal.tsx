@@ -7,7 +7,6 @@ import {
   getHonorariumCalculations,
   HonorariumCalculationMultiProps,
 } from "../lib/honorarium";
-import { FormDialog } from "@/components/shared/modal/modal";
 import {
   Table,
   TableBody,
@@ -17,6 +16,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { NoData } from "@/components/shared/state/state";
+import { FormSheet } from "@/components/shared/sheet/sheet";
 
 export default function CheckTierModal() {
   const [open, setOpen] = React.useState(false);
@@ -51,36 +51,38 @@ export default function CheckTierModal() {
         Check Tier <Info />
       </Button>
 
-      <FormDialog formTitle="Tier Details" open={open} onOpenChange={setOpen}>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Tier</TableHead>
-            <TableHead>Designation</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {hList.length > 0 ? (
-            hList.map((item) => (
-              <TableRow key={item.id}>
-                <TableCell>{item.tier_name}</TableCell>
-                <TableCell className="whitespace-wrap">
-                  <TableCell>
-                    {item.honorarium_designation.map((d, index) => (
-                      <div key={index}>{d.designation}</div>
-                    ))}
+      <FormSheet formTitle="Tier Details" open={open} onOpenChange={setOpen}>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Tier</TableHead>
+              <TableHead>Designation</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {hList.length > 0 ? (
+              hList.map((item) => (
+                <TableRow key={item.id}>
+                  <TableCell>{item.tier_name}</TableCell>
+                  <TableCell className="whitespace-wrap">
+                    <TableCell>
+                      {item.honorarium_designation.map((d, index) => (
+                        <div key={index}>{d.designation}</div>
+                      ))}
+                    </TableCell>
                   </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={100}>
+                  <NoData />
                 </TableCell>
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={100}>
-                <NoData />
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </FormDialog>
+            )}
+          </TableBody>
+        </Table>
+      </FormSheet>
     </>
   );
 }

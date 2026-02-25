@@ -55,7 +55,7 @@ export const EventConsultantSchema = z.object({
   duration_h: z.number("enter consultant session duration in hours"),
   in_different_district: z.enum(["yes", "no"]),
   night_stay: z.enum(["yes", "no"]),
-  tier: z.string('Select a tier'),
+  tier_id: z.string('Select a tier'),
 });
 
 export const EventAttachemntSchema = z

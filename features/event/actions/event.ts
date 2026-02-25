@@ -55,12 +55,7 @@ export const createEvent = async (data: EventType) => {
         ...(eventConsultant && {
           event_consultant: {
             createMany: {
-              data: eventConsultant.map((i) => {
-                const { tier, ...rest } = i;
-                return {
-                  ...rest,
-                };
-              }),
+              data: eventConsultant,
             },
           },
         }),
@@ -156,7 +151,7 @@ export const updateEvent = async (id: string, data: EventType) => {
     // update consultant
     if (eventConsultant.length > 0) {
       for (const item of eventConsultant) {
-        const { id: cId, tier, event_id, ...rest } = item;
+        const { id: cId, event_id, ...rest } = item;
 
         await db.event_consultant.upsert({
           where: { id: cId ?? "" },
