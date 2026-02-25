@@ -76,6 +76,7 @@ export default function EventForm({
           honorarium,
           in_different_district,
           night_stay,
+          tier_id,
           ...rest
         } = item;
 
@@ -85,6 +86,7 @@ export default function EventForm({
           honorarium: Number(honorarium),
           in_different_district: in_different_district ?? "no",
           night_stay: night_stay ?? "no",
+          tier_id: tier_id ?? "",
         };
       }),
       eventBudget: prevData?.event_budget.map((item) => {
