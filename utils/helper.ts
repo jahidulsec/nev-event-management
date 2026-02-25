@@ -3,6 +3,7 @@ import {
   event_budget,
   event_consultant,
   event_type,
+  honorarium_calculation,
 } from "@/lib/generated/prisma";
 import { AuthUserRole } from "@/types/auth-user";
 import { formatNumber } from "./formatter";
@@ -92,3 +93,32 @@ export function calculateEventBudget(
     eventConsultant?.reduce((acc, sum) => acc + Number(sum.honorarium || 0), 0)
   );
 }
+
+export const calculateHonorarium = (
+  tier: honorarium_calculation,
+  option: {
+    isSpeaker: boolean;
+    nightStay: boolean;
+    diffDist: boolean;
+    hours?: number
+  },
+) => {
+  const hRate = Number(tier.hr_rate || 0) * (option.hours || 1);
+  const spearkerPercentage = option.isSpeaker
+    ? Number(tier.speaker_percentage || 0)
+    : 0;
+  const nightStayPercentage = option.nightStay
+    ? Number(tier.night_stay_percentage || 0)
+    : 0;
+  const diffDistPercenate = option.diffDist
+    ? Number(tier.different_dist_percentage || 0)
+    : 0;
+
+  const total =
+    hRate +
+    (hRate * spearkerPercentage) +
+    (hRate * nightStayPercentage) +
+    (hRate * diffDistPercenate);
+
+  return total;
+};

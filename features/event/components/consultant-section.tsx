@@ -20,6 +20,11 @@ import Combobox from "@/components/shared/combobox/combobox";
 import { Select } from "@/components/shared/select/select";
 import { AuthUser } from "@/types/auth-user";
 import { yesNoList } from "@/lib/data";
+import {
+  getHonorariumCalculations,
+  HonorariumCalculationMultiProps,
+} from "@/features/honorarium/lib/honorarium";
+import { calculateHonorarium } from "@/utils/helper";
 
 const consultantRole = [
   "Speaker",
@@ -43,11 +48,50 @@ export default function ConsultantSection({
     name: "eventConsultant",
   });
 
+  const [hList, setHList] = React.useState<HonorariumCalculationMultiProps[]>(
+    [],
+  );
+  const [selectedTier, setSelectedTier] = React.useState<string>();
+  const [pending, startTransition] = React.useTransition();
+
+  // get filter full object of tier
+  const filteredTier = hList.find((i) => i.id === selectedTier);
+
   const eventConsultant = form.watch("eventConsultant");
 
   const eventCreator = form.watch("user_id");
 
   const isCreator = user?.workAreaCode === eventCreator || !eventCreator;
+
+  // get total honorarium
+  const handleHonorarium = (index: number) => {
+    const consultant = form.getValues(`eventConsultant.${index}`);
+
+    if (filteredTier) {
+      const totalHonorarium = calculateHonorarium(filteredTier, {
+        isSpeaker: consultant.role === "Speaker",
+        nightStay: consultant.night_stay === "yes",
+        diffDist: consultant.in_different_district === "yes",
+        hours: consultant.duration_h,
+      });
+
+      form.setValue(`eventConsultant.${index}.honorarium`, totalHonorarium);
+    }
+  };
+
+  // get honorarium list
+  React.useEffect(() => {
+    const handleList = async () => {
+      const res = await getHonorariumCalculations();
+
+      if (res.success) {
+        setHList(res.data ?? []);
+      }
+    };
+
+    if (hList.length !== 0) return;
+    startTransition(handleList);
+  }, []);
 
   return (
     <>
@@ -80,6 +124,7 @@ export default function ConsultantSection({
                 honorarium: 0,
                 in_different_district: "no",
                 night_stay: "no",
+                tier: "",
               })
             }
           >
@@ -91,7 +136,7 @@ export default function ConsultantSection({
 
       {fields.length > 0 ? (
         fields.map((item, index) => (
-          <div key={item.id} className="grid grid-cols-2 gap-2 border-b pb-6">
+          <div key={item.id} className="grid grid-cols-1 gap-6 border-b pb-6">
             <div className="col-span-2 flex items-end gap-3">
               <Controller
                 control={form.control}
@@ -136,9 +181,63 @@ export default function ConsultantSection({
 
             <Controller
               control={form.control}
+              name={`eventConsultant.${index}.tier`}
+              render={({ field, fieldState }) => (
+                <Field
+                  data-invalid={fieldState.invalid}
+                  className="col-span-1 md:col-span-2"
+                >
+                  <FieldLabel htmlFor={field.name}>Tier</FieldLabel>
+
+                  <Select
+                    data={hList.map((item) => ({
+                      label: item.tier_name,
+                      value: item.id,
+                    }))}
+                    onValueChange={(value) => {
+                      field.onChange(value);
+                      setSelectedTier(value);
+                      const consultant = form.getValues(
+                        `eventConsultant.${index}`,
+                      );
+                      const filteredList = hList.find((i) => i.id === value);
+
+                      if (filteredList) {
+                        const totalHonorarium = calculateHonorarium(
+                          filteredList,
+                          {
+                            isSpeaker: consultant.role === "Speaker",
+                            nightStay: consultant.night_stay === "yes",
+                            diffDist:
+                              consultant.in_different_district === "yes",
+                            hours: consultant.duration_h,
+                          },
+                        );
+
+                        form.setValue(
+                          `eventConsultant.${index}.honorarium`,
+                          totalHonorarium,
+                        );
+                      }
+                    }}
+                    defaultValue={eventConsultant[index].tier}
+                  />
+
+                  {fieldState.error?.message && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+
+            <Controller
+              control={form.control}
               name={`eventConsultant.${index}.role`}
               render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid} className="col-span-2">
+                <Field
+                  data-invalid={fieldState.invalid}
+                  className="col-span-1 md:col-span-2"
+                >
                   <FieldLabel htmlFor={field.name}>Role</FieldLabel>
 
                   <Select
@@ -148,45 +247,10 @@ export default function ConsultantSection({
                     }))}
                     onValueChange={(value) => {
                       field.onChange(value);
+
+                      handleHonorarium(index);
                     }}
                     defaultValue={eventConsultant[index].role}
-                  />
-
-                  {fieldState.error?.message && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-
-            <Controller
-              control={form.control}
-              name={`eventConsultant.${index}.duration_h`}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor={field.name}>Duration (hour)</FieldLabel>
-                  <Input
-                    type="number"
-                    {...field}
-                    onChange={(e) => field.onChange(e.target.valueAsNumber)}
-                  />
-
-                  {fieldState.error?.message && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-            <Controller
-              control={form.control}
-              name={`eventConsultant.${index}.honorarium`}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor={field.name}>Honorarium</FieldLabel>
-                  <Input
-                    type="number"
-                    {...field}
-                    onChange={(e) => field.onChange(e.target.valueAsNumber)}
                   />
 
                   {fieldState.error?.message && (
@@ -208,7 +272,11 @@ export default function ConsultantSection({
                     {...field}
                     name="in_different_district"
                     data={yesNoList}
-                    onValueChange={(value) => field.onChange(value)}
+                    onValueChange={(value) => {
+                      field.onChange(value);
+
+                      handleHonorarium(index);
+                    }}
                   />
 
                   {fieldState.error?.message && (
@@ -230,7 +298,51 @@ export default function ConsultantSection({
                     {...field}
                     name="night_stay"
                     data={yesNoList}
-                    onValueChange={(value) => field.onChange(value)}
+                    onValueChange={(value) => {
+                      field.onChange(value);
+
+                      handleHonorarium(index);
+                    }}
+                  />
+
+                  {fieldState.error?.message && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+
+            <Controller
+              control={form.control}
+              name={`eventConsultant.${index}.duration_h`}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor={field.name}>Duration (hour)</FieldLabel>
+                  <Input
+                    type="number"
+                    {...field}
+                    onChange={(e) => {
+                      field.onChange(e.target.valueAsNumber);
+                      handleHonorarium(index);
+                    }}
+                  />
+
+                  {fieldState.error?.message && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+            <Controller
+              control={form.control}
+              name={`eventConsultant.${index}.honorarium`}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor={field.name}>Honorarium</FieldLabel>
+                  <Input
+                    type="number"
+                    {...field}
+                    onChange={(e) => field.onChange(e.target.valueAsNumber)}
                   />
 
                   {fieldState.error?.message && (
