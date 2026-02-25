@@ -1,4 +1,5 @@
 import { Section } from "@/components/shared/section/section";
+import CreateEventButton from "@/features/event/components/create-button";
 import { AuthUser } from "@/types/auth-user";
 
 export default function ProfileSection({ user }: { user: AuthUser }) {
@@ -10,8 +11,7 @@ export default function ProfileSection({ user }: { user: AuthUser }) {
           Take a look into recent activities
         </p>
       </div>
-
-      {/* <CreateQuizButton /> */}
+      {user.role.includes("ao") && <CreateEventButton />}
     </Section>
   );
 }

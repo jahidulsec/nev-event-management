@@ -23,6 +23,10 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 export default async function EventPreviewPage({ params }: { params: Params }) {
+  const dashboardRole = await getDashboardRole();
+
+  if (dashboardRole === "ao") return notFound();
+
   return (
     <Section>
       <SectionHeader>

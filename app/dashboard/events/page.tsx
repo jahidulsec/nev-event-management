@@ -21,9 +21,10 @@ import { getAuthUser, getDashboardRole } from "@/lib/dal";
 import { AuthUser } from "@/types/auth-user";
 import { SearchParams } from "@/types/search-params";
 import { getPageData } from "@/utils/helper";
+import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
-export default function EventsPage({
+export default async function EventsPage({
   searchParams,
 }: {
   searchParams: SearchParams;
@@ -31,6 +32,8 @@ export default function EventsPage({
   const pageTitle = "Events";
 
   const pageData = getPageData(pageTitle, "superadmin");
+
+  const user = await getAuthUser()
 
   return (
     <>
@@ -47,7 +50,7 @@ export default function EventsPage({
 
           <SectionActions>
             <SearchForm />
-            <CreateEventButton />
+            {user?.role.includes("ao") && <CreateEventButton />}
           </SectionActions>
         </SectionHeader>
 
@@ -70,6 +73,8 @@ const TableSection = async ({
 
   const authUser = await getAuthUser();
   const dashboardRole = await getDashboardRole();
+
+  if (dashboardRole === "ao") return notFound();
 
   const res = await getEvents({
     page: Number(page),

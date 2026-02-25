@@ -19,6 +19,10 @@ import { SectionSpinner } from "@/components/shared/spinner/section";
 import { Step, StepContainer } from "@/components/shared/progress/step";
 
 export default async function EventDetailsPage({ params }: { params: Params }) {
+  const dashboardRole = await getDashboardRole();
+
+  if (dashboardRole !== "ec") return notFound();
+
   return (
     <Section>
       <SectionHeader>
@@ -45,8 +49,6 @@ const EventFormSection = async ({ params }: { params: Params }) => {
   const role = await getDashboardRole();
 
   if (!res.data) return notFound();
-
-  if (res.data.user_id !== user?.workAreaCode) return notFound();
 
   return (
     <>

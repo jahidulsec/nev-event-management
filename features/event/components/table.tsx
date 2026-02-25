@@ -167,7 +167,7 @@ export default function EventTable({
             >
               <Eye /> <span className="sr-only">Preview</span>
             </TableActionButton>
-            {authUser?.workAreaCode === value.user_id && (
+            {authUser?.role.includes("ec") && (
               <>
                 {["processing", "rework"].includes(
                   row.original.current_status ?? "",

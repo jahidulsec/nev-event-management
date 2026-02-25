@@ -46,12 +46,12 @@ export const navlist = {
       url: "/dashboard",
       icon: Layout,
     },
-    {
-      id: 2,
-      title: "Events",
-      url: "/dashboard/events",
-      icon: Calendars,
-    },
+    // {
+    //   id: 2,
+    //   title: "Events",
+    //   url: "/dashboard/events",
+    //   icon: Calendars,
+    // },
   ],
   flm: [
     {
