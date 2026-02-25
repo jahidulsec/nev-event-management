@@ -185,4 +185,4 @@ export default function EventStatusUpdateForm({
   );
 }
 
-const data = ["approved", "rejected", "rework"];
+const data = ["approved", "rejected"];
