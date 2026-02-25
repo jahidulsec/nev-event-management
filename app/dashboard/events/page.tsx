@@ -33,7 +33,7 @@ export default async function EventsPage({
 
   const pageData = getPageData(pageTitle, "superadmin");
 
-  const user = await getAuthUser()
+  const user = await getAuthUser();
 
   return (
     <>
@@ -86,7 +86,6 @@ const TableSection = async ({
 
   return (
     <ErrorBoundary message={!res.success ? res.message : undefined}>
-      {dashboardRole}
       <EventTable data={res?.data ?? []} authUser={authUser as AuthUser} />
       <PagePagination count={res.count} />
     </ErrorBoundary>
