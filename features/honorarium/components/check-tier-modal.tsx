@@ -42,6 +42,7 @@ export default function CheckTierModal() {
   return (
     <>
       <Button
+        type="button"
         size={"sm"}
         variant={"link"}
         className="text-xs border-b rounded-none border-dashed"
