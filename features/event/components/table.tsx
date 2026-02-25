@@ -167,7 +167,7 @@ export default function EventTable({
             >
               <Eye /> <span className="sr-only">Preview</span>
             </TableActionButton>
-            {authUser?.role.includes("ec") && (
+            {authUser?.role.includes("ec") || authUser?.role.includes("superadmin") && (
               <>
                 {["processing", "rework"].includes(
                   row.original.current_status ?? "",
@@ -180,15 +180,17 @@ export default function EventTable({
                     <Edit /> <span className="sr-only">Edit</span>
                   </TableActionButton>
                 )}
-                <TableActionButton
-                  tooltip="delete"
-                  variant={"delete"}
-                  disabled={pending}
-                  onClick={() => setDel(value.id)}
-                >
-                  <Trash2 /> <span className="sr-only">Delete</span>
-                </TableActionButton>
               </>
+            )}
+            {authUser?.role.includes("superadmin") && (
+              <TableActionButton
+                tooltip="delete"
+                variant={"delete"}
+                disabled={pending}
+                onClick={() => setDel(value.id)}
+              >
+                <Trash2 /> <span className="sr-only">Delete</span>
+              </TableActionButton>
             )}
           </div>
         );

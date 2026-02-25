@@ -163,8 +163,7 @@ const getMulti = async (query: EventQueryType) => {
           // current_status: "approved",
         }),
     };
-    console.log(params.role);
-    console.log(JSON.stringify(filter));
+
     const [data, count] = await Promise.all([
       db.event.findMany({
         include: {
@@ -240,7 +239,7 @@ const getSingle = async (id: string) => {
           include: {
             approver: {
               orderBy: {
-                type: "asc",
+                created_at: "asc",
               },
             },
           },

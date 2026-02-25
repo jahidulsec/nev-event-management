@@ -42,7 +42,7 @@ const getMulti = async (query: EventTypeQueryType) => {
               type: true,
             },
             orderBy: {
-              type: "asc",
+              created_at: "asc",
             },
           },
         },

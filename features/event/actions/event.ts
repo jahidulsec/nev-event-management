@@ -351,8 +351,25 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
       });
     }
 
+    const event = await db.event.findUnique({
+      where: {
+        id: data.event_id,
+      },
+      include: {
+        event_approver: true,
+        event_type: {
+          select: {
+            approver: true,
+          },
+        },
+      },
+    });
+
     // if approved by last approver, set event current status approver
-    if (eventUserType === "budget" && status === "approved") {
+    if (
+      event?.event_approver.length === event?.event_type?.approver.length &&
+      status === "approved"
+    ) {
       await db.event.update({
         where: {
           id: data.event_id,
