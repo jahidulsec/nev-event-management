@@ -25,6 +25,7 @@ import {
   HonorariumCalculationMultiProps,
 } from "@/features/honorarium/lib/honorarium";
 import { calculateHonorarium } from "@/utils/helper";
+import CheckTierModal from "@/features/honorarium/components/check-tier-modal";
 
 const consultantRole = [
   "Speaker",
@@ -137,7 +138,7 @@ export default function ConsultantSection({
       {fields.length > 0 ? (
         fields.map((item, index) => (
           <div key={item.id} className="grid grid-cols-1 gap-6 border-b pb-6">
-            <div className="col-span-2 flex items-end gap-3">
+            <div className="col-span-2 flex items-end gap-3 overflow-hidden">
               <Controller
                 control={form.control}
                 name={`eventConsultant.${index}.doctor_id`}
@@ -185,9 +186,12 @@ export default function ConsultantSection({
               render={({ field, fieldState }) => (
                 <Field
                   data-invalid={fieldState.invalid}
-                  className="col-span-1 md:col-span-2"
+                  className="col-span-2 md:col-span-1"
                 >
-                  <FieldLabel htmlFor={field.name}>Tier</FieldLabel>
+                  <div className="flex justify-between items-center gap-5">
+                    <FieldLabel htmlFor={field.name}>Tier</FieldLabel>
+                    <CheckTierModal />
+                  </div>
 
                   <Select
                     data={hList.map((item) => ({
@@ -236,7 +240,7 @@ export default function ConsultantSection({
               render={({ field, fieldState }) => (
                 <Field
                   data-invalid={fieldState.invalid}
-                  className="col-span-1 md:col-span-2"
+                  className="col-span-2 md:col-span-1"
                 >
                   <FieldLabel htmlFor={field.name}>Role</FieldLabel>
 
@@ -264,7 +268,10 @@ export default function ConsultantSection({
               control={form.control}
               name={`eventConsultant.${index}.in_different_district`}
               render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
+                <Field
+                  data-invalid={fieldState.invalid}
+                  className="col-span-2 md:col-span-1"
+                >
                   <FieldLabel htmlFor={field.name}>
                     Is in different district?
                   </FieldLabel>
@@ -290,7 +297,7 @@ export default function ConsultantSection({
               control={form.control}
               name={`eventConsultant.${index}.night_stay`}
               render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
+                <Field data-invalid={fieldState.invalid} className="col-span-2 md:col-span-1">
                   <FieldLabel htmlFor={field.name}>
                     Will stay at night?
                   </FieldLabel>

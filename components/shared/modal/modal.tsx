@@ -8,8 +8,6 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { DialogProps } from "@radix-ui/react-dialog";
-import AlertModal from "../alert-dialog/alert-dialog";
-import { toast } from "sonner";
 
 const FormDialog = ({
   open,
@@ -21,7 +19,7 @@ const FormDialog = ({
 }: DialogProps & React.ComponentProps<"div"> & { formTitle: string }) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="sm:max-w-xl ">
         <DialogHeader>
           <DialogTitle>{formTitle}</DialogTitle>
         </DialogHeader>
