@@ -55,7 +55,7 @@ export const EventConsultantSchema = z.object({
   duration_h: z.number("enter consultant session duration in hours"),
   in_different_district: z.enum(["yes", "no"]),
   night_stay: z.enum(["yes", "no"]),
-  tier_id: z.string('Select a tier'),
+  tier_id: z.string("Select a tier"),
 });
 
 export const EventAttachemntSchema = z
@@ -195,3 +195,10 @@ export const EventECApprovalSchema = z.object({
 export type EventFirstApprovalType = z.infer<typeof EventFirstApprovalSchema>;
 
 export type EventECApprovalType = z.infer<typeof EventECApprovalSchema>;
+
+export const EventTrackingSchema = z.object({
+  event_id: z.string('enter event id'),
+  track_no: z.string("Add a tracking no").min(2, "At least 2 characters"),
+});
+
+export type EventTrackingType = z.infer<typeof EventTrackingSchema>;

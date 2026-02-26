@@ -2,9 +2,9 @@
 
 import { db } from "@/config/db";
 import { handleError } from "@/lib/error";
-import { response } from "@/lib/response";
+import { apiResponse, response } from "@/lib/response";
 import { revalidatePath } from "next/cache";
-import { EventStatusSchemaType, EventType } from "./schema";
+import { EventStatusSchemaType, EventTrackingType, EventType } from "./schema";
 import fs from "fs/promises";
 import fs2 from "fs";
 import { deleteFile } from "@/utils/file";
@@ -394,5 +394,27 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
       success: false,
       message: err.message ?? "Something went wrong",
     });
+  }
+};
+
+export const updateEventTrackingNumber = async (data: EventTrackingType) => {
+  try {
+    const res = await db.event.update({
+      where: { id: data.event_id },
+      data: {
+        track_no: data.track_no,
+      },
+    });
+
+    revalidatePath('/dashboard/events')
+    revalidatePath('/dashboard/events/' + data.event_id + '/preview')
+
+    return apiResponse.single({
+      message: "Add tracking number successfully",
+      data: res,
+    });
+  } catch (error) {
+    console.error(error);
+    return apiResponse.error({ error });
   }
 };

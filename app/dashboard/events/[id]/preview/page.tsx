@@ -14,6 +14,7 @@ import ECApprovalForm from "@/features/event/components/ec-approval-form";
 import EventSection from "@/features/event/components/event-section";
 import FirstApproverForm from "@/features/event/components/first-approver-form";
 import EventStatusUpdateForm from "@/features/event/components/status-form";
+import TrackingEventForm from "@/features/event/components/tracking-form";
 import { getEvent } from "@/features/event/lib/event";
 import { getEventStatusHistories } from "@/features/event/lib/status-history";
 import { getAuthUser, getDashboardRole } from "@/lib/dal";
@@ -60,6 +61,7 @@ const EventDetailsSection = async ({ params }: { params: Params }) => {
       <SectionContent className="border p-6 rounded-md">
         <EventSection prevData={res.data} />
       </SectionContent>
+
       <SectionContent className="border rounded-md p-6">
         <FirstApproverForm
           authUser={user as AuthUser}
@@ -67,6 +69,20 @@ const EventDetailsSection = async ({ params }: { params: Params }) => {
           eventData={res.data}
         />
       </SectionContent>
+
+      {role === "ec" && (
+        <SectionContent className="border rounded-md p-6">
+          <div className="max-w-4xl mx-auto w-full flex flex-col gap-6">
+            <SectionHeading2>Tracking No.</SectionHeading2>
+            <Separator />
+            <TrackingEventForm
+              eventId={res.data.id}
+              trackingNo={res.data.track_no ?? ""}
+            />
+          </div>
+        </SectionContent>
+      )}
+
       <SectionContent className="border rounded-md p-6">
         <div className="max-w-4xl mx-auto w-full flex flex-col gap-6">
           <SectionHeading2>Event Coordinator Approval</SectionHeading2>
@@ -74,6 +90,7 @@ const EventDetailsSection = async ({ params }: { params: Params }) => {
           <ECApprovalForm authUser={user as AuthUser} eventData={res.data} />
         </div>
       </SectionContent>
+
       {!["ao"].includes(role as string) && (
         <SectionContent className="border rounded-md">
           <div className="max-w-4xl mx-auto flex flex-col w-full py-10 gap-6 p-6">
