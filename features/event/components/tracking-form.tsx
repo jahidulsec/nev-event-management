@@ -8,7 +8,6 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { EventTrackingSchema, EventTrackingType } from "../actions/schema";
 import { Input } from "@/components/ui/input";

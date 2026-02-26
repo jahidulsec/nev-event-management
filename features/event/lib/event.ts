@@ -264,7 +264,7 @@ const getSingle = async (id: string) => {
 
     return apiResponse.single<EventSingleProps>({
       message: "Get event successful",
-      data: data,
+      data: getSerializeData(data),
     });
   } catch (error) {
     console.error(error);
