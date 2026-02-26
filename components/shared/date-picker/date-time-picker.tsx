@@ -12,14 +12,16 @@ import {
 } from "@/components/ui/popover";
 import { format } from "date-fns";
 import { ChevronDownIcon } from "lucide-react";
+import { DayPicker } from "react-day-picker";
 
 export function DatePickerTime({
   onValueChange,
   defaultValue,
+  disabled,
 }: {
   onValueChange?: (value: Date) => void;
   defaultValue?: Date;
-}) {
+} & React.ComponentProps<typeof DayPicker>) {
   const [open, setOpen] = React.useState(false);
   const [date, setDate] = React.useState<Date | undefined>(defaultValue);
   const [time, setTime] = React.useState(
@@ -69,6 +71,7 @@ export function DatePickerTime({
                 setDate(selected);
                 setOpen(false);
               }}
+              disabled={disabled}
             />
           </PopoverContent>
         </Popover>

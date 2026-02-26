@@ -120,7 +120,7 @@ export default function EventForm({
     toast[res.success ? "success" : "error"](res.message);
 
     if (res.success) {
-      router.push("/dashboard/events");
+      router.push("/dashboard");
     }
     console.log(data);
   }
@@ -217,6 +217,7 @@ export default function EventForm({
               <DatePickerTime
                 defaultValue={prevData?.event_date}
                 onValueChange={(value) => field.onChange(value)}
+                disabled={{before: new Date()}}
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
