@@ -9,7 +9,7 @@ export function formatDateTime(date: Date) {
 }
 
 export const formatNumber = (number: number) => {
-  if (typeof number !== "number") return 0;
+  if (typeof number !== "number") return "0";
 
   return new Intl.NumberFormat("en-IN", {
     maximumFractionDigits: 2,
