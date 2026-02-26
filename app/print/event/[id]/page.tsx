@@ -1,6 +1,7 @@
 import PrintSection from "@/features/event/components/print-section";
 import { getEvent } from "@/features/event/lib/event";
-import { getAuthUser, getDashboardRole } from "@/lib/dal";
+import { getEventApprovers } from "@/features/event/lib/event-approver";
+import { getDashboardRole } from "@/lib/dal";
 import { Params } from "@/types/search-params";
 import { notFound } from "next/navigation";
 import React from "react";
@@ -16,11 +17,16 @@ export default async function EventFormPrintPage({
   if (role === "ao") return notFound();
 
   const res = await getEvent(id?.toString() ?? "");
+  const eventApproverData = await getEventApprovers(id?.toString() ?? "");
+
   if (!res.data) return notFound();
 
   return (
     <div>
-      <PrintSection eventData={res.data} />
+      <PrintSection
+        eventApprover={eventApproverData.data as any[]}
+        eventData={res.data}
+      />
     </div>
   );
 }

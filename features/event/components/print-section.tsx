@@ -13,6 +13,7 @@ import {
   Image,
 } from "@react-pdf/renderer";
 import { formatDate, formatDateTime, formatNumber } from "@/utils/formatter";
+import { EventApproverMultProps } from "../lib/event-approver";
 
 Font.register({
   family: "Roboto",
@@ -25,8 +26,10 @@ Font.register({
 
 export default function PrintSection({
   eventData,
+  eventApprover,
 }: {
   eventData: EventSingleProps;
+  eventApprover: EventApproverMultProps[];
 }) {
   return (
     <PDFViewer className="w-full min-h-svh">
@@ -39,7 +42,10 @@ export default function PrintSection({
             <Text style={styles.heading}>Event Proposal Form</Text>
           </View>
 
-          <EventBasicInformationSection data={eventData} />
+          <EventBasicInformationSection
+            eventApprover={eventApprover}
+            data={eventData}
+          />
         </Page>
       </Document>
     </PDFViewer>
@@ -54,7 +60,13 @@ const HeaderSection = () => {
   );
 };
 
-const EventBasicInformationSection = ({ data }: { data: EventSingleProps }) => {
+const EventBasicInformationSection = ({
+  data,
+  eventApprover,
+}: {
+  data: EventSingleProps;
+  eventApprover: EventApproverMultProps[];
+}) => {
   const totalHonorarium = data.event_consultant.reduce(
     (acc, sum) => acc + Number(sum.honorarium),
     0,
@@ -339,7 +351,13 @@ const EventBasicInformationSection = ({ data }: { data: EventSingleProps }) => {
                   <TableCell style={{ maxWidth: 100, width: "100%" }}>
                     {Number(item.duration_h)}
                   </TableCell>
-                  <TableCell style={{ maxWidth: 150, width: "100%", textAlign: 'center' }}>
+                  <TableCell
+                    style={{
+                      maxWidth: 150,
+                      width: "100%",
+                      textAlign: "center",
+                    }}
+                  >
                     {formatNumber(Number(item.honorarium))}
                   </TableCell>
                   <View
@@ -359,7 +377,7 @@ const EventBasicInformationSection = ({ data }: { data: EventSingleProps }) => {
                       name="Suitable for Participant:"
                       value={item.event_consultant_approval?.is_suitable}
                     />
-                    <View style={{borderBottom: 1}} />
+                    <View style={{ borderBottom: 1 }} />
                     <Field
                       name="Honorarium Check:"
                       value={item.event_consultant_approval?.honorarium_check}
@@ -395,7 +413,62 @@ const EventBasicInformationSection = ({ data }: { data: EventSingleProps }) => {
         </Table>
       </View>
 
-      
+      <View style={{ marginTop: 20 }}>
+        <Table>
+          <View style={{ backgroundColor: color.muted }}>
+            <TableRow>
+              <TableHead style={{ flex: 1 }}>Approver</TableHead>
+              <TableHead style={{ flex: 1 }}>Full Name</TableHead>
+              <TableHead style={{ flex: 1 }}>Designation</TableHead>
+              <TableHead style={{ flex: 1 }}>Approved Date</TableHead>
+            </TableRow>
+          </View>
+
+          <View>
+            {eventApprover.length > 0 ? (
+              eventApprover.map((item) => (
+                <TableRow key={item.id}>
+                  <TableCell style={{ flex: 1 }}>
+                    {item.user_role.replaceAll("_", " ").toUpperCase()}
+                  </TableCell>
+                  <TableCell style={{ flex: 1 }}>
+                    {
+                      item?.user[
+                        (item?.user_role === "director_sales"
+                          ? "franchise_head"
+                          : item?.user_role) as "ao"
+                      ]?.["full_name"]
+                    }
+                  </TableCell>
+                  <TableCell style={{ flex: 1 }}>
+                    {item?.user[
+                      (item?.user_role === "director_sales"
+                        ? "franchise_head"
+                        : item?.user_role) as "ao"
+                    ]?.designation || "-"}
+                  </TableCell>
+                  <TableCell style={{ flex: 1 }}>
+                    {item.created_at ? formatDateTime(item.created_at) : "-"}
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <Text
+                style={{
+                  flex: 1,
+                  textAlign: "center",
+                  paddingVertical: 10,
+                  fontSize: 11,
+                  borderBottom: 1,
+                  borderRight: 1,
+                }}
+              >
+                No data.
+              </Text>
+            )}
+          </View>
+        </Table>
+      </View>
     </View>
   );
 };
