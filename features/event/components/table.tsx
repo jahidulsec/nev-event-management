@@ -8,7 +8,7 @@ import {
 import { deleteToastTemplate } from "@/lib/template";
 import { formatDate } from "@/utils/formatter";
 import { ColumnDef } from "@tanstack/react-table";
-import { Edit, Eye, Trash2, Workflow } from "lucide-react";
+import { Edit, Eye, Printer, Trash2, Workflow } from "lucide-react";
 import React from "react";
 import { deleteEvent } from "../actions/event";
 import { TableActionButton } from "@/components/shared/button/button";
@@ -167,21 +167,24 @@ export default function EventTable({
             >
               <Eye /> <span className="sr-only">Preview</span>
             </TableActionButton>
-            {authUser?.role.includes("ec") || authUser?.role.includes("superadmin") && (
-              <>
-                {["processing", "rework"].includes(
-                  row.original.current_status ?? "",
-                ) && (
-                  <TableActionButton
-                    tooltip="Edit"
-                    variant={"edit"}
-                    onClick={() => router.push(`/dashboard/events/${value.id}`)}
-                  >
-                    <Edit /> <span className="sr-only">Edit</span>
-                  </TableActionButton>
-                )}
-              </>
-            )}
+            {authUser?.role.includes("ec") ||
+              (authUser?.role.includes("superadmin") && (
+                <>
+                  {["processing", "rework"].includes(
+                    row.original.current_status ?? "",
+                  ) && (
+                    <TableActionButton
+                      tooltip="Edit"
+                      variant={"edit"}
+                      onClick={() =>
+                        router.push(`/dashboard/events/${value.id}`)
+                      }
+                    >
+                      <Edit /> <span className="sr-only">Edit</span>
+                    </TableActionButton>
+                  )}
+                </>
+              ))}
             {authUser?.role.includes("superadmin") && (
               <TableActionButton
                 tooltip="delete"
@@ -192,6 +195,19 @@ export default function EventTable({
                 <Trash2 /> <span className="sr-only">Delete</span>
               </TableActionButton>
             )}
+            <TableActionButton
+              tooltip="Print"
+              variant={"edit"}
+              // onClick={() => router.push(`/print/event/${value.id}`)}
+            >
+              <a
+                href={`/print/event/${value.id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Printer /> <span className="sr-only">Print</span>
+              </a>
+            </TableActionButton>
           </div>
         );
       },
