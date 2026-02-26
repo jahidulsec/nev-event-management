@@ -1,4 +1,4 @@
-import { AuthUser } from "@/types/auth-user";
+import { AuthUser, AuthUserRole } from "@/types/auth-user";
 import React from "react";
 import { EventTypeMultiProps } from "../lib/type";
 import { EventSingleProps } from "../lib/event";
@@ -24,12 +24,15 @@ import {
 } from "@/components/ui/table";
 import { NoData } from "@/components/shared/state/state";
 import { formatNumber } from "@/utils/formatter";
-import { FileText } from "lucide-react";
+import { FileText, Printer } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function EventSection({
   prevData,
+  role,
 }: {
   prevData: EventSingleProps;
+  role: AuthUserRole;
 }) {
   const totalBudget = prevData.event_budget?.reduce(
     (acc, sum) => acc + Number(sum.unit_cost) * sum.unit,
@@ -43,9 +46,22 @@ export default function EventSection({
 
   return (
     <div className="max-w-4xl mx-auto py-10 w-full flex flex-col gap-6">
-      <h3 className="text-2xl font-bold text-primary mb-6 w-full">
-        Event Details
-      </h3>
+      <div className="flex justify-between items-center gap-5">
+        <h3 className="text-2xl font-bold text-primary mb-6 w-full">
+          Event Details
+        </h3>
+        {role === "ec" && (
+          <Button asChild>
+            <a
+              href={`/print/event/${prevData.id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Printer /> Print
+            </a>
+          </Button>
+        )}
+      </div>
 
       {/* Requester information */}
       <FieldContainer>

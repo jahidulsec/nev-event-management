@@ -59,7 +59,7 @@ const EventDetailsSection = async ({ params }: { params: Params }) => {
   return (
     <>
       <SectionContent className="border p-6 rounded-md">
-        <EventSection prevData={res.data} />
+        <EventSection role={role as string} prevData={res.data} />
       </SectionContent>
 
       <SectionContent className="border rounded-md p-6">

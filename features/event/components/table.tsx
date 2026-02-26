@@ -168,7 +168,7 @@ export default function EventTable({
               <Eye /> <span className="sr-only">Preview</span>
             </TableActionButton>
             {authUser?.role.includes("ec") ||
-              (authUser?.role.includes("superadmin") && (
+              authUser?.role.includes("superadmin") && (
                 <>
                   {["processing", "rework"].includes(
                     row.original.current_status ?? "",
@@ -184,7 +184,21 @@ export default function EventTable({
                     </TableActionButton>
                   )}
                 </>
-              ))}
+              )}
+
+            {(authUser?.role.includes("ec") ||
+              authUser?.role.includes("superadmin")) && (
+                <TableActionButton tooltip="Print" variant={"edit"}>
+                  <a
+                    href={`/print/event/${value.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Printer /> <span className="sr-only">Print</span>
+                  </a>
+                </TableActionButton>
+              )}
+
             {authUser?.role.includes("superadmin") && (
               <TableActionButton
                 tooltip="delete"
@@ -195,19 +209,6 @@ export default function EventTable({
                 <Trash2 /> <span className="sr-only">Delete</span>
               </TableActionButton>
             )}
-            <TableActionButton
-              tooltip="Print"
-              variant={"edit"}
-              // onClick={() => router.push(`/print/event/${value.id}`)}
-            >
-              <a
-                href={`/print/event/${value.id}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Printer /> <span className="sr-only">Print</span>
-              </a>
-            </TableActionButton>
           </div>
         );
       },
