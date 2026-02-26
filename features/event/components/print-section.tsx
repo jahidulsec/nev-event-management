@@ -55,6 +55,17 @@ const HeaderSection = () => {
 };
 
 const EventBasicInformationSection = ({ data }: { data: EventSingleProps }) => {
+  const totalHonorarium = data.event_consultant.reduce(
+    (acc, sum) => acc + Number(sum.honorarium),
+    0,
+  );
+
+  const totalBudget =
+    data.event_budget.reduce(
+      (acc, sum) => acc + sum.unit * Number(sum.unit_cost),
+      0,
+    ) + totalHonorarium;
+
   return (
     <View>
       <View style={{ borderRight: 1, borderBottom: 1 }}>
@@ -206,13 +217,14 @@ const EventBasicInformationSection = ({ data }: { data: EventSingleProps }) => {
           </FieldGroup>
         </View>
       </View>
+
       {/* budget */}
       <View break>
         <Table>
           <TableRow style={{ backgroundColor: color.muted }}>
             <TableHead>Event Budget</TableHead>
           </TableRow>
-          <View>
+          <View style={{ backgroundColor: color.muted }}>
             <TableRow>
               <TableHead style={{ flex: 1 }}>Item</TableHead>
               <TableHead style={{ flex: 1 }}>Unit</TableHead>
@@ -223,20 +235,34 @@ const EventBasicInformationSection = ({ data }: { data: EventSingleProps }) => {
 
           <View>
             {data.event_budget.length > 0 ? (
-              data.event_budget.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell style={{ flex: 1 }}>{item.item}</TableCell>
+              <>
+                {data.event_budget.map((item) => (
+                  <TableRow key={item.id}>
+                    <TableCell style={{ flex: 1 }}>{item.item}</TableCell>
+                    <TableCell style={{ textAlign: "center", flex: 1 }}>
+                      {item.unit}
+                    </TableCell>
+                    <TableCell style={{ textAlign: "right", flex: 1 }}>
+                      {formatNumber(Number(item.unit_cost))}
+                    </TableCell>
+                    <TableCell style={{ textAlign: "right", flex: 1 }}>
+                      {formatNumber(Number(item.unit_cost) * item.unit)}
+                    </TableCell>
+                  </TableRow>
+                ))}
+                <TableRow>
+                  <TableCell style={{ flex: 1 }}>Honorarium</TableCell>
                   <TableCell style={{ textAlign: "center", flex: 1 }}>
-                    {item.unit}
+                    {data.event_consultant.length}
                   </TableCell>
                   <TableCell style={{ textAlign: "right", flex: 1 }}>
-                    {formatNumber(Number(item.unit_cost))}
+                    -
                   </TableCell>
                   <TableCell style={{ textAlign: "right", flex: 1 }}>
-                    {formatNumber(Number(item.unit_cost) * item.unit)}
+                    {formatNumber(totalHonorarium)}
                   </TableCell>
                 </TableRow>
-              ))
+              </>
             ) : (
               <Text
                 style={{
@@ -264,20 +290,112 @@ const EventBasicInformationSection = ({ data }: { data: EventSingleProps }) => {
                   minWidth: 200,
                   textAlign: "right",
                   fontWeight: "bold",
-                  flexBasis: 1
+                  flexBasis: 1,
                 }}
               >
-                {formatNumber(
-                  data.event_budget.reduce(
-                    (acc, sum) => acc + sum.unit * Number(sum.unit_cost),
-                    0,
-                  ),
-                )}
+                {formatNumber(totalBudget)}
               </TableCell>
             </TableRow>
           </View>
         </Table>
       </View>
+
+      {/* consultant */}
+      <View style={{ marginTop: 20 }}>
+        <Table>
+          <TableRow style={{ backgroundColor: color.muted }}>
+            <TableHead>External Consultant Engagement</TableHead>
+          </TableRow>
+          <View style={{ backgroundColor: color.muted }}>
+            <TableRow>
+              <TableHead style={{ maxWidth: 50 }}>SL. no.</TableHead>
+              <TableHead style={{ flex: 1 }}>
+                Name, Degree, Speciality
+              </TableHead>
+              <TableHead style={{ maxWidth: 100 }}>Chamber ID</TableHead>
+              <TableHead style={{ maxWidth: 100 }}>Role</TableHead>
+              <TableHead style={{ maxWidth: 100 }}>Duration (Hr.)</TableHead>
+              <TableHead style={{ maxWidth: 150 }}>Honorarium</TableHead>
+              <TableHead style={{ maxWidth: 150 }}>Approval</TableHead>
+            </TableRow>
+          </View>
+          <View>
+            {data.event_consultant ? (
+              data.event_consultant.map((item, index) => (
+                <TableRow key={item.id}>
+                  <TableCell style={{ maxWidth: 50, width: "100%" }}>
+                    {index + 1}
+                  </TableCell>
+                  <TableCell style={{ flex: 1, width: "100%" }}>
+                    {item.doctor.full_name}, ({item.doctor.degrees}),{" "}
+                    {item.doctor.speciality}
+                  </TableCell>
+                  <TableCell style={{ maxWidth: 100, width: "100%" }}>
+                    {item.doctor.dr_child_id}
+                  </TableCell>
+                  <TableCell style={{ maxWidth: 100, width: "100%" }}>
+                    {item.role}
+                  </TableCell>
+                  <TableCell style={{ maxWidth: 100, width: "100%" }}>
+                    {Number(item.duration_h)}
+                  </TableCell>
+                  <TableCell style={{ maxWidth: 150, width: "100%", textAlign: 'center' }}>
+                    {formatNumber(Number(item.honorarium))}
+                  </TableCell>
+                  <View
+                    style={{
+                      maxWidth: 150,
+                      width: "100%",
+                      paddingHorizontal: 6,
+                      borderRight: 1,
+                    }}
+                  >
+                    <Field
+                      name="Relevant TA:"
+                      value={item.event_consultant_approval?.topic_expert}
+                    />
+
+                    <Field
+                      name="Suitable for Participant:"
+                      value={item.event_consultant_approval?.is_suitable}
+                    />
+                    <View style={{borderBottom: 1}} />
+                    <Field
+                      name="Honorarium Check:"
+                      value={item.event_consultant_approval?.honorarium_check}
+                    />
+                    <Field
+                      name="Consultant Form:"
+                      value={
+                        item.event_consultant_approval?.consultant_form_attached
+                      }
+                    />
+                    <Field
+                      name="Nth Engagement:"
+                      value={item.event_consultant_approval?.nth_engagement}
+                    />
+                  </View>
+                </TableRow>
+              ))
+            ) : (
+              <Text
+                style={{
+                  flex: 1,
+                  textAlign: "center",
+                  paddingVertical: 10,
+                  fontSize: 11,
+                  borderBottom: 1,
+                  borderRight: 1,
+                }}
+              >
+                No data.
+              </Text>
+            )}
+          </View>
+        </Table>
+      </View>
+
+      
     </View>
   );
 };
@@ -340,8 +458,8 @@ const TableCell = ({ style, ...props }: React.ComponentProps<typeof Text>) => {
     <Text
       style={[
         {
-          fontSize: 11,
-          padding: 2,
+          fontSize: 10,
+          padding: 1,
           paddingHorizontal: 6,
           borderRight: 1,
         },
@@ -373,8 +491,8 @@ const TableHead = ({ style, ...props }: React.ComponentProps<typeof Text>) => {
     <Text
       style={[
         {
-          fontSize: 11,
-          padding: 2,
+          fontSize: 10,
+          padding: 1,
           fontWeight: "bold",
           borderRight: 1,
           flex: 1,
@@ -396,6 +514,23 @@ const FieldGroup = ({ style, ...props }: React.ComponentProps<typeof View>) => {
       ]}
       {...props}
     />
+  );
+};
+
+const Field = ({
+  name,
+  value,
+}: {
+  name: string;
+  value?: string | number | null;
+}) => {
+  return (
+    <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+      <Text style={{ fontSize: 9, paddingVertical: 1 }}>{name}</Text>
+      <Text style={{ fontSize: 9, paddingVertical: 1, fontWeight: "bold" }}>
+        {value ?? "-"}
+      </Text>
+    </View>
   );
 };
 
