@@ -360,14 +360,16 @@ model honorarium_designation {
 }
 
 model notification {
-  id             String    @id @default(nanoid()) @db.VarChar(21)
-  work_area_code String    @db.VarChar(8)
-  event_id       String    @db.VarChar(21)
-  message        String    @db.VarChar(200)
-  created_at     DateTime? @default(now()) @db.Timestamp(0)
-  updated_at     DateTime? @default(now()) @db.Timestamp(0)
-  event          event     @relation(fields: [event_id], references: [id], onDelete: Cascade, map: "notification_ibfk_1")
-  user           user      @relation(fields: [work_area_code], references: [work_area_code], onDelete: Cascade, map: "notification_ibfk_2")
+  id             String                  @id @default(nanoid()) @db.VarChar(21)
+  work_area_code String                  @db.VarChar(8)
+  event_id       String                  @db.VarChar(21)
+  message        String                  @db.VarChar(200)
+  created_at     DateTime?               @default(now()) @db.Timestamp(0)
+  updated_at     DateTime?               @default(now()) @db.Timestamp(0)
+  is_marked      notification_is_marked? @default(no)
+  status         notification_status?    @default(read_only)
+  event          event                   @relation(fields: [event_id], references: [id], onDelete: Cascade, map: "notification_ibfk_1")
+  user           user                    @relation(fields: [work_area_code], references: [work_area_code], onDelete: Cascade, map: "notification_ibfk_2")
 
   @@index([event_id], map: "event_id")
   @@index([work_area_code], map: "work_area_code")
@@ -434,4 +436,14 @@ enum approver_type {
   forth
   fifth
   final
+}
+
+enum notification_is_marked {
+  yes
+  no
+}
+
+enum notification_status {
+  action
+  read_only
 }
