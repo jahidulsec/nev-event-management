@@ -416,7 +416,7 @@ const EventBasicInformationSection = ({
 
       <View style={{ marginTop: 10 }}>
         <Table>
-          <View style={{ backgroundColor: color.muted }}>
+          <View fixed style={{ backgroundColor: color.muted }}>
             <TableRow>
               <TableHead style={{ flex: 1 }}>Approver</TableHead>
               <TableHead style={{ flex: 1 }}>Full Name</TableHead>

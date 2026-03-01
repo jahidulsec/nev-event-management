@@ -67,6 +67,7 @@ model event {
   event_attachment      event_attachment[]
   event_budget          event_budget[]
   event_consultant      event_consultant[]
+  notification          notification[]
 
   @@index([user_id], map: "user_id")
   @@index([type], map: "event_type_id")
@@ -121,7 +122,7 @@ model event_status_history {
   created_at        DateTime?                   @default(now()) @db.Timestamp(0)
   updated_at        DateTime?                   @default(now()) @db.Timestamp(0)
   remarks           String?                     @db.Text
-  event_approver    event_approver              @relation(fields: [event_approver_id], references: [id], onUpdate: Restrict, map: "event_status_history_ibfk_1")
+  event_approver    event_approver              @relation(fields: [event_approver_id], references: [id], onDelete: Cascade, map: "event_status_history_ibfk_1")
 
   @@index([event_approver_id], map: "event_approver_id")
 }
@@ -160,6 +161,7 @@ model user {
   flm            flm?
   franchise_head franchise_head?
   marketing      marketing?
+  notification   notification[]
   product_user   product_user[]
   slm            slm?
   user_details   user_details?
@@ -357,6 +359,20 @@ model honorarium_designation {
   @@index([tier_id], map: "tier_id")
 }
 
+model notification {
+  id             String    @id @default(nanoid()) @db.VarChar(21)
+  work_area_code String    @db.VarChar(8)
+  event_id       String    @db.VarChar(21)
+  message        String    @db.VarChar(200)
+  created_at     DateTime? @default(now()) @db.Timestamp(0)
+  updated_at     DateTime? @default(now()) @db.Timestamp(0)
+  event          event     @relation(fields: [event_id], references: [id], onDelete: Cascade, map: "notification_ibfk_1")
+  user           user      @relation(fields: [work_area_code], references: [work_area_code], onDelete: Cascade, map: "notification_ibfk_2")
+
+  @@index([event_id], map: "event_id")
+  @@index([work_area_code], map: "work_area_code")
+}
+
 enum event_approved_material {
   promotional
   non_branded
@@ -365,16 +381,6 @@ enum event_approved_material {
 enum event_venue_appropriateness {
   yes
   no
-}
-
-enum approver_type {
-  first
-  second
-  third
-  forth
-  fifth
-  final
-  budget
 }
 
 enum event_consultant_in_different_district {
@@ -418,4 +424,14 @@ enum event_current_status {
   rejected
   processing
   rework
+}
+
+enum approver_type {
+  first
+  second
+  third
+  budget
+  forth
+  fifth
+  final
 }
