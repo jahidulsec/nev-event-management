@@ -15,7 +15,6 @@ import { TableActionButton } from "@/components/shared/button/button";
 import { EventMultiProps } from "../lib/event";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "@bprogress/next";
-import { user_role } from "@/lib/generated/prisma";
 import { getCostLimitText } from "@/utils/helper";
 import { EventTypeMultiProps } from "../lib/type";
 import {

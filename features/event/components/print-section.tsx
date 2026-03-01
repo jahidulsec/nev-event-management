@@ -183,8 +183,8 @@ const EventBasicInformationSection = ({
           <FieldGroup>
             <Text
               style={{
-                fontSize: 14,
-                paddingVertical: 6,
+                fontSize: 10,
+                paddingVertical: 2,
                 textAlign: "center",
                 flex: 1,
                 borderLeft: 1,
@@ -231,12 +231,12 @@ const EventBasicInformationSection = ({
       </View>
 
       {/* budget */}
-      <View break>
+      <View style={{ marginTop: 10 }}>
         <Table>
           <TableRow style={{ backgroundColor: color.muted }}>
             <TableHead>Event Budget</TableHead>
           </TableRow>
-          <View style={{ backgroundColor: color.muted }}>
+          <View fixed style={{ backgroundColor: color.muted }}>
             <TableRow>
               <TableHead style={{ flex: 1 }}>Item</TableHead>
               <TableHead style={{ flex: 1 }}>Unit</TableHead>
@@ -290,6 +290,7 @@ const EventBasicInformationSection = ({
               </Text>
             )}
           </View>
+          
 
           {/* footer */}
           <View>
@@ -313,12 +314,12 @@ const EventBasicInformationSection = ({
       </View>
 
       {/* consultant */}
-      <View style={{ marginTop: 20 }}>
+      <View break style={{ marginTop: 10 }}>
         <Table>
           <TableRow style={{ backgroundColor: color.muted }}>
             <TableHead>External Consultant Engagement</TableHead>
           </TableRow>
-          <View style={{ backgroundColor: color.muted }}>
+          <View fixed style={{ backgroundColor: color.muted }}>
             <TableRow>
               <TableHead style={{ maxWidth: 50 }}>SL. no.</TableHead>
               <TableHead style={{ flex: 1 }}>
@@ -413,7 +414,7 @@ const EventBasicInformationSection = ({
         </Table>
       </View>
 
-      <View style={{ marginTop: 20 }}>
+      <View style={{ marginTop: 10 }}>
         <Table>
           <View style={{ backgroundColor: color.muted }}>
             <TableRow>
@@ -487,21 +488,22 @@ const CustomField = ({
       style={[
         {
           // flexDirection: "row",
-          gap: 0,
-          padding: 4,
+          // gap: 6,
+          paddingHorizontal: 4,
+          paddingVertical: 1,
           flexWrap: "wrap",
           borderLeft: 1,
-          minWidth: 170,
+          minWidth: 180,
         },
         style,
       ]}
     >
-      <Text style={{ fontSize: 10 }}>{name}</Text>
+      <Text style={{ fontSize: 9 }}>{name}</Text>
       <Text
         style={[
-          styles.fontSm,
           {
             fontWeight: "bold",
+            fontSize: 10
           },
         ]}
       >
@@ -531,7 +533,7 @@ const TableCell = ({ style, ...props }: React.ComponentProps<typeof Text>) => {
     <Text
       style={[
         {
-          fontSize: 10,
+          fontSize: 9,
           padding: 1,
           paddingHorizontal: 6,
           borderRight: 1,
@@ -564,7 +566,7 @@ const TableHead = ({ style, ...props }: React.ComponentProps<typeof Text>) => {
     <Text
       style={[
         {
-          fontSize: 10,
+          fontSize: 9,
           padding: 1,
           fontWeight: "bold",
           borderRight: 1,
@@ -616,13 +618,13 @@ const styles = StyleSheet.create({
     width: 120,
   },
   heading: {
-    fontSize: 14,
+    fontSize: 11,
     fontWeight: "bold",
     textAlign: "center",
   },
   headingContainer: { paddingBottom: 10 },
   fontSm: {
-    fontSize: 12,
+    fontSize: 10,
   },
 });
 
