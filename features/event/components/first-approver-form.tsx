@@ -12,7 +12,10 @@ import {
 } from "@/components/ui/field";
 import { formatNumber } from "@/utils/formatter";
 import { Controller, useForm } from "react-hook-form";
-import { EventFirstApprovalSchema, EventFirstApprovalType } from "../actions/schema";
+import {
+  EventFirstApprovalSchema,
+  EventFirstApprovalType,
+} from "../actions/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Select } from "@/components/shared/select/select";
 import { yesNoList } from "@/lib/data";
@@ -21,6 +24,7 @@ import { AuthUser, AuthUserRole } from "@/types/auth-user";
 import { createFirstApproverApproval } from "../actions/consultant-approval";
 import { toast } from "sonner";
 import { CustomField } from "@/components/shared/field/field";
+import { SectionContent } from "@/components/shared/section/section";
 
 export default function FirstApproverForm({
   eventData,
@@ -36,61 +40,63 @@ export default function FirstApproverForm({
   if (consultants.length === 0) return null;
 
   return (
-    <div className="max-w-4xl mx-auto w-full flex flex-col gap-6">
-      <h2 className="w-full text-2xl font-medium">Consultant Approval</h2>
-      <Separator />
+    <SectionContent className="border rounded-md p-6">
+      <div className="max-w-4xl mx-auto w-full flex flex-col gap-6">
+        <h2 className="w-full text-2xl font-medium">Consultant Approval</h2>
+        <Separator />
 
-      {consultants.map((item) => (
-        <div className="border p-3 rounded-md " key={item.id}>
-          <div className="grid grid-cols-1  sm:grid-cols-2 md:grid-cols-3 gap-3 gap-y-6">
-            <CustomField title="Doctor" value={item.doctor.full_name} />
-            <CustomField title="Degrees" value={item.doctor.degrees ?? "-"} />
-            <CustomField title="Speciality" value={item.doctor.speciality} />
-            <CustomField
-              title="Chamber ID"
-              value={item.doctor.dr_child_id ?? "-"}
-            />
-            <CustomField title="Role" value={item.role} />
-            <CustomField
-              title="Duration (hours)"
-              value={String(item.duration_h)}
-            />
-            <CustomField
-              title="Honorarium"
-              value={formatNumber(Number(item.honorarium)).toString()}
-            />
-            <CustomField
-              title="Different District?"
-              value={item.in_different_district ?? ""}
-            />
-            <CustomField title="Night Stay?" value={item.night_stay ?? ""} />
-          </div>
-          <Separator className="my-3" />
-
-          {eventData.event_type?.approver?.[0]?.user_type === role &&
-          !item.event_consultant_approval?.first_approver_id ? (
-            <ApprovalForm consultant_id={item.id} authUser={authUser} />
-          ) : (
-            <div className="grid grid-cols-2 gap-3">
+        {consultants.map((item) => (
+          <div className="border p-3 rounded-md " key={item.id}>
+            <div className="grid grid-cols-1  sm:grid-cols-2 md:grid-cols-3 gap-3 gap-y-6">
+              <CustomField title="Doctor" value={item.doctor.full_name} />
+              <CustomField title="Degrees" value={item.doctor.degrees ?? "-"} />
+              <CustomField title="Speciality" value={item.doctor.speciality} />
               <CustomField
-                title="Suitable for participants?"
-                value={
-                  item.event_consultant_approval?.is_suitable ??
-                  "Not approved yet"
-                }
+                title="Chamber ID"
+                value={item.doctor.dr_child_id ?? "-"}
+              />
+              <CustomField title="Role" value={item.role} />
+              <CustomField
+                title="Duration (hours)"
+                value={String(item.duration_h)}
               />
               <CustomField
-                title="Topic Expert?"
-                value={
-                  item.event_consultant_approval?.topic_expert ??
-                  "Not approved yet"
-                }
+                title="Honorarium"
+                value={formatNumber(Number(item.honorarium)).toString()}
               />
+              <CustomField
+                title="Different District?"
+                value={item.in_different_district ?? ""}
+              />
+              <CustomField title="Night Stay?" value={item.night_stay ?? ""} />
             </div>
-          )}
-        </div>
-      ))}
-    </div>
+            <Separator className="my-3" />
+
+            {eventData.event_type?.approver?.[0]?.user_type === role &&
+            !item.event_consultant_approval?.first_approver_id ? (
+              <ApprovalForm consultant_id={item.id} authUser={authUser} />
+            ) : (
+              <div className="grid grid-cols-2 gap-3">
+                <CustomField
+                  title="Suitable for participants?"
+                  value={
+                    item.event_consultant_approval?.is_suitable ??
+                    "Not approved yet"
+                  }
+                />
+                <CustomField
+                  title="Topic Expert?"
+                  value={
+                    item.event_consultant_approval?.topic_expert ??
+                    "Not approved yet"
+                  }
+                />
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </SectionContent>
   );
 }
 
@@ -165,5 +171,3 @@ const ApprovalForm = ({
     </Form>
   );
 };
-
-

@@ -62,13 +62,11 @@ const EventDetailsSection = async ({ params }: { params: Params }) => {
         <EventSection role={role as string} prevData={res.data} />
       </SectionContent>
 
-      <SectionContent className="border rounded-md p-6">
-        <FirstApproverForm
-          authUser={user as AuthUser}
-          role={role as string}
-          eventData={res.data}
-        />
-      </SectionContent>
+      <FirstApproverForm
+        authUser={user as AuthUser}
+        role={role as string}
+        eventData={res.data}
+      />
 
       {role === "ec" && (
         <SectionContent className="border rounded-md p-6">
@@ -83,13 +81,15 @@ const EventDetailsSection = async ({ params }: { params: Params }) => {
         </SectionContent>
       )}
 
-      <SectionContent className="border rounded-md p-6">
-        <div className="max-w-4xl mx-auto w-full flex flex-col gap-6">
-          <SectionHeading2>Event Coordinator Approval</SectionHeading2>
-          <Separator />
-          <ECApprovalForm authUser={user as AuthUser} eventData={res.data} />
-        </div>
-      </SectionContent>
+      {res.data.event_consultant.length !== 0 && (
+        <SectionContent className="border rounded-md p-6">
+          <div className="max-w-4xl mx-auto w-full flex flex-col gap-6">
+            <SectionHeading2>Event Coordinator Approval</SectionHeading2>
+            <Separator />
+            <ECApprovalForm authUser={user as AuthUser} eventData={res.data} />
+          </div>
+        </SectionContent>
+      )}
 
       {!["ao"].includes(role as string) && (
         <SectionContent className="border rounded-md">

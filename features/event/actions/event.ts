@@ -9,7 +9,7 @@ import fs from "fs/promises";
 import fs2 from "fs";
 import { deleteFile } from "@/utils/file";
 import { createNotification } from "@/features/notifications/actions/notification";
-import { getFirstApproverWorkArea } from "@/lib/helper";
+import { getApproverWorkArea } from "@/lib/helper";
 
 export const createEvent = async (data: EventType) => {
   const files: any[] = [];
@@ -113,9 +113,7 @@ export const createEvent = async (data: EventType) => {
     });
 
     // create notifications for first approver
-    const firstApproverWorkArea = getFirstApproverWorkArea(etype);
-
-    console.log(firstApproverWorkArea)
+    const firstApproverWorkArea = await getApproverWorkArea(etype, 0);
 
     await createNotification({
       work_area_code: firstApproverWorkArea ?? "",
@@ -412,24 +410,80 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
         event_approver: true,
         event_type: {
           select: {
-            approver: true,
+            approver: {
+              orderBy: {
+                created_at: "asc",
+              },
+            },
+          },
+        },
+        user: {
+          select: {
+            ao: true,
+          },
+        },
+        product: {
+          select: {
+            product_user: {
+              include: {
+                user: {
+                  select: {
+                    user_role: true,
+                  },
+                },
+              },
+            },
           },
         },
       },
     });
+
+    // get post approval information
+    const approvedApproverCount = event?.event_approver.length ?? 0;
+    const eventApproverCount = event?.event_type?.approver.length ?? 0;
+
+    const postApproverIndex =
+      approvedApproverCount < eventApproverCount
+        ? approvedApproverCount
+        : undefined;
+
+    // create notificaiton for post approver
+    if (postApproverIndex) {
+      const postApproverWorkArea = await getApproverWorkArea(
+        event as any,
+        postApproverIndex,
+      );
+
+      await createNotification({
+        work_area_code: postApproverWorkArea ?? "",
+        is_marked: "no",
+        event_id: data.event_id,
+        status: "action",
+        message: "You have a new event proposal approval request",
+      });
+    }
 
     // if approved by last approver, set event current status approver
     if (
       event?.event_approver.length === event?.event_type?.approver.length &&
       status === "approved"
     ) {
-      await db.event.update({
+      const event = await db.event.update({
         where: {
           id: data.event_id,
         },
         data: {
           current_status: "approved",
         },
+      });
+
+      // create notification for requestor
+      await createNotification({
+        work_area_code: event.user_id ?? "",
+        is_marked: "no",
+        event_id: event.id,
+        status: "read_only",
+        message: "Your event proposal has been approved",
       });
     }
 

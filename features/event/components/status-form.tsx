@@ -27,6 +27,7 @@ import {
 import { cn } from "@/lib/utils";
 import { ApproverTypeBadge } from "@/components/shared/badge/badge";
 import { Textarea } from "@/components/ui/textarea";
+import { getApproverWorkArea } from "@/lib/helper";
 
 export default function EventStatusUpdateForm({
   authUser,
@@ -81,7 +82,7 @@ export default function EventStatusUpdateForm({
     if (!data.remarks) {
       data.remarks = `${eventType}: ${data.status}`;
     } else {
-      data.remarks = `${eventType}: ${data.remarks}`
+      data.remarks = `${eventType}: ${data.remarks}`;
     }
 
     const res = await createEventStatus(data);

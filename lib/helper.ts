@@ -1,6 +1,9 @@
+"use server";
+
+import { db } from "@/config/db";
 import { Prisma } from "./generated/prisma";
 
-export const getFirstApproverWorkArea = (
+export const getApproverWorkArea = async (
   event: Prisma.eventGetPayload<{
     include: {
       event_type: {
@@ -32,8 +35,9 @@ export const getFirstApproverWorkArea = (
       };
     };
   }>,
+  index: number = 0,
 ) => {
-  const firstApproverRole = event.event_type?.approver?.[0].user_type;
+  const firstApproverRole = event.event_type?.approver?.[index].user_type;
   const productUser = event.product.product_user.find((i) =>
     i.user.user_role.some((r) => r.role === firstApproverRole),
   );
@@ -56,6 +60,20 @@ export const getFirstApproverWorkArea = (
     case "ec":
       firstApproverWorkArea = productUser?.work_area_code ?? "";
       break;
+  }
+
+  if (firstApproverRole === "director_sales") {
+    const director = await db.user.findFirst({
+      where: {
+        user_role: {
+          some: {
+            role: "director_sales",
+          },
+        },
+      },
+    });
+
+    firstApproverWorkArea = director?.work_area_code ?? "";
   }
 
   return firstApproverWorkArea;

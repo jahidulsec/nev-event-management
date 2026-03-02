@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { formatDateTime } from "@/utils/formatter";
 import { updateNotification } from "../../actions/notification";
+import Link from "next/link";
+import { useRouter } from "@bprogress/next";
 
 export default function NotificationList({
   data,
@@ -14,6 +16,9 @@ export default function NotificationList({
   data: NotificationMultiProps[];
 }) {
   const [pending, startTransition] = React.useTransition();
+  const [pending1, startTransition1] = React.useTransition();
+
+  const router = useRouter();
 
   return (
     <div className="flex flex-col gap-3">
@@ -61,6 +66,17 @@ export default function NotificationList({
                     className="text-primary"
                     variant={"ghost"}
                     size={"sm"}
+                    disabled={pending1}
+                    onClick={() => {
+                      startTransition1(async () => {
+                        await updateNotification(item.id, {
+                          is_marked: "yes",
+                        });
+                        router.push(
+                          `/dashboard/events/${item.event_id}/preview`,
+                        );
+                      });
+                    }}
                   >
                     Take Action
                   </Button>
