@@ -8,6 +8,8 @@ import { EventStatusSchemaType, EventTrackingType, EventType } from "./schema";
 import fs from "fs/promises";
 import fs2 from "fs";
 import { deleteFile } from "@/utils/file";
+import { createNotification } from "@/features/notifications/actions/notification";
+import { getFirstApproverWorkArea } from "@/lib/helper";
 
 export const createEvent = async (data: EventType) => {
   const files: any[] = [];
@@ -45,6 +47,35 @@ export const createEvent = async (data: EventType) => {
     }
 
     const etype = await db.event.create({
+      include: {
+        event_type: {
+          select: {
+            approver: {
+              orderBy: {
+                created_at: "asc",
+              },
+            },
+          },
+        },
+        user: {
+          select: {
+            ao: true,
+          },
+        },
+        product: {
+          select: {
+            product_user: {
+              include: {
+                user: {
+                  select: {
+                    user_role: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
       data: {
         ...rest,
         ...(eventBudget && {
@@ -71,6 +102,28 @@ export const createEvent = async (data: EventType) => {
 
     revalidatePath("/dashboard");
     revalidatePath("/dashboard/events");
+
+    // create notificaion for creator
+    await createNotification({
+      work_area_code: data.user_id,
+      is_marked: "yes",
+      event_id: etype.id,
+      status: "read_only",
+      message: "You created a new event proposal",
+    });
+
+    // create notifications for first approver
+    const firstApproverWorkArea = getFirstApproverWorkArea(etype);
+
+    console.log(firstApproverWorkArea)
+
+    await createNotification({
+      work_area_code: firstApproverWorkArea ?? "",
+      is_marked: "no",
+      event_id: etype.id,
+      status: "action",
+      message: "You have a new event proposal approval request",
+    });
 
     return response({
       success: true,
@@ -406,8 +459,8 @@ export const updateEventTrackingNumber = async (data: EventTrackingType) => {
       },
     });
 
-    revalidatePath('/dashboard/events')
-    revalidatePath('/dashboard/events/' + data.event_id + '/preview')
+    revalidatePath("/dashboard/events");
+    revalidatePath("/dashboard/events/" + data.event_id + "/preview");
 
     return apiResponse.single({
       message: "Add tracking number successfully",

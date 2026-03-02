@@ -11,6 +11,7 @@ import NotificationList from "@/features/notifications/components/shared/notific
 import { getNotifications } from "@/features/notifications/lib/notification";
 import { getAuthUser } from "@/lib/dal";
 import { AuthUser } from "@/types/auth-user";
+import Link from "next/link";
 
 export default async function DashboardHomePage() {
   const authUser = await getAuthUser();
@@ -25,8 +26,8 @@ export default async function DashboardHomePage() {
             <SectionHeading2 className="text-xl font-semibold text-primary w-fit">
               Recent Activities
             </SectionHeading2>
-            <Button className="text-secondary" variant={"link"}>
-              See all
+            <Button className="text-secondary" variant={"link"} asChild>
+              <Link href={"/dashboard/notifications"}>See all</Link>
             </Button>
           </SectionHeader>
           <SectionContent>
