@@ -78,22 +78,30 @@ export const getNotifications = async (query: NotificaitonQueryType) => {
   }
 };
 
-export const getNotificationStats = async (query: NotificaitonStatsQueryType) => {
+export const getNotificationStats = async (
+  query: NotificaitonStatsQueryType,
+) => {
   try {
-    const params = NotificaitonStatsQuery.parse(query)
+    const params = NotificaitonStatsQuery.parse(query);
 
-    const data = await db.notification.aggregate({
-      where: {
-        work_area_code: params.work_area_code
-      },
-      _count: {
-        is_marked: true,
-      },
-    });
+    const [total, marked] = await Promise.all([
+      db.notification.count({
+        where: { work_area_code: params.work_area_code },
+      }),
+      db.notification.count({
+        where: {
+          work_area_code: params.work_area_code,
+          is_marked: "yes",
+        },
+      }),
+    ]);
 
     return apiResponse.single({
       message: "get notification stats successful",
-      data: data,
+      data: {
+        total,
+        marked,
+      },
     });
   } catch (error) {
     console.error(error);

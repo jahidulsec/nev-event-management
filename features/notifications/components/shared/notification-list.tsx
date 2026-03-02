@@ -36,7 +36,7 @@ export default function NotificationList({
                     Mark as read
                   </Button>
                 )}
-                {item.status !== "action" && (
+                {item.status === "action" && (
                   <Button
                     className="text-primary"
                     variant={"ghost"}

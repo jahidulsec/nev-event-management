@@ -11,23 +11,30 @@ import {
 import { setDashboardRole } from "@/features/auth/actions/login";
 import { AuthUser } from "@/types/auth-user";
 import React from "react";
+import { toast } from "sonner";
 
-export default function RoleSelect({ user, role }: { user: AuthUser, role: string }) {
-
-    const handleRole = async(value: string) => {
-        const res = await setDashboardRole(value)
-    }
+export default function RoleSelect({
+  user,
+  role,
+}: {
+  user: AuthUser;
+  role: string;
+}) {
+  const handleRole = async (value: string) => {
+    const res = await setDashboardRole(value);
+    toast[res.success ? "success" : "info"](res.message);
+  };
 
   return (
     <Select defaultValue={role ?? user.role[0]} onValueChange={handleRole}>
-      <SelectTrigger className="w-[180px]">
+      <SelectTrigger className="w-full sm:w-45">
         <SelectValue placeholder="Role" />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
           {user.role.map((item) => (
             <SelectItem key={item} value={item}>
-              {item.replaceAll("_",' ')}
+              {item.replaceAll("_", " ")}
             </SelectItem>
           ))}
         </SelectGroup>

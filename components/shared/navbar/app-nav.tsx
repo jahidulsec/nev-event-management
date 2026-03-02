@@ -13,7 +13,7 @@ export default async function AppNav() {
   return (
     <header className="sticky top-0 z-10 h-16 flex items-center justify-between container mx-auto px-6 bg-background">
       {/* left */}
-      <NavTitle role={role} />
+      <NavTitle user={authUser as AuthUser} role={role} />
 
       {/* center */}
       <NavMenu role={role} />

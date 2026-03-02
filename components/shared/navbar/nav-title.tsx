@@ -5,7 +5,7 @@ import { TextAlignStart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { AuthUserRole } from "@/types/auth-user";
+import { AuthUser, AuthUserRole } from "@/types/auth-user";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -15,13 +15,21 @@ import {
 } from "@/components/ui/sheet";
 import { LogoFull } from "../logo/logo";
 import { navlist } from "@/lib/data";
+import { ProfileButton } from "../button/profile-button";
+import RoleSelect from "./role-select";
 
-export default function NavTitle({ role }: { role: AuthUserRole }) {
+export default function NavTitle({
+  role,
+  user,
+}: {
+  role: AuthUserRole;
+  user: AuthUser;
+}) {
   const [open, setOpen] = React.useState(false);
   const pathname = usePathname();
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center">
       <Button
         size={"icon"}
         variant={"ghost"}
@@ -63,6 +71,9 @@ export default function NavTitle({ role }: { role: AuthUserRole }) {
               ))}
             </ul>
           </nav>
+          <div className="flex sm:hidden p-6">
+            <RoleSelect role={role} user={user} />
+          </div>
         </SheetContent>
       </Sheet>
     </div>

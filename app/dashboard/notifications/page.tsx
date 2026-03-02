@@ -8,7 +8,6 @@ import {
   SectionHeader,
 } from "@/components/shared/section/section";
 import { TableSkeleton } from "@/components/shared/skeleton/table";
-import { CommingSoon } from "@/components/shared/state/state";
 import {
   SectionHeading,
   SectionHeadingIcon,
@@ -17,10 +16,9 @@ import NotificationList from "@/features/notifications/components/shared/notific
 import { getNotifications } from "@/features/notifications/lib/notification";
 import { getAuthUser } from "@/lib/dal";
 import { SearchParams } from "@/types/search-params";
-import { getPageData } from "@/utils/helper";
 import { DEFAULT_PAGE_SIZE } from "@/utils/settings";
 import { Bell } from "lucide-react";
-import React, { Suspense } from "react";
+import { Suspense } from "react";
 
 export default function NotificationsPage({
   searchParams,
@@ -53,20 +51,19 @@ export default function NotificationsPage({
   );
 }
 
-
 const TableSection = async ({
   searchParams,
 }: {
   searchParams: SearchParams;
 }) => {
   const { page, size, search } = await searchParams;
-  const user = await getAuthUser()
+  const user = await getAuthUser();
 
   const res = await getNotifications({
     page: Number(page || 1),
     size: Number(size || DEFAULT_PAGE_SIZE),
     search: search?.toString().trim(),
-    work_area_code: user?.workAreaCode
+    work_area_code: user?.workAreaCode,
   });
 
   return (

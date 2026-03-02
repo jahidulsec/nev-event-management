@@ -13,7 +13,7 @@ export default function NavUser({
   role: string;
 }) {
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-1">
       <Button
         variant={"outline"}
         size={"icon"}
@@ -24,9 +24,9 @@ export default function NavUser({
           <Bell /> <span className="sr-only">Notifications</span>
         </Link>
       </Button>
-      <div className="flex items-center gap-3">
+      <ProfileButton user={user} />
+      <div className="hidden md:flex">
         <RoleSelect role={role} user={user} />
-        <ProfileButton user={user} />
       </div>
     </div>
   );
