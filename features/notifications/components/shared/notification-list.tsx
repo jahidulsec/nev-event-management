@@ -28,8 +28,8 @@ export default function NotificationList({
         data.map((item) => (
           <article
             className={cn(
-              "border rounded-md p-3",
-              item.is_marked === "no" ? "bg-muted/35" : "",
+              "border rounded-md p-3 hover:border-secondary transition-colors duration-300",
+              item.is_marked === "no" ? "bg-muted/50" : "",
             )}
             key={item.id}
           >
