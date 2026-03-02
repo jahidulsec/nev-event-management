@@ -10,6 +10,8 @@ export const NotificationSchema = z.object({
   status: z.enum(["action", "read_only"]).optional(),
 });
 
+export const UpdateNotificationSchema = NotificationSchema.omit({}).partial();
+
 export const NotificaitonQuerySchema = QuerySchema.extend({
   work_area_code: z.string().optional(),
 });
@@ -19,5 +21,6 @@ export const NotificaitonStatsQuery = z.object({
 });
 
 export type NotificationType = z.infer<typeof NotificationSchema>;
+export type UpdateNotificationType = z.infer<typeof UpdateNotificationSchema>;
 export type NotificaitonQueryType = z.infer<typeof NotificaitonQuerySchema>;
 export type NotificaitonStatsQueryType = z.infer<typeof NotificaitonStatsQuery>;
