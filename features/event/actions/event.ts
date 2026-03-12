@@ -477,6 +477,17 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
         },
       });
 
+      // get suserpadmin
+      const admins = await db.user.findMany({
+        where: {
+          user_role: {
+            some: {
+              role: "superadmin",
+            },
+          },
+        },
+      });
+
       // create notification for requestor
       await createNotification({
         work_area_code: event.user_id ?? "",
@@ -485,6 +496,16 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
         status: "read_only",
         message: "Your event proposal has been approved",
       });
+
+      for (const i of admins) {
+        await createNotification({
+          work_area_code: i.work_area_code ?? "",
+          is_marked: "no",
+          event_id: event.id,
+          status: "read_only",
+          message: "Event proposal has been approved",
+        });
+      }
     }
 
     revalidatePath("/dashboard");
