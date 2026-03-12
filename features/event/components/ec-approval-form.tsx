@@ -157,7 +157,7 @@ const ApprovalForm = ({
       </FieldGroup>
 
       <FormButton className="max-w-sm" isPending={form.formState.isSubmitting}>
-        Submit
+        Check
       </FormButton>
     </Form>
   );

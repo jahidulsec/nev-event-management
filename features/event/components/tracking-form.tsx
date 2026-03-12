@@ -58,7 +58,7 @@ export default function TrackingEventForm({
       </FieldGroup>
 
       <FormButton className="max-w-sm" isPending={form.formState.isSubmitting}>
-        Submit
+        Save
       </FormButton>
     </Form>
   );
