@@ -15,6 +15,12 @@ export type NotificationMultiProps = Prisma.notificationGetPayload<{
     event: {
       select: {
         title: true;
+        product: {
+          select: {
+            name: true;
+          };
+        };
+        type: true;
       };
     };
   };
@@ -53,6 +59,12 @@ export const getNotifications = async (query: NotificaitonQueryType) => {
           event: {
             select: {
               title: true,
+              product: {
+                select: {
+                  name: true,
+                },
+              },
+              type: true,
             },
           },
         },

@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { formatDateTime } from "@/utils/formatter";
 import { updateNotification } from "../../actions/notification";
-import Link from "next/link";
 import { useRouter } from "@bprogress/next";
 
 export default function NotificationList({
@@ -36,6 +35,7 @@ export default function NotificationList({
             <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-3">
               <div className="">
                 <p>
+                  {item.event.product.name}, {item.event.type}, {" "}
                   <strong>{item.event.title}</strong>: {item.message}
                 </p>
                 {item.created_at && (

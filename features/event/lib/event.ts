@@ -9,9 +9,6 @@ import { getSerializeData } from "@/utils/helper";
 
 export type EventMultiProps = Prisma.eventGetPayload<{
   include: {
-    event_attachment: true;
-    event_budget: true;
-    event_consultant: true;
     event_type: {
       include: {
         approver: {
@@ -26,7 +23,7 @@ export type EventMultiProps = Prisma.eventGetPayload<{
         user_details: true;
       };
     };
-    product: true;
+    // product: true;
     event_approver: {
       include: {
         event_status_history: true;
@@ -171,11 +168,8 @@ const getMulti = async (query: EventQueryType) => {
     const [data, count] = await Promise.all([
       db.event.findMany({
         include: {
-          event_attachment: true,
-          event_budget: true,
-          event_consultant: true,
           user: { include: { user_details: true } },
-          product: true,
+          // product: true,
           event_type: {
             include: {
               approver: {

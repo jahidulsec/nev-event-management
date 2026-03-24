@@ -21,7 +21,7 @@ import { Step, StepContainer } from "@/components/shared/progress/step";
 export default async function EventDetailsPage({ params }: { params: Params }) {
   const dashboardRole = await getDashboardRole();
 
-  if (dashboardRole !== "ec") return notFound();
+  if (dashboardRole !== "ec" && dashboardRole !== 'superadmin') return notFound();
 
   return (
     <Section>

@@ -494,7 +494,7 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
         is_marked: "no",
         event_id: event.id,
         status: "read_only",
-        message: "Your event proposal has been approved",
+        message: "Approved",
       });
 
       for (const i of admins) {
