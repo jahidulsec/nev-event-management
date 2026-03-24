@@ -115,12 +115,6 @@ export const EventSchema = z.object({
   institute: z
     .string("Enter event institute name")
     .min(3, "Institute name must be more than 2 characters"),
-  // institute_code: z
-  //   .string("Enter institute code")
-  //   .min(3, "Institute code must be more than 2 characters"),
-  // institute_area: z
-  //   .string("Enter institute area")
-  //   .min(3, "Institute area must be more than 2 characters"),
   institute_unit: z
     .string("Enter institute unit")
     .min(3, "Institute unit must be more than 2 characters"),
@@ -154,6 +148,7 @@ export const EventSchema = z.object({
 export const EventQuerySchema = QuerySchema.extend({
   work_area_code: z.string().optional(),
   role: userRoleSchema.optional(),
+  status: z.enum(["approved", "rejected", "processing"]).optional(),
 });
 
 export const EventStatusSchema = z.object({
@@ -197,7 +192,7 @@ export type EventFirstApprovalType = z.infer<typeof EventFirstApprovalSchema>;
 export type EventECApprovalType = z.infer<typeof EventECApprovalSchema>;
 
 export const EventTrackingSchema = z.object({
-  event_id: z.string('enter event id'),
+  event_id: z.string("enter event id"),
   track_no: z.string("Add a tracking no").min(2, "At least 2 characters"),
 });
 

@@ -162,6 +162,10 @@ const getMulti = async (query: EventQueryType) => {
           },
           // current_status: "approved",
         }),
+
+      ...(params.status && {
+        current_status: params.status,
+      }),
     };
 
     const [data, count] = await Promise.all([

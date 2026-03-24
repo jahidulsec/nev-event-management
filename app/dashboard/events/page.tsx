@@ -12,11 +12,9 @@ import {
   SectionHeading,
   SectionHeadingIcon,
 } from "@/components/shared/typography/heading";
-import { db } from "@/config/db";
 import CreateEventButton from "@/features/event/components/create-button";
 import EventTable from "@/features/event/components/table";
 import { getEvents } from "@/features/event/lib/event";
-import { getEventTypes } from "@/features/event/lib/type";
 import { getAuthUser, getDashboardRole } from "@/lib/dal";
 import { AuthUser } from "@/types/auth-user";
 import { SearchParams } from "@/types/search-params";
@@ -36,31 +34,29 @@ export default async function EventsPage({
   const user = await getAuthUser();
 
   return (
-    <>
-      <Section>
-        <SectionHeader>
-          <SectionHeading>
-            {pageData && (
-              <SectionHeadingIcon>
-                <pageData.icon />
-              </SectionHeadingIcon>
-            )}
-            {pageTitle}
-          </SectionHeading>
+    <Section>
+      <SectionHeader>
+        <SectionHeading>
+          {pageData && (
+            <SectionHeadingIcon>
+              <pageData.icon />
+            </SectionHeadingIcon>
+          )}
+          {pageTitle}
+        </SectionHeading>
 
-          <SectionActions>
-            <SearchForm />
-            {user?.role.includes("ao") && <CreateEventButton />}
-          </SectionActions>
-        </SectionHeader>
+        <SectionActions>
+          <SearchForm />
+          {user?.role.includes("ao") && <CreateEventButton />}
+        </SectionActions>
+      </SectionHeader>
 
-        <SectionContent>
-          <Suspense fallback={<TableSkeleton />}>
-            <TableSection searchParams={searchParams} />
-          </Suspense>
-        </SectionContent>
-      </Section>
-    </>
+      <SectionContent>
+        <Suspense fallback={<TableSkeleton />}>
+          <TableSection searchParams={searchParams} />
+        </Suspense>
+      </SectionContent>
+    </Section>
   );
 }
 
@@ -82,6 +78,9 @@ const TableSection = async ({
     search: search?.toString().trim(),
     work_area_code: authUser?.workAreaCode,
     role: dashboardRole as any,
+    status: ["ec", "superadmin"].includes(dashboardRole ?? "")
+      ? undefined
+      : "processing",
   });
 
   return (
