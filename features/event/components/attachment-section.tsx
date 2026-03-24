@@ -39,22 +39,6 @@ export default function AttachmentSection({
         <div className="flex flex-col gap-1 w-full">
           <h4 className="w-full text-2xl font-medium">Event Attachements</h4>
         </div>
-
-        {isCreator && (
-          <Button
-            variant={"outline"}
-            type="button"
-            onClick={() =>
-              append({
-                document_title: "",
-                file: undefined as any,
-              })
-            }
-          >
-            <PlusCircle />
-            Add
-          </Button>
-        )}
       </div>
 
       {fields.length > 0 ? (
@@ -144,6 +128,23 @@ export default function AttachmentSection({
             )}
           </EmptyHeader>
         </Empty>
+      )}
+
+      {isCreator && (
+        <Button
+          variant={"outline"}
+          type="button"
+          className="text-primary"
+          onClick={() =>
+            append({
+              document_title: "",
+              file: undefined as any,
+            })
+          }
+        >
+          <PlusCircle />
+          Add
+        </Button>
       )}
     </>
   );

@@ -116,27 +116,6 @@ export default function ConsultantSection({
             </strong>
           </p>
         </div>
-
-        {isCreator && (
-          <Button
-            variant={"outline"}
-            type="button"
-            onClick={() =>
-              append({
-                doctor_id: "",
-                role: "",
-                duration_h: 1,
-                honorarium: 0,
-                in_different_district: "no",
-                night_stay: "no",
-                tier_id: "",
-              })
-            }
-          >
-            <PlusCircle />
-            Add
-          </Button>
-        )}
       </div>
 
       {fields.length > 0 ? (
@@ -381,6 +360,28 @@ export default function ConsultantSection({
             )}
           </EmptyHeader>
         </Empty>
+      )}
+
+      {isCreator && (
+        <Button
+          variant={"outline"}
+          type="button"
+          className="text-primary"
+          onClick={() =>
+            append({
+              doctor_id: "",
+              role: "",
+              duration_h: 1,
+              honorarium: 0,
+              in_different_district: "no",
+              night_stay: "no",
+              tier_id: "",
+            })
+          }
+        >
+          <PlusCircle />
+          Add
+        </Button>
       )}
     </>
   );

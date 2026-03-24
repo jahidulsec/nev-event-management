@@ -67,22 +67,6 @@ export const EventBudgetSection = ({
             </strong>
           </p>
         </div>
-        {isCreator && (
-          <Button
-            variant={"outline"}
-            type="button"
-            onClick={() =>
-              append({
-                item: "",
-                unit: 1,
-                unit_cost: 1,
-              })
-            }
-          >
-            <PlusCircle />
-            Add
-          </Button>
-        )}
       </div>
 
       {fields.length > 0 ? (
@@ -183,6 +167,24 @@ export const EventBudgetSection = ({
             )}
           </EmptyHeader>
         </Empty>
+      )}
+
+      {isCreator && (
+        <Button
+          variant={"outline"}
+          type="button"
+          className="text-primary"
+          onClick={() =>
+            append({
+              item: "",
+              unit: 1,
+              unit_cost: 1,
+            })
+          }
+        >
+          <PlusCircle />
+          Add
+        </Button>
       )}
     </>
   );

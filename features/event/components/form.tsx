@@ -31,6 +31,7 @@ import { useRouter } from "@bprogress/next";
 import { calculateEventBudget, findEventTypeByCost } from "@/utils/helper";
 import { EventTypeMultiProps } from "../lib/type";
 import { DatePickerTime } from "@/components/shared/date-picker/date-time-picker";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function EventForm({
   prevData,
@@ -609,7 +610,7 @@ export default function EventForm({
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor={field.name}>Details Participants</FieldLabel>
-              <Input
+              <Textarea
                 {...field}
                 id={field.name}
                 aria-invalid={fieldState.invalid}
