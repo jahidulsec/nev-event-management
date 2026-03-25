@@ -56,7 +56,7 @@ export default function PrintSection({
             let convertedImage: string = "";
 
             if (item.file_path.split(".").pop() !== "pdf") {
-              convertedImage = item.file_path;
+              convertedImage = `/api/files/?file_path=${item.file_path}`;
             } else {
               try {
                 convertedImage = await convertPdfToImage(
