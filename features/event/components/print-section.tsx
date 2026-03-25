@@ -55,13 +55,17 @@ export default function PrintSection({
           attachments.map(async (item) => {
             let convertedImage: string = "";
 
-            try {
-              convertedImage = await convertPdfToImage(
-                `/api/files/?file_path=${item.file_path}`,
-                1,
-              );
-            } catch (error) {
-              console.error(error);
+            if (item.file_path.split(".").pop() !== "pdf") {
+              convertedImage = item.file_path;
+            } else {
+              try {
+                convertedImage = await convertPdfToImage(
+                  `/api/files/?file_path=${item.file_path}`,
+                  1,
+                );
+              } catch (error) {
+                console.error(error);
+              }
             }
 
             if (!convertedImage) return;
