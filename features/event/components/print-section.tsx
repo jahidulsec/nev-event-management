@@ -14,6 +14,7 @@ import {
 } from "@react-pdf/renderer";
 import { formatDate, formatDateTime, formatNumber } from "@/utils/formatter";
 import { EventApproverMultProps } from "../lib/event-approver";
+import { convertPdfToImage } from "@/lib/pdf";
 
 Font.register({
   family: "Roboto",
@@ -31,6 +32,8 @@ export default function PrintSection({
   eventData: EventSingleProps;
   eventApprover: EventApproverMultProps[];
 }) {
+  const attachments = eventData.event_attachment;
+
   return (
     <PDFViewer className="w-full min-h-svh">
       <Document>
@@ -47,6 +50,28 @@ export default function PrintSection({
             data={eventData}
           />
         </Page>
+
+        {attachments.length > 0 &&
+          attachments.map(async (item) => {
+            let convertedImage: string = "";
+
+            try {
+              convertedImage = await convertPdfToImage(
+                `/api/files/?file_path=${item.file_path}`,
+                1,
+              );
+            } catch (error) {
+              console.error(error);
+            }
+
+            if (!convertedImage) return;
+
+            return (
+              <Page size={"A4"} key={item.id}>
+                <Image src={convertedImage} />
+              </Page>
+            );
+          })}
       </Document>
     </PDFViewer>
   );
@@ -290,7 +315,6 @@ const EventBasicInformationSection = ({
               </Text>
             )}
           </View>
-          
 
           {/* footer */}
           <View>
@@ -503,7 +527,7 @@ const CustomField = ({
         style={[
           {
             fontWeight: "bold",
-            fontSize: 10
+            fontSize: 10,
           },
         ]}
       >

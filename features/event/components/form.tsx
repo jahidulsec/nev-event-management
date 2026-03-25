@@ -657,7 +657,8 @@ const objectiveList = [
 const eventTypeList = [
   "Non-paid Promotional",
   "Paid Promotional",
-  "Medical",
+  "Non-paid Medical",
+  "Paid Medical",
   "Special",
   "Other",
 ];
