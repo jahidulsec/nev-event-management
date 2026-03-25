@@ -381,27 +381,6 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
       },
     });
 
-    // if event rejected, update event current status
-    if (status === "rejected") {
-      await db.event.update({
-        where: {
-          id: data.event_id,
-        },
-        data: {
-          current_status: "rejected",
-        },
-      });
-    } else if (status === "rework") {
-      await db.event.update({
-        where: {
-          id: data.event_id,
-        },
-        data: {
-          current_status: "rework",
-        },
-      });
-    }
-
     const event = await db.event.findUnique({
       where: {
         id: data.event_id,
@@ -437,6 +416,36 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
         },
       },
     });
+
+    // if event rejected, update event current status
+    if (status === "rejected") {
+      await db.event.update({
+        where: {
+          id: data.event_id,
+        },
+        data: {
+          current_status: "rejected",
+        },
+      });
+
+      // create notification for requestor
+      await createNotification({
+        work_area_code: event?.user_id ?? "",
+        is_marked: "no",
+        event_id: event?.id ?? '',
+        status: "read_only",
+        message: "Rejected",
+      });
+    } else if (status === "rework") {
+      await db.event.update({
+        where: {
+          id: data.event_id,
+        },
+        data: {
+          current_status: "rework",
+        },
+      });
+    }
 
     // get post approval information
     const approvedApproverCount = event?.event_approver.length ?? 0;
