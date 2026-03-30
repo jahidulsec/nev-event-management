@@ -116,7 +116,7 @@ export default function EventSection({
           value={prevData?.institute}
         />
         <FieldGroup className="flex-row">
-          <CustomField title="Unit" value={prevData?.institute_unit} />
+          <CustomField title="Unit" value={prevData?.institute_unit ?? "-"} />
           <CustomField
             title="Department/Speciality"
             value={prevData?.institute_dept}
@@ -145,7 +145,7 @@ export default function EventSection({
       <Separator />
 
       {/* participation details */}
-      <FieldContainer className="border p-6 rounded-md">
+      <Card>
         <h4 className="font-semibold">Participants</h4>
         <Table className="border">
           <TableHeader className="bg-muted/35">
@@ -184,10 +184,10 @@ export default function EventSection({
           title="Participants Details"
           value={prevData.details_participants ?? "-"}
         />
-      </FieldContainer>
+      </Card>
 
       {/* Event Budget section */}
-      <FieldContainer className="border p-6 rounded-md">
+      <Card>
         <h4 className="font-semibold">Budgets</h4>
         <Table className="border">
           <TableHeader className="bg-muted/35">
@@ -237,10 +237,10 @@ export default function EventSection({
             </TableFooter>
           )}
         </Table>
-      </FieldContainer>
+      </Card>
 
       {/* Event Consultant section */}
-      <FieldContainer className="border p-6 rounded-md">
+      <Card>
         <h4 className="font-semibold">Consultants</h4>
         <Table className="border">
           <TableHeader className="bg-muted/35">
@@ -288,10 +288,10 @@ export default function EventSection({
             </TableFooter>
           )}
         </Table>
-      </FieldContainer>
+      </Card>
 
       {/* attachement section */}
-      <FieldContainer className="border p-6 rounded-md gap-3">
+      <Card className="gap-3">
         <h4 className="font-semibold">Attachments</h4>
         {prevData.event_attachment.length > 0 ? (
           prevData.event_attachment.map((item) => (
@@ -310,7 +310,7 @@ export default function EventSection({
         ) : (
           <NoData />
         )}
-      </FieldContainer>
+      </Card>
     </div>
   );
 }
@@ -331,4 +331,16 @@ const FieldContainer = ({
   ...props
 }: React.ComponentProps<"div">) => {
   return <div {...props} className={cn("flex flex-col gap-6", className)} />;
+};
+
+const Card = ({ className, ...props }: React.ComponentProps<"div">) => {
+  return (
+    <div
+      {...props}
+      className={cn(
+        "flex flex-col gap-6 border rounded-md border-primary/50 p-6",
+        className,
+      )}
+    />
+  );
 };

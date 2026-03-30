@@ -60,7 +60,7 @@ const SectionHeading2 = ({
   ...props
 }: React.ComponentProps<"h2">) => {
   return (
-    <h2 className={cn("w-full text-2xl font-medium", className)} {...props} />
+    <h2 className={cn("w-full text-2xl font-medium text-secondary", className)} {...props} />
   );
 };
 

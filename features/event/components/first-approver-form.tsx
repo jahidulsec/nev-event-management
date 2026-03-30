@@ -25,6 +25,7 @@ import { createFirstApproverApproval } from "../actions/consultant-approval";
 import { toast } from "sonner";
 import { CustomField } from "@/components/shared/field/field";
 import { SectionContent } from "@/components/shared/section/section";
+import { SectionHeading2 } from "@/components/shared/typography/heading";
 
 export default function FirstApproverForm({
   eventData,
@@ -42,11 +43,11 @@ export default function FirstApproverForm({
   return (
     <SectionContent className="border rounded-md p-6">
       <div className="max-w-4xl mx-auto w-full flex flex-col gap-6">
-        <h2 className="w-full text-2xl font-medium">Consultant Approval</h2>
+        <SectionHeading2>Consultant Approval</SectionHeading2>
         <Separator />
 
         {consultants.map((item) => (
-          <div className="border p-3 rounded-md " key={item.id}>
+          <div className="border p-3 rounded-md border-primary/50" key={item.id}>
             <div className="grid grid-cols-1  sm:grid-cols-2 md:grid-cols-3 gap-3 gap-y-6">
               <CustomField title="Doctor" value={item.doctor.full_name} />
               <CustomField title="Degrees" value={item.doctor.degrees ?? "-"} />

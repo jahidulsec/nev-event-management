@@ -36,7 +36,7 @@ export default function ECApprovalForm({
     <div className="flex flex-col gap-6">
       {consultants.map((item) => (
         <div
-          className="border rounded-md p-3 flex flex-col gap-3"
+          className="border rounded-md p-3 flex flex-col gap-3 border-primary/50"
           key={item.id}
         >
           <CustomField title="Doctor" value={item.doctor.full_name} />
