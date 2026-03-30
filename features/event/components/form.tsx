@@ -61,7 +61,7 @@ export default function EventForm({
       venue_appropriateness: prevData?.venue_appropriateness,
       institute: prevData?.institute,
       institute_dept: prevData?.institute_dept,
-      institute_unit: prevData?.institute_unit,
+      institute_unit: prevData?.institute_unit ?? undefined,
       objective: prevData?.objective,
       type: prevData?.type,
       approved_material: prevData?.approved_material,

@@ -44,7 +44,7 @@ model event {
   venue                 String                      @db.VarChar(255)
   food_supplier         String                      @db.VarChar(200)
   institute             String                      @db.VarChar(150)
-  institute_unit        String                      @db.VarChar(50)
+  institute_unit        String?                     @db.VarChar(50)
   institute_dept        String                      @db.VarChar(25)
   objective             String                      @db.VarChar(150)
   type                  String                      @db.VarChar(100)

@@ -115,9 +115,7 @@ export const EventSchema = z.object({
   institute: z
     .string("Enter event institute name")
     .min(3, "Institute name must be more than 2 characters"),
-  institute_unit: z
-    .string("Enter institute unit")
-    .min(3, "Institute unit must be more than 2 characters"),
+  institute_unit: z.string("Enter institute unit").optional(),
   institute_dept: z
     .string("Enter institute dept")
     .min(3, "Institute dept must be more than 2 characters"),
