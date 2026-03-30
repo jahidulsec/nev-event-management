@@ -85,6 +85,9 @@ export const EventBudgetSection = ({
                       data={budgetType.map((item) => ({
                         label: item,
                         value: item,
+                        disabled: eventBudget.some(
+                          (value) => value.item === item,
+                        ),
                       }))}
                       id={field.name}
                       placeholder="Item"

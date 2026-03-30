@@ -28,7 +28,7 @@ const Select = ({
   className?: string;
   placeholder?: string;
   id?: string;
-  data: { label: string; value: string }[];
+  data: { label: string; value: string; disabled?: boolean }[];
   paramsName?: string;
   pending?: boolean;
 }) => {
@@ -62,7 +62,11 @@ const Select = ({
         <SelectGroup>
           {data.length > 0 ? (
             data.map((item) => (
-              <SelectItem key={item.value} value={item.value}>
+              <SelectItem
+                disabled={item.disabled}
+                key={item.value}
+                value={item.value}
+              >
                 {item.label}
               </SelectItem>
             ))
