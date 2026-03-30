@@ -137,9 +137,9 @@ export default function ConsultantSection({
                       placeholder="Select a doctor"
                       onValueChange={(value) => {
                         field.onChange(value);
-                        console.log(value);
                       }}
                       defaultValue={eventConsultant[index].doctor_id}
+                      disabledKeys={eventConsultant.map(i => i.doctor_id)}
                     />
 
                     {fieldState.error?.message && (

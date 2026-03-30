@@ -39,6 +39,7 @@ interface AsyncComboboxProps<T> {
   defaultValue?: string;
   getLabel: (item: T) => string;
   getKey: (item: T) => React.Key;
+  disabledKeys?: string[];
 }
 
 export default function Combobox<T>({
@@ -48,6 +49,7 @@ export default function Combobox<T>({
   getLabel,
   placeholder = "Select an option",
   defaultValue,
+  disabledKeys,
 }: AsyncComboboxProps<T>) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState(defaultValue ?? "");
@@ -101,11 +103,12 @@ export default function Combobox<T>({
             <CommandGroup heading="Suggestions">
               {data.map((item) => (
                 <CommandItem
+                  disabled={disabledKeys?.some((key) => getKey(item) === key)}
                   onSelect={(value) => {
                     setValue(value);
                     setSelect(item);
                     onValueChange?.(value);
-                    setOpen(false)
+                    setOpen(false);
                   }}
                   key={getKey(item)}
                   value={getKey(item) as string}
