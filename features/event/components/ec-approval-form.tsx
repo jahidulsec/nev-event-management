@@ -35,12 +35,15 @@ export default function ECApprovalForm({
   return (
     <div className="flex flex-col gap-6">
       {consultants.map((item) => (
-        <div className="border rounded-md p-3" key={item.id}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <CustomField title="Doctor" value={item.doctor.full_name} />
-            <Separator />
-
-            {authUser.role.includes("ec") && !!!item.event_consultant_approval?.ec_id ? (
+        <div
+          className="border rounded-md p-3 flex flex-col gap-3"
+          key={item.id}
+        >
+          <CustomField title="Doctor" value={item.doctor.full_name} />
+          <Separator />
+          <div className="">
+            {authUser.role.includes("ec") &&
+            !!!item.event_consultant_approval?.ec_id ? (
               <ApprovalForm authUser={authUser} consultant_id={item.id} />
             ) : (
               <div className="flex flex-wrap sm:flex-nowrap gap-3">
@@ -90,7 +93,6 @@ const ApprovalForm = ({
   });
 
   const onSubmit = async (data: EventECApprovalType) => {
-    console.log(data);
     const res = await createECapproval(data);
 
     toast[res.success ? "success" : "error"](res.message);
@@ -100,7 +102,7 @@ const ApprovalForm = ({
       onSubmit={form.handleSubmit(onSubmit)}
       className="gap-3 w-full max-w-4xl"
     >
-      <FieldGroup className="flex-row">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
         <Controller
           control={form.control}
           name="consultant_form_attached"
@@ -141,7 +143,7 @@ const ApprovalForm = ({
           name="nth_engagement"
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Honorarium Check?</FieldLabel>
+              <FieldLabel htmlFor={field.name}>nTh Engagement?</FieldLabel>
               <Input
                 type="number"
                 {...field}
@@ -154,7 +156,7 @@ const ApprovalForm = ({
             </Field>
           )}
         />
-      </FieldGroup>
+      </div>
 
       <FormButton className="max-w-sm" isPending={form.formState.isSubmitting}>
         Check

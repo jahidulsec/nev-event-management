@@ -36,6 +36,13 @@ export default function TrackingEventForm({
     toast[res.success ? "success" : "error"](res.message);
   };
 
+  if(trackingNo) return <div className="max-w-4xl">
+    <FieldGroup className="gap-3">
+      <FieldLabel>Tracking No.</FieldLabel>
+      <Input value={trackingNo} />
+    </FieldGroup>
+  </div>
+
   return (
     <Form className="max-w-4xl" onSubmit={form.handleSubmit(onSubmit)}>
       <FieldGroup>

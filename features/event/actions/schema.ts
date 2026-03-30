@@ -181,7 +181,7 @@ export const EventECApprovalSchema = z.object({
   consultant_id: z.string(),
   hororarium_check: yesNoEnum,
   consultant_form_attached: yesNoEnum,
-  nth_engagement: z.number().positive(),
+  nth_engagement: z.number("Enter a positive number").positive(),
   ec_id: z.string(),
 });
 
