@@ -1,5 +1,3 @@
-"use server";
-
 import { EmailService } from "@/lib/email";
 import z from "zod";
 
@@ -27,11 +25,15 @@ const emailService = new EmailService()
   .setAuth(getEnv("EMAIL_USER"), getEnv("EMAIL_PASSWORD"))
   .setHost(getEnv("EMAIL_HOST"))
   .setPort(Number(getEnv("EMAIL_PORT")))
-  .setSecureMethod(process.env.EMAIL_SECURE === "true") // more standard than "1"
+  .setSecureMethod(process.env.EMAIL_SECURE === "1") // more standard than "1"
   .build();
 
 const sendEmail = async (data: EmailSendSchemaType) => {
-  const info = await emailService.sendMail(data);
+  const { to, ...rest } = data;
+  const info = await emailService.sendMail({
+    to: to.join(', '),
+    ...rest,
+  });
 
   return info;
 };
