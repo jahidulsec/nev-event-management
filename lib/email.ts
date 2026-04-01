@@ -39,6 +39,11 @@ export class EmailService {
         user: this._user,
         pass: this._password,
       },
+      ...(!this._secure && {
+        tls: {
+          rejectUnauthorized: false,
+        },
+      }),
     });
   }
 }
