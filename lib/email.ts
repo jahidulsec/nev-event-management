@@ -35,10 +35,10 @@ export class EmailService {
       host: this._host,
       port: this._port,
       secure: this._secure,
-      // auth: {
-      //   user: this._user,
-      //   pass: this._password,
-      // },
+      auth: {
+        user: this._user,
+        // pass: this._password,
+      },
       ...(!this._secure && {
         tls: {
           rejectUnauthorized: false,
