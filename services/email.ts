@@ -22,10 +22,10 @@ const getEnv = (key: string) => {
 };
 
 const emailService = new EmailService()
-  .setAuth(getEnv("EMAIL_USER"), getEnv("EMAIL_PASSWORD"), getEnv("EMAIL_DOMAIN"))
+  .setAuth(getEnv("EMAIL_USER"), getEnv("EMAIL_PASSWORD"))
   .setHost(getEnv("EMAIL_HOST"))
   .setPort(Number(getEnv("EMAIL_PORT")))
-  // .setSecureMethod(process.env.EMAIL_SECURE === "1") // more standard than "1"
+  .setSecureMethod(process.env.EMAIL_SECURE === "1") // more standard than "1"
   .build();
 
 const sendEmail = async (data: EmailSendSchemaType) => {
