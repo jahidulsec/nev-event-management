@@ -9,17 +9,21 @@ import {
   SectionHeading2,
   SectionHeadingWithBackButton,
 } from "@/components/shared/typography/heading";
+import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import ECApprovalForm from "@/features/event/components/ec-approval-form";
 import EventSection from "@/features/event/components/event-section";
 import FirstApproverForm from "@/features/event/components/first-approver-form";
+import { EventStatusSection } from "@/features/event/components/preview/event-status-section";
 import EventStatusUpdateForm from "@/features/event/components/status-form";
 import TrackingEventForm from "@/features/event/components/tracking-form";
 import { getEvent } from "@/features/event/lib/event";
 import { getEventStatusHistories } from "@/features/event/lib/status-history";
 import { getAuthUser, getDashboardRole } from "@/lib/dal";
+import { event_current_status } from "@/lib/generated/prisma";
 import { AuthUser } from "@/types/auth-user";
 import { Params } from "@/types/search-params";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
@@ -54,7 +58,20 @@ const EventDetailsSection = async ({ params }: { params: Params }) => {
   const user = await getAuthUser();
   const role = await getDashboardRole();
 
+  const canBypassStatusCheck = ["ec", "superadmin"].includes(role ?? "");
+  const isFinalStatus = ["approved", "rejected"].includes(
+    res.data?.current_status ?? "",
+  );
+
   if (!res.data) return notFound();
+
+  if (!canBypassStatusCheck && isFinalStatus) {
+    return (
+      <EventStatusSection
+        status={res.data.current_status as event_current_status}
+      />
+    );
+  }
 
   return (
     <>
