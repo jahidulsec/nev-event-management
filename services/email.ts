@@ -22,7 +22,7 @@ const getEnv = (key: string) => {
 };
 
 const emailService = new EmailService()
-  .setAuth(getEnv("EMAIL_USER"), getEnv("EMAIL_PASSWORD"))
+  .setAuth(getEnv("EMAIL_USER"), getEnv("EMAIL_PASSWORD"), getEnv("EMAIL_DOMAIN"))
   .setHost(getEnv("EMAIL_HOST"))
   .setPort(Number(getEnv("EMAIL_PORT")))
   // .setSecureMethod(process.env.EMAIL_SECURE === "1") // more standard than "1"
