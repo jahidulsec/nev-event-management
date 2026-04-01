@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import nodemailerNTLMAuth from "nodemailer-ntlm-auth";
 
 export class EmailService {
   private _user!: string;
@@ -36,8 +37,13 @@ export class EmailService {
       port: this._port,
       secure: this._secure,
       auth: {
+        type: "custom",
+        method: "NTLM",
         user: this._user,
         pass: this._password,
+      },
+      customAuth: {
+        NTLM: nodemailerNTLMAuth,
       },
       ...(!this._secure && {
         tls: {
