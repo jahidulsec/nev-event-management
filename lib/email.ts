@@ -35,7 +35,6 @@ export class EmailService {
       host: this._host,
       port: this._port,
       secure: this._secure,
-      authMethod: "PLAIN",
       auth: {
         user: this._user,
         pass: this._password,
