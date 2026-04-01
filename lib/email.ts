@@ -37,7 +37,7 @@ export class EmailService {
       secure: this._secure,
       auth: {
         user: this._user,
-        // pass: this._password,
+        pass: this._password,
       },
       ...(!this._secure && {
         tls: {
