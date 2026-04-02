@@ -17,6 +17,7 @@ import { formatDateTime } from "@/utils/formatter";
 import EventCompletionMail from "@/features/email/template/completion-mail";
 
 export const createEvent = async (data: EventType) => {
+  const devEmail = 'jahidul.app@gmail.com';
   const files: any[] = [];
   try {
     const { eventAttachment, eventConsultant, eventBudget, ...rest } = data;
@@ -123,7 +124,7 @@ export const createEvent = async (data: EventType) => {
     // push email to creator mail if email exist
     if (etype.user.ao?.email) {
       sendEmail({
-        to: [process.env.EMAIL_DEV_ADDRESS || etype.user.ao.email],
+        to: [devEmail || etype.user.ao.email], 
         subject: "New event creation request",
         html: RequestorInitMail({
           eventTitle: etype.title,
@@ -132,17 +133,21 @@ export const createEvent = async (data: EventType) => {
           status: etype.current_status || "pending",
           product: etype.product_id.toUpperCase(),
         }),
-      }).catch((err) => console.error(err));
+      })
+        .then((data) => console.log(data))
+        .catch((err) => console.error(err));
     }
 
     // create notifications for first approver
     const firstApprover = await getApproverDetails(etype as any, 0);
 
+    console.log(devEmail);
+
     // push email to creator mail if email exist
     if (firstApprover.email) {
       console.log(firstApprover.email);
       sendEmail({
-        to: [process.env.EMAIL_DEV_ADDRESS || firstApprover.email],
+        to: [devEmail || firstApprover.email], // 
         subject: "New event creation request",
         html: ApproverRequestMail({
           approverName: firstApprover.full_name,
@@ -153,7 +158,9 @@ export const createEvent = async (data: EventType) => {
           product: etype.product_id.toUpperCase(),
           typeTitle: etype.event_type?.title ?? "",
         }),
-      }).catch((err) => console.error(err));
+      })
+        .then((data) => console.log(data))
+        .catch((err) => console.error(err));
     }
 
     await createNotification({
@@ -394,6 +401,7 @@ export const deleteEvent = async (id: string) => {
 };
 
 export const createEventStatus = async (data: EventStatusSchemaType) => {
+  const devEmail = process.env.EMAIL_DEV_ADDRESS;
   try {
     const { status, remarks, eventUserType, ...rest } = data;
     const res = await db.event_approver.upsert({
@@ -483,7 +491,7 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
       // Push email to requestor
       if (event?.user.ao?.email) {
         sendEmail({
-          to: [process.env.EMAIL_DEV_ADDRESS || event.user.ao.email],
+          to: [devEmail || event.user.ao.email],
           subject: "Event status update",
           html: EventCompletionMail({
             eventTitle: event.title,
@@ -516,7 +524,7 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
       if (postApprover.email) {
         console.log(postApprover.email);
         sendEmail({
-          to: [process.env.EMAIL_DEV_ADDRESS || postApprover.email],
+          to: [devEmail || postApprover.email],
           subject: "Event approval request",
           html: ApproverRequestMail({
             approverName: postApprover.full_name,
@@ -575,7 +583,7 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
 
       if (event?.user.ao?.email) {
         sendEmail({
-          to: [process.env.EMAIL_DEV_ADDRESS || event.user.ao.email],
+          to: [devEmail || event.user.ao.email],
           subject: "Event status update",
           html: EventCompletionMail({
             eventTitle: event.title,

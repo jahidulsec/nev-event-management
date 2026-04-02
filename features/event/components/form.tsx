@@ -147,8 +147,8 @@ export default function EventForm({
   // get event type
   React.useEffect(() => {
     const handleEventTypes = () => {
-      startTransition(async () => {
-        const res = await getEventTypes({ page: 1, size: 20, sort: 'asc' });
+      startTransitionType(async () => {
+        const res = await getEventTypes({ page: 1, size: 20, sort: "asc" });
         if (res.success) {
           const newData = new Set(res.data?.map((item) => item.title));
           setTypes([...newData]);
@@ -187,7 +187,7 @@ export default function EventForm({
             </Field>
             <FieldGroup className="md:grid-cols-3 md:grid">
               <Field>
-                <FieldLabel>Territory ID</FieldLabel>
+                <FieldLabel>Work Area</FieldLabel>
                 <FieldDescription>{prevData?.user_id}</FieldDescription>
               </Field>
               <Field>
@@ -204,7 +204,7 @@ export default function EventForm({
               </Field>
             </FieldGroup>
           </div>
-          <Separator />
+          <Separator className="bg-secondary/50" />
         </>
       )}
       <FieldGroup>
@@ -233,14 +233,28 @@ export default function EventForm({
           name="event_date"
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Proposed Date</FieldLabel>
+              <FieldLabel htmlFor={field.name}>Proposed Event Date</FieldLabel>
               <DatePickerTime
                 defaultValue={prevData?.event_date}
                 onValueChange={(value) => field.onChange(value)}
-                disabled={{
-                  before: new Date(
-                    new Date().getTime() + 5 * 24 * 60 * 60 * 1000, // upcoming 5 days
-                  ),
+                disabled={(date: Date) => {
+                  const dayNumber = date.getDay();
+
+                  // ❌ Disable Friday (5) & Saturday (6)
+                  if (dayNumber === 5 || dayNumber === 6) {
+                    return true;
+                  }
+
+                  // ✅ Normalize today's date
+                  const today = new Date();
+                  today.setHours(0, 0, 0, 0);
+
+                  // ✅ Minimum allowed date (today + 5 days)
+                  const minDate = new Date(today);
+                  minDate.setDate(minDate.getDate() + 5);
+
+                  // ❌ Disable dates before minDate
+                  return date < minDate;
                 }}
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -272,7 +286,7 @@ export default function EventForm({
         />
       </FieldGroup>
 
-      <Separator />
+      <Separator className="bg-secondary/50" />
 
       {/* venue */}
       <FieldGroup>
@@ -343,7 +357,7 @@ export default function EventForm({
         />
       </FieldGroup>
 
-      <Separator />
+      <Separator className="bg-secondary/50" />
 
       {/* institue */}
       <FieldGroup>
@@ -408,7 +422,7 @@ export default function EventForm({
         />
       </FieldGroup>
 
-      <Separator />
+      <Separator className="bg-secondary/50" />
 
       {/* event data */}
       <FieldGroup className="lg:flex-row">
@@ -477,8 +491,7 @@ export default function EventForm({
                 }}
               />
               {((eventType &&
-                types.slice(0, 4).some((i) => i === eventType) ===
-                  false) ||
+                types.slice(0, 4).some((i) => i === eventType) === false) ||
                 eventType?.length === 0) && (
                 <Input
                   defaultValue={eventType}
@@ -498,7 +511,7 @@ export default function EventForm({
         />
       </FieldGroup>
 
-      <Separator />
+      <Separator className="bg-secondary/50" />
 
       {/* material */}
       <FieldGroup className="lg:flex-row">
@@ -542,7 +555,7 @@ export default function EventForm({
         />
       </FieldGroup>
 
-      <Separator />
+      <Separator className="bg-secondary/50" />
 
       {/* participants */}
       <FieldGroup className="lg:flex-row">
@@ -647,16 +660,16 @@ export default function EventForm({
         />
       </FieldGroup>
 
-      <Separator />
+      <Separator className="bg-secondary/50" />
 
       {/* event budget section */}
       <EventBudgetSection form={form} user={authUser} />
 
-      <Separator />
+      <Separator className="bg-secondary/50" />
 
       <ConsultantSection form={form} user={authUser} />
 
-      <Separator />
+      <Separator className="bg-secondary/50" />
 
       <AttachmentSection form={form} user={authUser} />
 

@@ -31,6 +31,7 @@ const emailService = new EmailService()
 const sendEmail = async (data: EmailSendSchemaType) => {
   const { to, ...rest } = data;
   const info = await emailService.sendMail({
+    from: data.from ?? `Event Management System <${process.env.EMAIL_USER}>`,
     to: to.join(', '),
     ...rest,
   });
