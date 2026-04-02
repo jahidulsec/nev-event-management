@@ -10,6 +10,10 @@ import fs2 from "fs";
 import { deleteFile } from "@/utils/file";
 import { createNotification } from "@/features/notifications/actions/notification";
 import { getApproverWorkArea } from "@/lib/helper";
+import { sendEmail } from "@/services/email";
+import RequestorInitMail from "@/features/email/template/ao-init-mail";
+import ApproverRequestMail from "@/features/email/template/approver-mail";
+import { formatDateTime } from "@/utils/formatter";
 
 export const createEvent = async (data: EventType) => {
   const files: any[] = [];
@@ -50,6 +54,7 @@ export const createEvent = async (data: EventType) => {
       include: {
         event_type: {
           select: {
+            title: true,
             approver: {
               orderBy: {
                 created_at: "asc",
@@ -112,8 +117,39 @@ export const createEvent = async (data: EventType) => {
       message: "You created a new event proposal",
     });
 
+    // push email to creator mail if email exist
+    if (etype.user.ao?.email) {
+      sendEmail({
+        to: ["jahidul.app@gmail.com"],
+        subject: "New event creation request",
+        html: RequestorInitMail({
+          eventTitle: etype.title,
+          eventDate: formatDateTime(etype.event_date),
+          typeTitle: etype.event_type?.title ?? "",
+          status: etype.current_status || "pending",
+          product: etype.product_id.toUpperCase(),
+        }),
+      }).catch((err) => console.error(err));
+    }
+
     // create notifications for first approver
     const firstApproverWorkArea = await getApproverWorkArea(etype, 0);
+
+    // push email to creator mail if email exist
+    if (firstApproverWorkArea) {
+      sendEmail({
+        to: ["jahidul.app@gmail.com"],
+        subject: "New event creation request",
+        html: ApproverRequestMail({
+          eventId: etype.id,
+          eventTitle: etype.title,
+          eventDate: formatDateTime(etype.event_date),
+          requestorName: etype.user.ao?.full_name ?? "",
+          product: etype.product_id.toUpperCase(),
+          typeTitle: etype.event_type?.title ?? "",
+        }),
+      }).catch((err) => console.error(err));
+    }
 
     await createNotification({
       work_area_code: firstApproverWorkArea ?? "",
@@ -432,7 +468,7 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
       await createNotification({
         work_area_code: event?.user_id ?? "",
         is_marked: "no",
-        event_id: event?.id ?? '',
+        event_id: event?.id ?? "",
         status: "read_only",
         message: "Rejected",
       });
