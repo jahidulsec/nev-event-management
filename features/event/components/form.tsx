@@ -367,7 +367,7 @@ export default function EventForm({
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor={field.name}>
-                Institute Name, Code & Area
+                Institute Name, Customer Code of the Institute & Address
               </FieldLabel>
               <Input
                 {...field}
@@ -406,9 +406,7 @@ export default function EventForm({
           name="institute_dept"
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>
-                Department/Speciality
-              </FieldLabel>
+              <FieldLabel htmlFor={field.name}>Department/Specialty</FieldLabel>
               <Input
                 {...field}
                 id={field.name}
@@ -646,7 +644,9 @@ export default function EventForm({
           name="details_participants"
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Details Participants</FieldLabel>
+              <FieldLabel htmlFor={field.name}>
+                Details of Participants
+              </FieldLabel>
               <Textarea
                 {...field}
                 id={field.name}

@@ -139,7 +139,7 @@ export default function ConsultantSection({
                         field.onChange(value);
                       }}
                       defaultValue={eventConsultant[index].doctor_id}
-                      disabledKeys={eventConsultant.map(i => i.doctor_id)}
+                      disabledKeys={eventConsultant.map((i) => i.doctor_id)}
                     />
 
                     {fieldState.error?.message && (
@@ -308,41 +308,57 @@ export default function ConsultantSection({
             <Controller
               control={form.control}
               name={`eventConsultant.${index}.duration_h`}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor={field.name}>Duration (hour)</FieldLabel>
-                  <Input
-                    type="number"
-                    {...field}
-                    onChange={(e) => {
-                      field.onChange(e.target.valueAsNumber);
-                      handleHonorarium(index);
-                    }}
-                  />
+              render={({ field, fieldState }) => {
+                const { ref, ...rest } = field;
 
-                  {fieldState.error?.message && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
+                return (
+                  <Field
+                    className="col-span-2 md:col-span-1"
+                    data-invalid={fieldState.invalid}
+                  >
+                    <FieldLabel htmlFor={field.name}>
+                      Duration (hour)
+                    </FieldLabel>
+                    <Input
+                      type="number"
+                      {...rest}
+                      onChange={(e) => {
+                        field.onChange(e.target.valueAsNumber);
+                        handleHonorarium(index);
+                      }}
+                    />
+
+                    {fieldState.error?.message && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                );
+              }}
             />
             <Controller
               control={form.control}
               name={`eventConsultant.${index}.honorarium`}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor={field.name}>Honorarium</FieldLabel>
-                  <Input
-                    type="number"
-                    {...field}
-                    onChange={(e) => field.onChange(e.target.valueAsNumber)}
-                  />
+              render={({ field, fieldState }) => {
+                const { ref, ...rest } = field;
 
-                  {fieldState.error?.message && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
+                return (
+                  <Field
+                    className="col-span-2 md:col-span-1"
+                    data-invalid={fieldState.invalid}
+                  >
+                    <FieldLabel htmlFor={field.name}>Honorarium</FieldLabel>
+                    <Input
+                      type="number"
+                      {...rest}
+                      onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                    />
+
+                    {fieldState.error?.message && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                );
+              }}
             />
           </div>
         ))

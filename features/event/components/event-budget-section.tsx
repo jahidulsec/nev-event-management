@@ -33,6 +33,7 @@ export const EventBudgetSection = ({
   form: UseFormReturn<EventType>;
   user?: AuthUser;
 }) => {
+  const { setFocus } = form;
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "eventBudget",
@@ -119,40 +120,48 @@ export const EventBudgetSection = ({
             <Controller
               control={form.control}
               name={`eventBudget.${index}.unit`}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor={field.name}>Unit</FieldLabel>
+              render={({ field, fieldState }) => {
+                const { ref, ...rest } = field;
 
-                  <Input
-                    type="number"
-                    {...field}
-                    onChange={(e) => field.onChange(e.target.valueAsNumber)}
-                  />
+                return (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Unit</FieldLabel>
 
-                  {fieldState.error?.message && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
+                    <Input
+                      type="number"
+                      {...rest}
+                      onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                    />
+
+                    {fieldState.error?.message && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                );
+              }}
             />
 
             <Controller
               control={form.control}
               name={`eventBudget.${index}.unit_cost`}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor={field.name}>Unit Cost</FieldLabel>
-                  <Input
-                    type="number"
-                    {...field}
-                    onChange={(e) => field.onChange(e.target.valueAsNumber)}
-                  />
+              render={({ field, fieldState }) => {
+                const { ref, ...rest } = field;
+                return (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Unit Cost</FieldLabel>
+                    <Input
+                      type="number"
+                      {...rest}
+                      onFocus={(e) => e.preventDefault()}
+                      onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                    />
 
-                  {fieldState.error?.message && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
+                    {fieldState.error?.message && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                );
+              }}
             />
           </div>
         ))
@@ -177,13 +186,13 @@ export const EventBudgetSection = ({
           variant={"outline"}
           type="button"
           className="text-primary"
-          onClick={() =>
+          onClick={() => {
             append({
               item: "",
-              unit: 1,
+              unit: 0,
               unit_cost: 1,
-            })
-          }
+            });
+          }}
         >
           <PlusCircle />
           Add
