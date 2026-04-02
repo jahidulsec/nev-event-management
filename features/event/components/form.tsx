@@ -218,7 +218,11 @@ export default function EventForm({
               <DatePickerTime
                 defaultValue={prevData?.event_date}
                 onValueChange={(value) => field.onChange(value)}
-                disabled={{before: new Date()}}
+                disabled={{
+                  before: new Date(
+                    new Date().getTime() + 5 * 24 * 60 * 60 * 1000, // upcoming 5 days
+                  ),
+                }}
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
