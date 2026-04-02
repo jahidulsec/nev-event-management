@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
       from:  `Event Management System <${process.env.EMAIL_USER}>`,
       to: ["jahidul.app@gmail.com"],
       subject: "Test mail from nevian event management mail",
-      text: "Hello Jahidul",
+      html: '<div style="background:#f9f9fa; color:#09090b; padding:16px 24px;">Hello Jahidul</div>',
     });
 
     console.log("heelo");

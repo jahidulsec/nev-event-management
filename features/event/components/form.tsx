@@ -1,6 +1,6 @@
 "use client";
 
-import { product } from "@/lib/generated/prisma";
+import { event_type, product } from "@/lib/generated/prisma";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -29,7 +29,7 @@ import { formatNumber } from "@/utils/formatter";
 import { useParams } from "next/navigation";
 import { useRouter } from "@bprogress/next";
 import { calculateEventBudget, findEventTypeByCost } from "@/utils/helper";
-import { EventTypeMultiProps } from "../lib/type";
+import { EventTypeMultiProps, getEventTypes } from "../lib/type";
 import { DatePickerTime } from "@/components/shared/date-picker/date-time-picker";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -44,6 +44,10 @@ export default function EventForm({
 }) {
   const [products, setProducts] = React.useState<product[]>([]);
   const [pending, startTransition] = React.useTransition();
+
+  // event type
+  const [types, setTypes] = React.useState<string[]>([]);
+  const [pendingType, startTransitionType] = React.useTransition();
 
   const params = useParams();
   const router = useRouter();
@@ -128,11 +132,26 @@ export default function EventForm({
 
   // get products
   React.useEffect(() => {
-    const handleEventTypes = () => {
+    const handleProduct = () => {
       startTransition(async () => {
         const res = await getProducts({ page: 1, size: 20 });
         if (res.success) {
           setProducts(res?.data ?? []);
+        }
+      });
+    };
+
+    handleProduct();
+  }, []);
+
+  // get event type
+  React.useEffect(() => {
+    const handleEventTypes = () => {
+      startTransitionType(async () => {
+        const res = await getEventTypes({ page: 1, size: 20, sort: "asc" });
+        if (res.success) {
+          const newData = new Set(res.data?.map((item) => item.title));
+          setTypes([...newData]);
         }
       });
     };
@@ -168,7 +187,7 @@ export default function EventForm({
             </Field>
             <FieldGroup className="md:grid-cols-3 md:grid">
               <Field>
-                <FieldLabel>Territory ID</FieldLabel>
+                <FieldLabel>Work Area</FieldLabel>
                 <FieldDescription>{prevData?.user_id}</FieldDescription>
               </Field>
               <Field>
@@ -185,7 +204,7 @@ export default function EventForm({
               </Field>
             </FieldGroup>
           </div>
-          <Separator />
+          <Separator className="bg-secondary/50" />
         </>
       )}
       <FieldGroup>
@@ -214,14 +233,28 @@ export default function EventForm({
           name="event_date"
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Proposed Date</FieldLabel>
+              <FieldLabel htmlFor={field.name}>Proposed Event Date</FieldLabel>
               <DatePickerTime
                 defaultValue={prevData?.event_date}
                 onValueChange={(value) => field.onChange(value)}
-                disabled={{
-                  before: new Date(
-                    new Date().getTime() + 5 * 24 * 60 * 60 * 1000, // upcoming 5 days
-                  ),
+                disabled={(date: Date) => {
+                  const dayNumber = date.getDay();
+
+                  // ❌ Disable Friday (5) & Saturday (6)
+                  if (dayNumber === 5 || dayNumber === 6) {
+                    return true;
+                  }
+
+                  // ✅ Normalize today's date
+                  const today = new Date();
+                  today.setHours(0, 0, 0, 0);
+
+                  // ✅ Minimum allowed date (today + 5 days)
+                  const minDate = new Date(today);
+                  minDate.setDate(minDate.getDate() + 5);
+
+                  // ❌ Disable dates before minDate
+                  return date < minDate;
                 }}
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -253,7 +286,7 @@ export default function EventForm({
         />
       </FieldGroup>
 
-      <Separator />
+      <Separator className="bg-secondary/50" />
 
       {/* venue */}
       <FieldGroup>
@@ -324,7 +357,7 @@ export default function EventForm({
         />
       </FieldGroup>
 
-      <Separator />
+      <Separator className="bg-secondary/50" />
 
       {/* institue */}
       <FieldGroup>
@@ -389,7 +422,7 @@ export default function EventForm({
         />
       </FieldGroup>
 
-      <Separator />
+      <Separator className="bg-secondary/50" />
 
       {/* event data */}
       <FieldGroup className="lg:flex-row">
@@ -444,12 +477,12 @@ export default function EventForm({
               <Select
                 defaultValue={
                   prevData?.type
-                    ? eventTypeList.includes(prevData?.type)
+                    ? types.some((i) => i === prevData?.type)
                       ? prevData.type
                       : "Other"
                     : undefined
                 }
-                data={eventTypeList.map((item) => ({
+                data={types.map((item) => ({
                   label: item,
                   value: item,
                 }))}
@@ -458,7 +491,7 @@ export default function EventForm({
                 }}
               />
               {((eventType &&
-                eventTypeList.slice(0, 4).includes(eventType) === false) ||
+                types.slice(0, 4).some((i) => i === eventType) === false) ||
                 eventType?.length === 0) && (
                 <Input
                   defaultValue={eventType}
@@ -478,7 +511,7 @@ export default function EventForm({
         />
       </FieldGroup>
 
-      <Separator />
+      <Separator className="bg-secondary/50" />
 
       {/* material */}
       <FieldGroup className="lg:flex-row">
@@ -522,7 +555,7 @@ export default function EventForm({
         />
       </FieldGroup>
 
-      <Separator />
+      <Separator className="bg-secondary/50" />
 
       {/* participants */}
       <FieldGroup className="lg:flex-row">
@@ -627,16 +660,16 @@ export default function EventForm({
         />
       </FieldGroup>
 
-      <Separator />
+      <Separator className="bg-secondary/50" />
 
       {/* event budget section */}
       <EventBudgetSection form={form} user={authUser} />
 
-      <Separator />
+      <Separator className="bg-secondary/50" />
 
       <ConsultantSection form={form} user={authUser} />
 
-      <Separator />
+      <Separator className="bg-secondary/50" />
 
       <AttachmentSection form={form} user={authUser} />
 
@@ -655,15 +688,6 @@ const objectiveList = [
   "Brand Promotion",
   "Disease Awareness",
   "Scientific Knowledge Dissemination",
-  "Other",
-];
-
-const eventTypeList = [
-  "Non-paid Promotional",
-  "Paid Promotional",
-  "Non-paid Medical",
-  "Paid Medical",
-  "Special",
   "Other",
 ];
 

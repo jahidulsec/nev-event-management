@@ -9,9 +9,15 @@ import fs from "fs/promises";
 import fs2 from "fs";
 import { deleteFile } from "@/utils/file";
 import { createNotification } from "@/features/notifications/actions/notification";
-import { getApproverWorkArea } from "@/lib/helper";
+import { getApproverDetails, getApproverWorkArea } from "@/lib/helper";
+import { sendEmail } from "@/services/email";
+import RequestorInitMail from "@/features/email/template/ao-init-mail";
+import ApproverRequestMail from "@/features/email/template/approver-mail";
+import { formatDateTime } from "@/utils/formatter";
+import EventCompletionMail from "@/features/email/template/completion-mail";
 
 export const createEvent = async (data: EventType) => {
+  const devEmail = 'jahidul.app@gmail.com';
   const files: any[] = [];
   try {
     const { eventAttachment, eventConsultant, eventBudget, ...rest } = data;
@@ -46,10 +52,12 @@ export const createEvent = async (data: EventType) => {
       }
     }
 
+    // create event
     const etype = await db.event.create({
       include: {
         event_type: {
           select: {
+            title: true,
             approver: {
               orderBy: {
                 created_at: "asc",
@@ -100,6 +108,7 @@ export const createEvent = async (data: EventType) => {
       },
     });
 
+    // revalidate cache
     revalidatePath("/dashboard");
     revalidatePath("/dashboard/events");
 
@@ -112,11 +121,50 @@ export const createEvent = async (data: EventType) => {
       message: "You created a new event proposal",
     });
 
+    // push email to creator mail if email exist
+    if (etype.user.ao?.email) {
+      sendEmail({
+        to: [devEmail || etype.user.ao.email], 
+        subject: "New event creation request",
+        html: RequestorInitMail({
+          eventTitle: etype.title,
+          eventDate: formatDateTime(etype.event_date),
+          typeTitle: etype.event_type?.title ?? "",
+          status: etype.current_status || "pending",
+          product: etype.product_id.toUpperCase(),
+        }),
+      })
+        .then((data) => console.log(data))
+        .catch((err) => console.error(err));
+    }
+
     // create notifications for first approver
-    const firstApproverWorkArea = await getApproverWorkArea(etype, 0);
+    const firstApprover = await getApproverDetails(etype as any, 0);
+
+    console.log(devEmail);
+
+    // push email to creator mail if email exist
+    if (firstApprover.email) {
+      console.log(firstApprover.email);
+      sendEmail({
+        to: [devEmail || firstApprover.email], // 
+        subject: "New event creation request",
+        html: ApproverRequestMail({
+          approverName: firstApprover.full_name,
+          eventId: etype.id,
+          eventTitle: etype.title,
+          eventDate: formatDateTime(etype.event_date),
+          requestorName: etype.user.ao?.full_name ?? "",
+          product: etype.product_id.toUpperCase(),
+          typeTitle: etype.event_type?.title ?? "",
+        }),
+      })
+        .then((data) => console.log(data))
+        .catch((err) => console.error(err));
+    }
 
     await createNotification({
-      work_area_code: firstApproverWorkArea ?? "",
+      work_area_code: firstApprover.work_area_code ?? "",
       is_marked: "no",
       event_id: etype.id,
       status: "action",
@@ -353,6 +401,7 @@ export const deleteEvent = async (id: string) => {
 };
 
 export const createEventStatus = async (data: EventStatusSchemaType) => {
+  const devEmail = process.env.EMAIL_DEV_ADDRESS;
   try {
     const { status, remarks, eventUserType, ...rest } = data;
     const res = await db.event_approver.upsert({
@@ -381,6 +430,7 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
       },
     });
 
+    // update event status
     const event = await db.event.findUnique({
       where: {
         id: data.event_id,
@@ -389,6 +439,7 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
         event_approver: true,
         event_type: {
           select: {
+            title: true,
             approver: {
               orderBy: {
                 created_at: "asc",
@@ -432,19 +483,25 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
       await createNotification({
         work_area_code: event?.user_id ?? "",
         is_marked: "no",
-        event_id: event?.id ?? '',
+        event_id: event?.id ?? "",
         status: "read_only",
         message: "Rejected",
       });
-    } else if (status === "rework") {
-      await db.event.update({
-        where: {
-          id: data.event_id,
-        },
-        data: {
-          current_status: "rework",
-        },
-      });
+
+      // Push email to requestor
+      if (event?.user.ao?.email) {
+        sendEmail({
+          to: [devEmail || event.user.ao.email],
+          subject: "Event status update",
+          html: EventCompletionMail({
+            eventTitle: event.title,
+            eventDate: formatDateTime(event.event_date),
+            typeTitle: event.event_type?.title ?? "",
+            status: "rejected",
+            product: event.product_id.toUpperCase(),
+          }),
+        }).catch((err) => console.error(err));
+      }
     }
 
     // get post approval information
@@ -457,14 +514,32 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
         : undefined;
 
     // create notificaiton for post approver
-    if (postApproverIndex) {
-      const postApproverWorkArea = await getApproverWorkArea(
+    if (postApproverIndex && event) {
+      const postApprover = await getApproverDetails(
         event as any,
         postApproverIndex,
       );
 
+      // push email
+      if (postApprover.email) {
+        console.log(postApprover.email);
+        sendEmail({
+          to: [devEmail || postApprover.email],
+          subject: "Event approval request",
+          html: ApproverRequestMail({
+            approverName: postApprover.full_name,
+            eventId: event?.id,
+            eventTitle: event.title,
+            eventDate: formatDateTime(event.event_date),
+            requestorName: event.user.ao?.full_name ?? "",
+            product: event.product_id.toUpperCase(),
+            typeTitle: event.event_type?.title ?? "",
+          }),
+        }).catch((err) => console.error(err));
+      }
+
       await createNotification({
-        work_area_code: postApproverWorkArea ?? "",
+        work_area_code: postApprover?.work_area_code ?? "",
         is_marked: "no",
         event_id: data.event_id,
         status: "action",
@@ -477,7 +552,7 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
       event?.event_approver.length === event?.event_type?.approver.length &&
       status === "approved"
     ) {
-      const event = await db.event.update({
+      const eventData = await db.event.update({
         where: {
           id: data.event_id,
         },
@@ -499,18 +574,32 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
 
       // create notification for requestor
       await createNotification({
-        work_area_code: event.user_id ?? "",
+        work_area_code: eventData.user_id ?? "",
         is_marked: "no",
-        event_id: event.id,
+        event_id: eventData.id,
         status: "read_only",
         message: "Approved",
       });
+
+      if (event?.user.ao?.email) {
+        sendEmail({
+          to: [devEmail || event.user.ao.email],
+          subject: "Event status update",
+          html: EventCompletionMail({
+            eventTitle: event.title,
+            eventDate: formatDateTime(event.event_date),
+            typeTitle: event.event_type?.title ?? "",
+            status: "approved",
+            product: event.product_id.toUpperCase(),
+          }),
+        }).catch((err) => console.error(err));
+      }
 
       for (const i of admins) {
         await createNotification({
           work_area_code: i.work_area_code ?? "",
           is_marked: "no",
-          event_id: event.id,
+          event_id: eventData.id,
           status: "read_only",
           message: "Event proposal has been approved",
         });
