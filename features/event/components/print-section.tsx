@@ -132,11 +132,11 @@ const EventBasicInformationSection = ({
               name="Activity Owner (AO)"
               value={data.user.ao?.full_name}
             />
-            <CustomField name="Territory ID" value={data.user_id} />
+            <CustomField name="Work Area" value={data.user_id} />
           </FieldGroup>
           <FieldGroup>
             <CustomField name="Designation" value={data.user.ao?.designation} />
-            <CustomField name="Reigon" value={data.user.ao?.rm_code} />
+            <CustomField name="Region" value={data.user.ao?.rm_code} />
             <CustomField name="Employee ID" value={data.user.ao?.employee_id} />
           </FieldGroup>
         </View>
@@ -168,12 +168,12 @@ const EventBasicInformationSection = ({
         <View>
           <FieldGroup>
             <CustomField
-              name="Institute Name with Code/Area"
+              name="Institute Name, Customer Code of the Institute & Address"
               value={data.institute}
             />
             <CustomField name="Unit" value={data.institute_unit} />
             <CustomField
-              name="Department/Speciality"
+              name="Department/Specialty"
               value={data.institute_dept}
             />
           </FieldGroup>
