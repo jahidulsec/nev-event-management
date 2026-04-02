@@ -9,7 +9,7 @@ import fs from "fs/promises";
 import fs2 from "fs";
 import { deleteFile } from "@/utils/file";
 import { createNotification } from "@/features/notifications/actions/notification";
-import { getApproverWorkArea } from "@/lib/helper";
+import { getApproverDetails, getApproverWorkArea } from "@/lib/helper";
 import { sendEmail } from "@/services/email";
 import RequestorInitMail from "@/features/email/template/ao-init-mail";
 import ApproverRequestMail from "@/features/email/template/approver-mail";
@@ -133,14 +133,16 @@ export const createEvent = async (data: EventType) => {
     }
 
     // create notifications for first approver
-    const firstApproverWorkArea = await getApproverWorkArea(etype, 0);
+    const firstApprover = await getApproverDetails(etype as any, 0);
 
     // push email to creator mail if email exist
-    if (firstApproverWorkArea) {
+    if (firstApprover.email) {
+      console.log(firstApprover.email);
       sendEmail({
         to: ["jahidul.app@gmail.com"],
         subject: "New event creation request",
         html: ApproverRequestMail({
+          approverName: firstApprover.full_name,
           eventId: etype.id,
           eventTitle: etype.title,
           eventDate: formatDateTime(etype.event_date),
@@ -152,7 +154,7 @@ export const createEvent = async (data: EventType) => {
     }
 
     await createNotification({
-      work_area_code: firstApproverWorkArea ?? "",
+      work_area_code: firstApprover.work_area_code ?? "",
       is_marked: "no",
       event_id: etype.id,
       status: "action",
@@ -425,6 +427,7 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
         event_approver: true,
         event_type: {
           select: {
+            title: true,
             approver: {
               orderBy: {
                 created_at: "asc",
@@ -493,14 +496,31 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
         : undefined;
 
     // create notificaiton for post approver
-    if (postApproverIndex) {
-      const postApproverWorkArea = await getApproverWorkArea(
+    if (postApproverIndex && event) {
+      const postApprover = await getApproverDetails(
         event as any,
         postApproverIndex,
       );
 
+      if (postApprover.email) {
+        console.log(postApprover.email);
+        sendEmail({
+          to: ["jahidul.app@gmail.com"],
+          subject: "New event creation request",
+          html: ApproverRequestMail({
+            approverName: postApprover.full_name,
+            eventId: event?.id,
+            eventTitle: event.title,
+            eventDate: formatDateTime(event.event_date),
+            requestorName: event.user.ao?.full_name ?? "",
+            product: event.product_id.toUpperCase(),
+            typeTitle: event.event_type?.title ?? "",
+          }),
+        }).catch((err) => console.error(err));
+      }
+
       await createNotification({
-        work_area_code: postApproverWorkArea ?? "",
+        work_area_code: postApprover?.work_area_code ?? "",
         is_marked: "no",
         event_id: data.event_id,
         status: "action",

@@ -664,6 +664,7 @@ const eventTypeList = [
   "Non-paid Medical",
   "Paid Medical",
   "Special",
+  "Special Care",
   "Other",
 ];
 
