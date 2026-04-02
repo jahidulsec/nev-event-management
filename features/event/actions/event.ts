@@ -17,7 +17,7 @@ import { formatDateTime } from "@/utils/formatter";
 import EventCompletionMail from "@/features/email/template/completion-mail";
 
 export const createEvent = async (data: EventType) => {
-  const devEmail = 'jahidul.app@gmail.com';
+  const devEmail = process.env.EMAIL_DEV_ADDRESS;
   const files: any[] = [];
   try {
     const { eventAttachment, eventConsultant, eventBudget, ...rest } = data;
