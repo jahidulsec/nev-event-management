@@ -1,4 +1,4 @@
-export default function EventApprovedMail({
+export default function EventCompletionMail({
   product,
   typeTitle,
   eventDate,

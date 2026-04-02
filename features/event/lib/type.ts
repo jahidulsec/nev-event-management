@@ -33,7 +33,7 @@ const getMulti = async (query: EventTypeQueryType) => {
         skip: (params.page - 1) * params.size,
         take: params.size,
         orderBy: {
-          created_at: params.sort ?? "desc",
+          title: params.sort ?? "desc",
         },
         include: {
           approver: {

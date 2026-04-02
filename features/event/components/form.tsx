@@ -1,6 +1,6 @@
 "use client";
 
-import { product } from "@/lib/generated/prisma";
+import { event_type, product } from "@/lib/generated/prisma";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -29,7 +29,7 @@ import { formatNumber } from "@/utils/formatter";
 import { useParams } from "next/navigation";
 import { useRouter } from "@bprogress/next";
 import { calculateEventBudget, findEventTypeByCost } from "@/utils/helper";
-import { EventTypeMultiProps } from "../lib/type";
+import { EventTypeMultiProps, getEventTypes } from "../lib/type";
 import { DatePickerTime } from "@/components/shared/date-picker/date-time-picker";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -44,6 +44,10 @@ export default function EventForm({
 }) {
   const [products, setProducts] = React.useState<product[]>([]);
   const [pending, startTransition] = React.useTransition();
+
+  // event type
+  const [types, setTypes] = React.useState<string[]>([]);
+  const [pendingType, startTransitionType] = React.useTransition();
 
   const params = useParams();
   const router = useRouter();
@@ -128,11 +132,26 @@ export default function EventForm({
 
   // get products
   React.useEffect(() => {
-    const handleEventTypes = () => {
+    const handleProduct = () => {
       startTransition(async () => {
         const res = await getProducts({ page: 1, size: 20 });
         if (res.success) {
           setProducts(res?.data ?? []);
+        }
+      });
+    };
+
+    handleProduct();
+  }, []);
+
+  // get event type
+  React.useEffect(() => {
+    const handleEventTypes = () => {
+      startTransition(async () => {
+        const res = await getEventTypes({ page: 1, size: 20, sort: 'asc' });
+        if (res.success) {
+          const newData = new Set(res.data?.map((item) => item.title));
+          setTypes([...newData]);
         }
       });
     };
@@ -444,12 +463,12 @@ export default function EventForm({
               <Select
                 defaultValue={
                   prevData?.type
-                    ? eventTypeList.includes(prevData?.type)
+                    ? types.some((i) => i === prevData?.type)
                       ? prevData.type
                       : "Other"
                     : undefined
                 }
-                data={eventTypeList.map((item) => ({
+                data={types.map((item) => ({
                   label: item,
                   value: item,
                 }))}
@@ -458,7 +477,8 @@ export default function EventForm({
                 }}
               />
               {((eventType &&
-                eventTypeList.slice(0, 4).includes(eventType) === false) ||
+                types.slice(0, 4).some((i) => i === eventType) ===
+                  false) ||
                 eventType?.length === 0) && (
                 <Input
                   defaultValue={eventType}
@@ -655,16 +675,6 @@ const objectiveList = [
   "Brand Promotion",
   "Disease Awareness",
   "Scientific Knowledge Dissemination",
-  "Other",
-];
-
-const eventTypeList = [
-  "Non-paid Promotional",
-  "Paid Promotional",
-  "Non-paid Medical",
-  "Paid Medical",
-  "Special",
-  "Special Care",
   "Other",
 ];
 
