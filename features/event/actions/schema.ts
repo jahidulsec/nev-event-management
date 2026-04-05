@@ -154,7 +154,7 @@ export const EventStatusSchema = z.object({
   user_id: z.string(),
   user_role: userRoleSchema,
   status: eventApproverStatusEnum,
-  remarks: z.string("enter remarks").optional(),
+  remarks: z.string("enter remarks").min(2, "At least two characters"),
   eventUserType: z.string().optional(),
 });
 
