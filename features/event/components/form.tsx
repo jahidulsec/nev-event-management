@@ -130,6 +130,37 @@ export default function EventForm({
     console.log(data);
   }
 
+  const isDisabled = (date: Date) => {
+    const dayNumber = date.getDay();
+
+    // ❌ Disable Friday (5) & Saturday (6)
+    if (dayNumber === 5 || dayNumber === 6) {
+      return true;
+    }
+
+    // Normalize today's date
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Calculate min date = today + 5 working days
+    const minDate = new Date(today);
+    let addedDays = 0;
+
+    while (addedDays < 5) {
+      minDate.setDate(minDate.getDate() + 1);
+
+      const d = minDate.getDay();
+
+      // Skip Friday (5) & Saturday (6)
+      if (d !== 5 && d !== 6) {
+        addedDays++;
+      }
+    }
+
+    // Disable dates before minDate
+    return date < minDate;
+  };
+
   // get products
   React.useEffect(() => {
     const handleProduct = () => {
@@ -237,25 +268,7 @@ export default function EventForm({
               <DatePickerTime
                 defaultValue={prevData?.event_date}
                 onValueChange={(value) => field.onChange(value)}
-                disabled={(date: Date) => {
-                  const dayNumber = date.getDay();
-
-                  // ❌ Disable Friday (5) & Saturday (6)
-                  if (dayNumber === 5 || dayNumber === 6) {
-                    return true;
-                  }
-
-                  // ✅ Normalize today's date
-                  const today = new Date();
-                  today.setHours(0, 0, 0, 0);
-
-                  // ✅ Minimum allowed date (today + 5 days)
-                  const minDate = new Date(today);
-                  minDate.setDate(minDate.getDate() + 5);
-
-                  // ❌ Disable dates before minDate
-                  return date < minDate;
-                }}
+                disabled={isDisabled}
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>

@@ -76,7 +76,7 @@ export default function ApproverRequestMail({
 
                 <!-- CTA Buttons -->
                 <div style="margin-top:24px; text-align:center;">
-                    <a href="${process.env.NEXT_PUBLIC_APP_URL}/dahboard/events/${eventId}/preview"
+                    <a href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard/events/${eventId}/preview"
                         style="display:inline-block; margin-right:10px; padding:10px 20px; background:#2563eb; color:#fff; text-decoration:none; border-radius:4px;">
                         Review Event
                     </a>
