@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/config/db";
-import { event, Prisma } from "@/lib/generated/prisma";
+import { Prisma } from "@/lib/generated/prisma";
 import { apiResponse } from "@/lib/response";
 import { getCleanData } from "@/utils/formatter";
 import { EventQuerySchema, EventQueryType } from "../actions/schema";
@@ -27,6 +27,11 @@ export type EventMultiProps = Prisma.eventGetPayload<{
     event_approver: {
       include: {
         event_status_history: true;
+      };
+    };
+    event_consultant: {
+      select: {
+        event_consultant_approval: true;
       };
     };
   };
@@ -169,7 +174,6 @@ const getMulti = async (query: EventQueryType) => {
       db.event.findMany({
         include: {
           user: { include: { user_details: true } },
-          // product: true,
           event_type: {
             include: {
               approver: {
@@ -189,6 +193,11 @@ const getMulti = async (query: EventQueryType) => {
             },
             orderBy: {
               created_at: "desc",
+            },
+          },
+          event_consultant: {
+            select: {
+              event_consultant_approval: true,
             },
           },
         },

@@ -141,8 +141,6 @@ export const createEvent = async (data: EventType) => {
     // create notifications for first approver
     const firstApprover = await getApproverDetails(etype as any, 0);
 
-    console.log(devEmail);
-
     // push email to creator mail if email exist
     if (firstApprover.email) {
       console.log(firstApprover.email);

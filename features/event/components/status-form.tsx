@@ -27,7 +27,6 @@ import {
 import { cn } from "@/lib/utils";
 import { ApproverTypeBadge } from "@/components/shared/badge/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { getApproverWorkArea } from "@/lib/helper";
 
 export default function EventStatusUpdateForm({
   authUser,
@@ -178,7 +177,12 @@ export default function EventStatusUpdateForm({
         isPending={form.formState.isSubmitting}
         size={"lg"}
         className="max-w-sm"
-        // disabled={!!params.id?.toString()}
+        disabled={
+          role === "ec" &&
+          !event.event_consultant.some(
+            (i) => i.event_consultant_approval?.created_at,
+          )
+        }
       >
         Submit
       </FormButton>
