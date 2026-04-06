@@ -10,7 +10,7 @@ import {
   FieldLabel,
   FieldTitle,
 } from "@/components/ui/field";
-import { formatNumber } from "@/utils/formatter";
+import { formatNumber, getTitleCase } from "@/utils/formatter";
 import { Controller, useForm } from "react-hook-form";
 import {
   EventFirstApprovalSchema,
@@ -47,7 +47,10 @@ export default function FirstApproverForm({
         <Separator />
 
         {consultants.map((item) => (
-          <div className="border p-3 rounded-md border-primary/50" key={item.id}>
+          <div
+            className="border p-3 rounded-md border-primary/50"
+            key={item.id}
+          >
             <div className="grid grid-cols-1  sm:grid-cols-2 md:grid-cols-3 gap-3 gap-y-6">
               <CustomField title="Doctor" value={item.doctor.full_name} />
               <CustomField title="Degrees" value={item.doctor.degrees ?? "-"} />
@@ -67,9 +70,9 @@ export default function FirstApproverForm({
               />
               <CustomField
                 title="Different District?"
-                value={item.in_different_district ?? ""}
+                value={getTitleCase(item.in_different_district ?? "")}
               />
-              <CustomField title="Night Stay?" value={item.night_stay ?? ""} />
+              <CustomField title="Night Stay?" value={getTitleCase(item.night_stay ?? "") } />
             </div>
             <Separator className="my-3" />
 
@@ -81,15 +84,21 @@ export default function FirstApproverForm({
                 <CustomField
                   title="Suitable for participants?"
                   value={
-                    item.event_consultant_approval?.is_suitable ??
-                    "Not approved yet"
+                    item.event_consultant_approval?.is_suitable
+                      ? getTitleCase(
+                          item.event_consultant_approval?.is_suitable,
+                        )
+                      : "Not approved yet"
                   }
                 />
                 <CustomField
-                  title="Topic Expert?"
+                  title="Relevant TA/Topic Expert?"
                   value={
-                    item.event_consultant_approval?.topic_expert ??
-                    "Not approved yet"
+                    item.event_consultant_approval?.topic_expert
+                      ? getTitleCase(
+                          item.event_consultant_approval?.topic_expert,
+                        )
+                      : "Not approved yet"
                   }
                 />
               </div>
@@ -135,7 +144,9 @@ const ApprovalForm = ({
           name="topic_expert"
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Topic Expert?</FieldLabel>
+              <FieldLabel htmlFor={field.name}>
+                Relevant TA/Topic Expert?
+              </FieldLabel>
               <Select
                 data={yesNoList}
                 onValueChange={(value) => field.onChange(value)}
@@ -152,7 +163,7 @@ const ApprovalForm = ({
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor={field.name}>
-                Suitable for participants?
+                Suitable for Participants?
               </FieldLabel>
               <Select
                 data={yesNoList}

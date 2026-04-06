@@ -12,7 +12,7 @@ import {
   View,
   Image,
 } from "@react-pdf/renderer";
-import { formatDate, formatDateTime, formatNumber } from "@/utils/formatter";
+import { formatDate, formatDateTime, formatNumber, getTitleCase } from "@/utils/formatter";
 import { EventApproverMultProps } from "../lib/event-approver";
 import { convertPdfToImage } from "@/lib/pdf";
 
@@ -119,7 +119,7 @@ const EventBasicInformationSection = ({
               value={data.created_at ? formatDate(data.created_at) : undefined}
             />
             <CustomField
-              name="Proposed Date"
+              name="Proposed Event Date"
               value={formatDateTime(data.event_date)}
             />
           </FieldGroup>
@@ -155,7 +155,7 @@ const EventBasicInformationSection = ({
         {/* venue information */}
         <View>
           <FieldGroup>
-            <CustomField name="Venue Name with Address" value={data.venue} />
+            <CustomField name="Venue Name, Address" value={data.venue} />
             <CustomField name="Food Supplier" value={data.food_supplier} />
             <CustomField
               name="Venue Appropiateness"
@@ -168,7 +168,7 @@ const EventBasicInformationSection = ({
         <View>
           <FieldGroup>
             <CustomField
-              name="Institute Name, Customer Code of the Institute & Address"
+              name="Institute Name, Customer Code of the Institute, Address"
               value={data.institute}
             />
             <CustomField name="Unit" value={data.institute_unit} />
@@ -184,7 +184,7 @@ const EventBasicInformationSection = ({
           <FieldGroup>
             <CustomField
               style={{ flex: 1 }}
-              name="Objective"
+              name="Objective of the Meeting"
               value={data.objective}
             />
             <CustomField
@@ -399,22 +399,22 @@ const EventBasicInformationSection = ({
                   >
                     <Field
                       name="Relevant TA:"
-                      value={item.event_consultant_approval?.topic_expert}
+                      value={getTitleCase(item.event_consultant_approval?.topic_expert ?? '')}
                     />
 
                     <Field
                       name="Suitable for Participant:"
-                      value={item.event_consultant_approval?.is_suitable}
+                      value={getTitleCase(item.event_consultant_approval?.is_suitable ?? '')}
                     />
                     <View style={{ borderBottom: 1 }} />
                     <Field
                       name="Honorarium Check:"
-                      value={item.event_consultant_approval?.honorarium_check}
+                      value={getTitleCase(item.event_consultant_approval?.honorarium_check ?? '')}
                     />
                     <Field
                       name="Consultant Form:"
                       value={
-                        item.event_consultant_approval?.consultant_form_attached
+                        getTitleCase(item.event_consultant_approval?.consultant_form_attached ?? '')
                       }
                     />
                     <Field
@@ -474,7 +474,7 @@ const EventBasicInformationSection = ({
                       (item?.user_role === "director_sales"
                         ? "franchise_head"
                         : item?.user_role) as "ao"
-                    ]?.designation || "-"}
+                    ]?.designation.toUpperCase() || "-"}
                   </TableCell>
                   <TableCell style={{ flex: 1 }}>
                     {item.created_at ? formatDateTime(item.created_at) : "-"}
