@@ -9,12 +9,13 @@ import fs from "fs/promises";
 import fs2 from "fs";
 import { deleteFile } from "@/utils/file";
 import { createNotification } from "@/features/notifications/actions/notification";
-import { getApproverDetails, getApproverWorkArea } from "@/lib/helper";
+import { getApproverDetails } from "@/lib/helper";
 import { sendEmail } from "@/services/email";
 import RequestorInitMail from "@/features/email/template/ao-init-mail";
 import ApproverRequestMail from "@/features/email/template/approver-mail";
 import { formatDateTime } from "@/utils/formatter";
 import EventCompletionMail from "@/features/email/template/completion-mail";
+import { generateTrackingID } from "@/utils/tracking-id";
 
 export const createEvent = async (data: EventType) => {
   const devEmail = process.env.EMAIL_DEV_ADDRESS;
@@ -108,6 +109,24 @@ export const createEvent = async (data: EventType) => {
       },
     });
 
+    // generate tracking ID
+    const totalEventCount = await db.event.count();
+    const trackingId = generateTrackingID(
+      etype.event_type?.title ?? "",
+      etype.product_id,
+      totalEventCount,
+    );
+
+    //  update tracking id
+    await db.event.update({
+      where: {
+        id: etype.id,
+      },
+      data: {
+        track_no: trackingId,
+      },
+    });
+
     // revalidate cache
     revalidatePath("/dashboard");
     revalidatePath("/dashboard/events");
@@ -124,7 +143,7 @@ export const createEvent = async (data: EventType) => {
     // push email to creator mail if email exist
     if (etype.user.ao?.email) {
       sendEmail({
-        to: [devEmail || etype.user.ao.email], 
+        to: [devEmail || etype.user.ao.email],
         subject: "New event creation request",
         html: RequestorInitMail({
           eventTitle: etype.title,
@@ -145,7 +164,7 @@ export const createEvent = async (data: EventType) => {
     if (firstApprover.email) {
       console.log(firstApprover.email);
       sendEmail({
-        to: [devEmail || firstApprover.email], // 
+        to: [devEmail || firstApprover.email], //
         subject: "New event creation request",
         html: ApproverRequestMail({
           approverName: firstApprover.full_name,

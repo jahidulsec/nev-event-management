@@ -26,6 +26,7 @@ import { NoData } from "@/components/shared/state/state";
 import { formatNumber, getTitleCase } from "@/utils/formatter";
 import { FileText, Printer } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { generateTrackingID } from "@/utils/tracking-id";
 
 export default function EventSection({
   prevData,
@@ -91,7 +92,10 @@ export default function EventSection({
             title="Proposed Event Date"
             value={format(prevData?.event_date, "LLL dd, yyyy - h:mm aaa")}
           />
-          <CustomField title="Product Name" value={getTitleCase(prevData?.product_id)} />
+          <CustomField
+            title="Product Name"
+            value={getTitleCase(prevData?.product_id)}
+          />
         </FieldGroup>
       </FieldContainer>
       <Separator />
@@ -128,7 +132,10 @@ export default function EventSection({
       {/* event additional information */}
       <FieldContainer>
         <FieldGroup className="flex-row">
-          <CustomField title="Objective of the meeting" value={prevData.objective} />
+          <CustomField
+            title="Objective of the meeting"
+            value={prevData.objective}
+          />
           <CustomField title="Event Type" value={prevData.type} />
         </FieldGroup>
         <FieldGroup className="flex-row">
@@ -245,7 +252,7 @@ export default function EventSection({
         <Table className="border">
           <TableHeader className="bg-muted/35">
             <TableRow>
-              <TableHead>Doctor, (Degress) - Speciality </TableHead>
+              <TableHead>Doctor, (Degrees) - Speciality </TableHead>
               <TableHead>Chamber ID</TableHead>
               <TableHead>Role</TableHead>
               <TableHead>Duration (hours)</TableHead>
