@@ -25,7 +25,7 @@ import ConsultantSection from "./consultant-section";
 import AttachmentSection from "./attachment-section";
 import { AuthUser } from "@/types/auth-user";
 import { EventSingleProps } from "../lib/event";
-import { formatNumber } from "@/utils/formatter";
+import { formatNumber, getTitleCase } from "@/utils/formatter";
 import { useParams } from "next/navigation";
 import { useRouter } from "@bprogress/next";
 import { calculateEventBudget, findEventTypeByCost } from "@/utils/helper";
@@ -133,7 +133,7 @@ export default function EventForm({
   const isDisabled = (date: Date) => {
     const dayNumber = date.getDay();
 
-    // ❌ Disable Friday (5) & Saturday (6)
+    // Disable Friday (5) & Saturday (6)
     if (dayNumber === 5 || dayNumber === 6) {
       return true;
     }
@@ -206,45 +206,13 @@ export default function EventForm({
         {params.id ? "Event Details" : "Create Event"}
       </h3>
 
-      {/* user */}
-      {params.id && (
-        <>
-          <div className="flex flex-col gap-3">
-            <Field>
-              <FieldLabel>AO full name</FieldLabel>
-              <FieldDescription>
-                {prevData?.user.ao?.full_name}
-              </FieldDescription>
-            </Field>
-            <FieldGroup className="md:grid-cols-3 md:grid">
-              <Field>
-                <FieldLabel>Work Area</FieldLabel>
-                <FieldDescription>{prevData?.user_id}</FieldDescription>
-              </Field>
-              <Field>
-                <FieldLabel>Employee ID</FieldLabel>
-                <FieldDescription>
-                  {prevData?.user.ao?.employee_id}
-                </FieldDescription>
-              </Field>
-              <Field>
-                <FieldLabel>Designation</FieldLabel>
-                <FieldDescription>
-                  {prevData?.user.ao?.designation}
-                </FieldDescription>
-              </Field>
-            </FieldGroup>
-          </div>
-          <Separator className="bg-secondary/50" />
-        </>
-      )}
       <FieldGroup>
         <Controller
           control={form.control}
           name="title"
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Event Title</FieldLabel>
+              <FieldLabel htmlFor={field.name}>Event Title & Topic</FieldLabel>
               <Input
                 {...field}
                 id={field.name}
@@ -280,13 +248,13 @@ export default function EventForm({
           name="product_id"
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel>Product</FieldLabel>
+              <FieldLabel>Product Name</FieldLabel>
               <Select
                 placeholder="Select a product"
                 pending={pending}
                 defaultValue={prevData?.product_id ?? undefined}
                 data={products.map((item) => ({
-                  label: item.name,
+                  label: getTitleCase(item.name),
                   value: item.id,
                 }))}
                 onValueChange={(value) => {
@@ -308,7 +276,7 @@ export default function EventForm({
           name="venue"
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Venue Name & address</FieldLabel>
+              <FieldLabel htmlFor={field.name}>Venue Name, Address</FieldLabel>
               <Input
                 {...field}
                 id={field.name}
@@ -380,7 +348,7 @@ export default function EventForm({
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor={field.name}>
-                Institute Name, Customer Code of the Institute & Address
+                Institute Name, Customer Code of the Institute, Address
               </FieldLabel>
               <Input
                 {...field}
@@ -442,7 +410,7 @@ export default function EventForm({
           name="objective"
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Objective</FieldLabel>
+              <FieldLabel htmlFor={field.name}>Objective of the meeting</FieldLabel>
               <Select
                 defaultValue={
                   prevData?.objective
@@ -531,7 +499,7 @@ export default function EventForm({
           name="approved_material"
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Approved material</FieldLabel>
+              <FieldLabel htmlFor={field.name}>Approved Material</FieldLabel>
               <Select
                 defaultValue={prevData?.approved_material ?? undefined}
                 data={approvedMaterial.map((item) => ({
@@ -691,7 +659,7 @@ export default function EventForm({
         size={"lg"}
         className="max-w-sm"
       >
-        Save
+        Submit
       </FormButton>
     </Form>
   );

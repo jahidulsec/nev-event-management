@@ -33,7 +33,6 @@ export const EventBudgetSection = ({
   form: UseFormReturn<EventType>;
   user?: AuthUser;
 }) => {
-  const { setFocus } = form;
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "eventBudget",
@@ -190,7 +189,7 @@ export const EventBudgetSection = ({
             append({
               item: "",
               unit: 0,
-              unit_cost: 1,
+              unit_cost: 0,
             });
           }}
         >

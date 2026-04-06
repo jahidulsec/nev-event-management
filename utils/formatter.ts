@@ -23,3 +23,16 @@ export function getCleanData(data: object) {
     ),
   );
 }
+
+export const getTitleCase = (word: string): string => {
+  if (!word) return "-";
+
+  const words = word.split("-");
+
+  if (words.length > 1) {
+    const data: string[] = words.map((i) => getTitleCase(i));
+    return data.join(" ");
+  }
+
+  return word.charAt(0).toUpperCase() + word.slice(1);
+};

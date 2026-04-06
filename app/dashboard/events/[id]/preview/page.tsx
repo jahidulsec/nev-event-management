@@ -9,7 +9,6 @@ import {
   SectionHeading2,
   SectionHeadingWithBackButton,
 } from "@/components/shared/typography/heading";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import ECApprovalForm from "@/features/event/components/ec-approval-form";
 import EventSection from "@/features/event/components/event-section";
@@ -23,7 +22,6 @@ import { getAuthUser, getDashboardRole } from "@/lib/dal";
 import { event_current_status } from "@/lib/generated/prisma";
 import { AuthUser } from "@/types/auth-user";
 import { Params } from "@/types/search-params";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 

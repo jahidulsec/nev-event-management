@@ -23,7 +23,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { NoData } from "@/components/shared/state/state";
-import { formatNumber } from "@/utils/formatter";
+import { formatNumber, getTitleCase } from "@/utils/formatter";
 import { FileText, Printer } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -66,11 +66,11 @@ export default function EventSection({
       {/* Requester information */}
       <FieldContainer>
         <CustomField
-          title="AO full name"
+          title="AO Full Name"
           value={prevData?.user.ao?.full_name}
         />
         <FieldGroup className="md:grid-cols-3 md:grid">
-          <CustomField title="Territory ID" value={prevData?.user_id} />{" "}
+          <CustomField title="Work Area" value={prevData?.user_id} />{" "}
           <CustomField
             title="Employee ID"
             value={prevData?.user.ao?.employee_id}
@@ -85,24 +85,24 @@ export default function EventSection({
 
       {/* event basic information */}
       <FieldContainer>
-        <CustomField title="Event title" value={prevData?.title} />
+        <CustomField title="Event Title & Topic" value={prevData?.title} />
         <FieldGroup className="flex-row">
           <CustomField
-            title="Proposed Date"
+            title="Proposed Event Date"
             value={format(prevData?.event_date, "LLL dd, yyyy - h:mm aaa")}
           />
-          <CustomField title="Product name" value={prevData?.product_id} />
+          <CustomField title="Product Name" value={getTitleCase(prevData?.product_id)} />
         </FieldGroup>
       </FieldContainer>
       <Separator />
 
       {/* venue information */}
       <FieldContainer>
-        <CustomField title="Venue name, address" value={prevData?.venue} />
+        <CustomField title="Venue Name, Address" value={prevData?.venue} />
         <FieldGroup className="flex-row">
           <CustomField
-            title="Venue appropiateness"
-            value={prevData?.venue_appropriateness}
+            title="Venue Appropiateness"
+            value={getTitleCase(prevData?.venue_appropriateness)}
           />
           <CustomField title="Food Supplier" value={prevData?.food_supplier} />
         </FieldGroup>
@@ -112,13 +112,13 @@ export default function EventSection({
       {/* institute information */}
       <FieldContainer>
         <CustomField
-          title="Institute name, address, area"
+          title="Institute Name, Customer Code of the Institute, Address"
           value={prevData?.institute}
         />
         <FieldGroup className="flex-row">
           <CustomField title="Unit" value={prevData?.institute_unit ?? "-"} />
           <CustomField
-            title="Department/Speciality"
+            title="Department/Specialty"
             value={prevData?.institute_dept}
           />
         </FieldGroup>
@@ -128,7 +128,7 @@ export default function EventSection({
       {/* event additional information */}
       <FieldContainer>
         <FieldGroup className="flex-row">
-          <CustomField title="Objective" value={prevData.objective} />
+          <CustomField title="Objective of the meeting" value={prevData.objective} />
           <CustomField title="Event Type" value={prevData.type} />
         </FieldGroup>
         <FieldGroup className="flex-row">
@@ -181,7 +181,7 @@ export default function EventSection({
         </Table>
 
         <CustomField
-          title="Participants Details"
+          title="Details of Participants"
           value={prevData.details_participants ?? "-"}
         />
       </Card>

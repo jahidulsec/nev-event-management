@@ -27,6 +27,7 @@ import {
 import { cn } from "@/lib/utils";
 import { ApproverTypeBadge } from "@/components/shared/badge/badge";
 import { Textarea } from "@/components/ui/textarea";
+import { getTitleCase } from "@/utils/formatter";
 
 export default function EventStatusUpdateForm({
   authUser,
@@ -128,7 +129,7 @@ export default function EventStatusUpdateForm({
   return (
     <Form className="w-full max-w-2xl" onSubmit={form.handleSubmit(onSubmit)}>
       <p className="text-mguted-foreground">
-        Approve as <strong className="text-foreground">{eventTypeRole}</strong>{" "}
+        Approve as <strong className="text-foreground">{eventTypeRole.toUpperCase()}</strong>{" "}
         <ApproverTypeBadge type={eventType as any}>
           {eventType}
         </ApproverTypeBadge>
@@ -144,7 +145,7 @@ export default function EventStatusUpdateForm({
                 placeholder="Select a status"
                 // defaultValue={prevData?.sta ?? undefined}
                 data={data.map((item) => ({
-                  label: item,
+                  label: getTitleCase(item),
                   value: item,
                 }))}
                 onValueChange={(value) => {
