@@ -26,7 +26,6 @@ import { NoData } from "@/components/shared/state/state";
 import { formatNumber, getTitleCase } from "@/utils/formatter";
 import { FileText, Printer } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { generateTrackingID } from "@/utils/tracking-id";
 
 export default function EventSection({
   prevData,
@@ -92,10 +91,7 @@ export default function EventSection({
             title="Proposed Event Date"
             value={format(prevData?.event_date, "LLL dd, yyyy - h:mm aaa")}
           />
-          <CustomField
-            title="Product Name"
-            value={getTitleCase(prevData?.product_id)}
-          />
+          <CustomField title="Product Name" value={prevData?.product.name} />
         </FieldGroup>
       </FieldContainer>
       <Separator />

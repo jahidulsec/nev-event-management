@@ -32,6 +32,7 @@ import { calculateEventBudget, findEventTypeByCost } from "@/utils/helper";
 import { EventTypeMultiProps, getEventTypes } from "../lib/type";
 import { DatePickerTime } from "@/components/shared/date-picker/date-time-picker";
 import { Textarea } from "@/components/ui/textarea";
+import Combobox from "@/components/shared/combobox/combobox";
 
 export default function EventForm({
   prevData,
@@ -134,7 +135,8 @@ export default function EventForm({
     const dayNumber = date.getDay();
 
     // Disable Friday (5) & Saturday (6)
-    if (dayNumber === 5 ) { //|| dayNumber === 6
+    if (dayNumber === 5) {
+      //|| dayNumber === 6
       return true;
     }
 
@@ -152,7 +154,8 @@ export default function EventForm({
       const d = minDate.getDay();
 
       // Skip Friday (5) & Saturday (6)
-      if (d !== 5 ) { //&& d !== 6
+      if (d !== 5) {
+        //&& d !== 6
         addedDays++;
       }
     }
@@ -165,7 +168,7 @@ export default function EventForm({
   React.useEffect(() => {
     const handleProduct = () => {
       startTransition(async () => {
-        const res = await getProducts({ page: 1, size: 20 });
+        const res = await getProducts({ page: 1, size: 100 });
         if (res.success) {
           setProducts(res?.data ?? []);
         }
@@ -249,7 +252,17 @@ export default function EventForm({
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel>Product Name</FieldLabel>
-              <Select
+              <Combobox
+                getKey={(item: product) => item.id}
+                getLabel={(item: product) => item.name}
+                fetcher={getProducts as any}
+                placeholder="Select"
+                onValueChange={(value) => {
+                  field.onChange(value);
+                }}
+                defaultValue={prevData?.product_id}
+              />
+              {/* <Select
                 placeholder="Select a product"
                 pending={pending}
                 defaultValue={prevData?.product_id ?? undefined}
@@ -260,7 +273,7 @@ export default function EventForm({
                 onValueChange={(value) => {
                   field.onChange(value);
                 }}
-              />
+              /> */}
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
@@ -410,7 +423,9 @@ export default function EventForm({
           name="objective"
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>Objective of the meeting</FieldLabel>
+              <FieldLabel htmlFor={field.name}>
+                Objective of the meeting
+              </FieldLabel>
               <Select
                 defaultValue={
                   prevData?.objective

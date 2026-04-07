@@ -150,10 +150,7 @@ const EventBasicInformationSection = ({
         <View>
           <FieldGroup>
             <CustomField name="Event Title & Topic" value={data.title} />
-            <CustomField
-              name="Product Name"
-              value={getTitleCase(data.product_id)}
-            />
+            <CustomField name="Product Name" value={data.product.name} />
           </FieldGroup>
         </View>
 
