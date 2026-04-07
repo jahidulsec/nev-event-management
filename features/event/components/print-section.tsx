@@ -12,7 +12,12 @@ import {
   View,
   Image,
 } from "@react-pdf/renderer";
-import { formatDate, formatDateTime, formatNumber, getTitleCase } from "@/utils/formatter";
+import {
+  formatDate,
+  formatDateTime,
+  formatNumber,
+  getTitleCase,
+} from "@/utils/formatter";
 import { EventApproverMultProps } from "../lib/event-approver";
 import { convertPdfToImage } from "@/lib/pdf";
 
@@ -147,7 +152,7 @@ const EventBasicInformationSection = ({
             <CustomField name="Event Title & Topic" value={data.title} />
             <CustomField
               name="Product Name"
-              value={data.product_id.replace(/-/g, " ")}
+              value={getTitleCase(data.product_id)}
             />
           </FieldGroup>
         </View>
@@ -159,7 +164,7 @@ const EventBasicInformationSection = ({
             <CustomField name="Food Supplier" value={data.food_supplier} />
             <CustomField
               name="Venue Appropiateness"
-              value={data.venue_appropriateness}
+              value={getTitleCase(data.venue_appropriateness)}
             />
           </FieldGroup>
         </View>
@@ -197,7 +202,7 @@ const EventBasicInformationSection = ({
             <CustomField
               style={{ flex: 1 }}
               name="Approved Material"
-              value={data.approved_material}
+              value={getTitleCase(data.approved_material)}
             />
             <CustomField
               style={{ flex: 1 }}
@@ -398,24 +403,31 @@ const EventBasicInformationSection = ({
                     }}
                   >
                     <Field
-                      name="Relevant TA:"
-                      value={getTitleCase(item.event_consultant_approval?.topic_expert ?? '')}
+                      name="Relevant TA/Topic Expert:"
+                      value={getTitleCase(
+                        item.event_consultant_approval?.topic_expert ?? "",
+                      )}
                     />
 
                     <Field
                       name="Suitable for Participant:"
-                      value={getTitleCase(item.event_consultant_approval?.is_suitable ?? '')}
+                      value={getTitleCase(
+                        item.event_consultant_approval?.is_suitable ?? "",
+                      )}
                     />
                     <View style={{ borderBottom: 1 }} />
                     <Field
                       name="Honorarium Check:"
-                      value={getTitleCase(item.event_consultant_approval?.honorarium_check ?? '')}
+                      value={getTitleCase(
+                        item.event_consultant_approval?.honorarium_check ?? "",
+                      )}
                     />
                     <Field
                       name="Consultant Form:"
-                      value={
-                        getTitleCase(item.event_consultant_approval?.consultant_form_attached ?? '')
-                      }
+                      value={getTitleCase(
+                        item.event_consultant_approval
+                          ?.consultant_form_attached ?? "",
+                      )}
                     />
                     <Field
                       name="Nth Engagement:"
