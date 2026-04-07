@@ -36,3 +36,20 @@ export const getTitleCase = (word: string): string => {
 
   return word.charAt(0).toUpperCase() + word.slice(1);
 };
+
+export function generateSlug(text: string) {
+  return (
+    text
+      .toString()
+      .toLowerCase()
+      .trim()
+      // Replace spaces with -
+      .replace(/\s+/g, "-")
+      // Remove all non-word chars (except -)
+      .replace(/[^\w-]+/g, "")
+      // Replace multiple - with single -
+      .replace(/--+/g, "-")
+      // Remove - from start and end
+      .replace(/^-+|-+$/g, "")
+  );
+}

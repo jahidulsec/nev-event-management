@@ -9,11 +9,7 @@ export const ProductQuerySchema = QuerySchema.extend({
   // participant_id: z.string().optional(),
 });
 
-export const ProductsSchema = z.array(
-  ProductSchema.extend({
-    slug: z.string().min(1),
-  }),
-);
+export const ProductsSchema = z.array(ProductSchema);
 
 export type ProductType = z.infer<typeof ProductSchema>;
 export type ProductsType = z.infer<typeof ProductsSchema>;

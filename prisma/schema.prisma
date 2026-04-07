@@ -196,8 +196,8 @@ model event_consultant {
   in_different_district     event_consultant_in_different_district? @default(yes)
   night_stay                event_consultant_night_stay?            @default(no)
   tier_id                   String?                                 @db.VarChar(21)
-  doctor                    doctor                                  @relation(fields: [doctor_id], references: [id], map: "event_consultant_ibfk_1")
   event                     event                                   @relation(fields: [event_id], references: [id], onDelete: Cascade, map: "event_consultant_ibfk_2")
+  doctor                    doctor                                  @relation(fields: [doctor_id], references: [id], map: "event_consultant_ibfk_1")
   event_consultant_approval event_consultant_approval?
 
   @@unique([doctor_id, event_id], map: "doctor_id")

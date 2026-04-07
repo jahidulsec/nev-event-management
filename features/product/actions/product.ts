@@ -5,12 +5,15 @@ import { handleError } from "@/lib/error";
 import { response } from "@/lib/response";
 import { revalidatePath } from "next/cache";
 import { ProductsSchema, ProductsType, ProductType } from "./schema";
-import { hashPassword } from "@/utils/password";
+import { generateSlug } from "@/utils/formatter";
 
 export const createProduct = async (data: ProductType) => {
   try {
     const product = await db.product.create({
-      data: data,
+      data: {
+        id: generateSlug(data.name),
+        ...data,
+      },
     });
 
     revalidatePath("/dashboard");
@@ -89,17 +92,19 @@ export const createProducts = async (data: ProductsType) => {
     if (validatedData.length === 0) throw new Error("No column is included");
 
     for (let i = 0; i < validatedData.length; i++) {
+      const id = generateSlug(validatedData[i].name);
+
       await db.product.upsert({
         where: {
-          id: validatedData[i].slug,
+          id: id,
         },
         create: {
           name: validatedData[i].name,
-          id: validatedData[i].slug,
+          id: id,
         },
         update: {
           name: validatedData[i].name,
-          id: validatedData[i].slug,
+          id: id,
         },
       });
     }
