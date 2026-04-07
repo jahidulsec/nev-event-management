@@ -183,7 +183,7 @@ export const EventBudgetSection = ({
       {isCreator && (
         <Button
           variant={"outline"}
-          disabled={budgetType.length === eventBudget.length}
+          disabled={budgetType?.length === eventBudget?.length}
           type="button"
           className="text-primary"
           onClick={() => {
