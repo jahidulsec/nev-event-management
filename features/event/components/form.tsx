@@ -134,7 +134,7 @@ export default function EventForm({
     const dayNumber = date.getDay();
 
     // Disable Friday (5) & Saturday (6)
-    if (dayNumber === 5 || dayNumber === 6) {
+    if (dayNumber === 5 ) { //|| dayNumber === 6
       return true;
     }
 
@@ -152,7 +152,7 @@ export default function EventForm({
       const d = minDate.getDay();
 
       // Skip Friday (5) & Saturday (6)
-      if (d !== 5 && d !== 6) {
+      if (d !== 5 ) { //&& d !== 6
         addedDays++;
       }
     }
