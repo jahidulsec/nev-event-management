@@ -28,13 +28,13 @@ export const DoctorQuerySchema = QuerySchema.extend({
 
 export const DoctorsSchema = z.array(
   z.object({
-    TerritoryCode: z.string().min(5),
+    TerritoryCode: z.string().min(1),
     AreaName: z.string().optional(),
     DrMasterID: z.string().min(3),
     DrChildID: z.string().optional(),
     DoctorName: z.string().min(1),
     Degrees: z.string().optional(),
-    Speciality: z.string().min(1),
+    Speciality: z.string().optional(),
     Chamber: z.string().optional(),
   }),
 );

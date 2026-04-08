@@ -93,7 +93,7 @@ export const createDoctors = async (data: DoctorsType) => {
         create: {
           full_name: validatedData[i].DoctorName,
           degrees: validatedData[i].Degrees,
-          speciality: validatedData[i].Speciality,
+          speciality: validatedData[i].Speciality ?? '-',
           dr_child_id: validatedData[i].DrChildID,
           dr_master_id: validatedData[i].DrMasterID,
           chamber: validatedData[i].Chamber,
