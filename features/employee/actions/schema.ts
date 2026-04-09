@@ -42,6 +42,7 @@ export const EmployeesSchema = z.array(EmployeeSchema);
 // ✅ AO Schema (clean & validated)
 //
 export const AOSchema = z.object({
+  employee_id: z.string(),
   full_name: z.string(),
   designation: z.string(),
   email: z.email({ message: "Invalid email address" }),

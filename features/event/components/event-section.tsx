@@ -70,7 +70,7 @@ export default function EventSection({
           <CustomField title="Work Area" value={prevData?.user_id} />{" "}
           <CustomField
             title="Employee ID"
-            value={prevData?.user.ao?.employee_id}
+            value={prevData?.user.ao?.employee_id ?? ""}
           />{" "}
           <CustomField
             title="Designation"
