@@ -1,82 +1,129 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-</head>
+  </head>
 
-<body>
-    <div style="font-family: Arial, sans-serif; background:#f6f6f6; padding:20px;">
+  <body>
+    <div
+      style="font-family: Arial, sans-serif; background: #f6f6f6; padding: 20px"
+    >
+      <div
+        style="
+          font-family: Arial, sans-serif;
+          background: #f6f6f6;
+          padding: 20px;
+        "
+      >
         <div
-            style="max-width:600px; margin:auto; background:#ffffff; border: 1px dashed #206bb9; border-radius:8px; overflow:hidden; box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+          style="
+            max-width: 600px;
+            margin: auto;
+            background: #ffffff;
+            border: 1px dashed #4f46e5;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+          "
+        >
+          <!-- Header -->
+          <div style="background: #f9f9fa; color: #09090b; padding: 16px 24px">
+            <img
+              src="${process.env.NEXT_PUBLIC_APP_URL}/logo/nevian.png"
+              alt="nevian logo"
+              width="100"
+            />
+            <div>
+              <h2 style="margin: 0; font-size: 20px">Event Status Updated</h2>
+              <p style="margin: 5px 0 0; color: #666; font-size: 14px">
+                Event Management System
+              </p>
+            </div>
+          </div>
 
-            <!-- Header -->
-            <div
-                style="background:#f9f9fa; color:#09090b; padding:16px 24px;">
-                <img src="/public/logo/nevian.png" alt="nevian logo" width="100">
-                <div style="display: flex; flex-direction: column; gap: 0px;">
-                    <h2 style="margin:0;">Event Approval Status</h2>
-                    <p style="margin:0; color: #666; font-size: 11px;">Event Management System</p>
-                </div>
+          <!-- Body -->
+          <div style="padding: 24px; color: #333">
+            <p style="font-size: 14px">
+              <strong>${product}</strong> / ${typeTitle || "Event"} /
+              <strong>${eventTitle}</strong>
+            </p>
+
+            <p style="margin-top: 16px">
+              The status of your event proposal has been updated by
+              <strong>${approverName || "Approver"}</strong>.
+            </p>
+
+            <!-- Status Badge -->
+            <div style="margin-top: 16px">
+              <span
+                style="
+              display:inline-block;
+              padding:6px 12px;
+              border-radius:999px;
+              font-size:12px;
+              font-weight:bold;
+              color:white;
+              background:${getStatusColor(status)};
+            "
+              >
+                ${status}
+              </span>
             </div>
 
-            <!-- Body -->
-            <div style="padding:24px; color:#333;">
+            <!-- Details -->
+            <table
+              style="width: 100%; margin-top: 16px; border-collapse: collapse"
+            >
+              <tr>
+                <td style="padding: 8px 0; font-weight: bold">Event Title:</td>
+                <td>${eventTitle}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; font-weight: bold">Event Type:</td>
+                <td>${typeTitle || "-"}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; font-weight: bold">Product:</td>
+                <td>${product}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; font-weight: bold">Event Date:</td>
+                <td>${eventDate}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px 0; font-weight: bold">
+                  Updated Status:
+                </td>
+                <td style="color:${getStatusColor(status)}; font-weight:bold;">
+                  ${status}
+                </td>
+              </tr>
 
-                <p style="font-size:14px;">
-                    Hello,
-                </p>
+              ${ remarks ? `
+              <tr>
+                <td style="padding: 8px 0; font-weight: bold">Remarks:</td>
+                <td>${remarks}</td>
+              </tr>
+              ` : "" }
+            </table>
+          </div>
 
-                <p style="margin-top:12px;">
-                    Your event proposal has been <strong style="color:#206bb9;">${event.current_status}</strong>.
-                </p>
-
-                <!-- Summary -->
-                <p style="margin-top:16px; font-size:14px;">
-                    <strong>${event.product_id?.toUpperCase()}</strong> /
-                    ${event.event_type?.title || "Event"} /
-                    <strong>${event.title}</strong>
-                </p>
-
-                <!-- Event Details -->
-                <table style="width:100%; margin-top:16px; border-collapse:collapse;">
-                    <tr>
-                        <td style="padding:8px 0; font-weight:bold;">Event Title:</td>
-                        <td>${event.title}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding:8px 0; font-weight:bold;">Event Type:</td>
-                        <td>${event.event_type?.title || "-"}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding:8px 0; font-weight:bold;">Product:</td>
-                        <td>${event.product_id}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding:8px 0; font-weight:bold;">Event Date:</td>
-                        <td>${new Date(event.event_date).toLocaleString()}</td>
-                    </tr>
-
-                </table>
-
-
-
-                <!-- Extra Message -->
-                <p style="margin-top:20px; font-size:13px; color:#555;">
-                    You can now proceed with execution and coordination for this event.
-                </p>
-
-            </div>
-
-            <!-- Footer -->
-            <div style="background:#f1f1f1; padding:16px; font-size:12px; text-align:center; color:#666;">
-                This is an automated message. Please do not reply.
-            </div>
-
+          <!-- Footer -->
+          <div
+            style="
+              background: #f1f1f1;
+              padding: 16px;
+              font-size: 12px;
+              text-align: center;
+              color: #666;
+            "
+          >
+            This is an automated message. Please do not reply.
+          </div>
         </div>
+      </div>
     </div>
-</body>
-
+  </body>
 </html>

@@ -19,7 +19,7 @@ export default function EventCompletionMail({
             <!-- Header -->
             <div style="background:#f9f9fa; color:#09090b; padding:16px 24px;">
                  <img src="${process.env.NEXT_PUBLIC_APP_URL}/logo/nevian.png" alt="nevian logo" width="100">
-                <div style="display: flex; flex-direction: column; gap: 0px;">
+                <div>
                     <h2 style="margin:0;">Event Approval Status</h2>
                     <p style="margin:0; color: #666; font-size: 11px;">Event Management System</p>
                 </div>
