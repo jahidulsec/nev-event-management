@@ -62,7 +62,7 @@ export default function ECApprovalForm({
                   }
                 />
                 <CustomField
-                  title="Consultant Form Attached?"
+                  title="nTh Engagement?"
                   value={
                     item?.event_consultant_approval?.nth_engagement?.toString() ??
                     "Not approved yet"
