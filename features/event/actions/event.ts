@@ -555,6 +555,14 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
         }).catch((err) => console.error(err));
 
         // send status update to ao
+        await createNotification({
+          work_area_code: event?.user_id ?? "",
+          is_marked: "no",
+          event_id: event?.id ?? "",
+          status: "read_only",
+          message: `Status Update: ${data.user_id} (${data.user_role}) has ${status} the event`,
+        });
+
         if (event.user.ao?.email) {
           sendEmail({
             to: [devEmail || event.user.ao?.email],
