@@ -129,7 +129,10 @@ export default function EventStatusUpdateForm({
   return (
     <Form className="w-full max-w-2xl" onSubmit={form.handleSubmit(onSubmit)}>
       <p className="text-mguted-foreground">
-        Approve as <strong className="text-foreground">{eventTypeRole.toUpperCase()}</strong>{" "}
+        Approve as{" "}
+        <strong className="text-foreground">
+          {eventTypeRole.toUpperCase()}
+        </strong>{" "}
         <ApproverTypeBadge type={eventType as any}>
           {eventType}
         </ApproverTypeBadge>
@@ -180,8 +183,8 @@ export default function EventStatusUpdateForm({
         className="max-w-sm"
         disabled={
           role === "ec" &&
-          !event.event_consultant.some(
-            (i) => i.event_consultant_approval?.created_at,
+          !event?.event_consultant?.every(
+            (i) => i?.event_consultant_approval?.created_at,
           )
         }
       >
