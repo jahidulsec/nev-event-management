@@ -43,9 +43,6 @@ export default function EventForm({
   eventTypes: EventTypeMultiProps[];
   authUser?: AuthUser;
 }) {
-  const [products, setProducts] = React.useState<product[]>([]);
-  const [pending, startTransition] = React.useTransition();
-
   // event type
   const [types, setTypes] = React.useState<string[]>([]);
   const [pendingType, startTransitionType] = React.useTransition();
@@ -164,19 +161,7 @@ export default function EventForm({
     return date < minDate;
   };
 
-  // get products
-  React.useEffect(() => {
-    const handleProduct = () => {
-      startTransition(async () => {
-        const res = await getProducts({ page: 1, size: 100 });
-        if (res.success) {
-          setProducts(res?.data ?? []);
-        }
-      });
-    };
 
-    handleProduct();
-  }, []);
 
   // get event type
   React.useEffect(() => {
