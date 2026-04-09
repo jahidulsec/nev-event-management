@@ -5,6 +5,8 @@ import { handleError } from "@/lib/error";
 import { response } from "@/lib/response";
 import { revalidatePath } from "next/cache";
 import {
+  AOsSchema,
+  AOsType,
   EmployeesSchema,
   EmployeesType,
   EmployeeType,
@@ -116,6 +118,62 @@ export const createEmployees = async (data: EmployeesType) => {
       success: true,
       message: "New employees is created successfully",
       data: employees,
+    });
+  } catch (error) {
+    console.error(error);
+    const err = handleError(error);
+    return response({
+      success: false,
+      message: err.message ?? "Something went wrong",
+    });
+  }
+};
+
+export const createAOs = async (data: AOsType) => {
+  try {
+    const validatedData = AOsSchema.parse(data);
+
+    if (validatedData.length === 0) throw new Error("No column is included");
+
+    for (let i = 0; i < validatedData.length; i++) {
+      const { work_area_code, ...rest } = validatedData[i];
+
+      await db.user.upsert({
+        where: {
+          work_area_code,
+        },
+        create: {
+          work_area_code,
+          password: await hashPassword(process.env.USER_DEFAULT_PASSWORD!),
+          role: "ao",
+          ao: {
+            create: {
+              ...rest,
+            },
+          },
+        },
+        update: {
+          ao: {
+            upsert: {
+              create: {
+                ...rest,
+              },
+              update: {
+                ...rest,
+              },
+            },
+          },
+        },
+      });
+    }
+
+    revalidatePath("/dashboard");
+    revalidatePath("/dashboard/employees");
+
+    return response({
+      success: true,
+      message: "Employees is added successfully",
+      data: [],
     });
   } catch (error) {
     console.error(error);

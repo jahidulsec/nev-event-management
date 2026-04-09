@@ -17,6 +17,12 @@ import { FormButton } from "./button";
 import ExcelJS from "exceljs";
 import { toast } from "sonner";
 import { FormDialog } from "../modal/modal";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogCancel
+} from "@/components/ui/alert-dialog";
 
 const ExcelUploadSchema = z.object({
   file: z
@@ -79,9 +85,12 @@ function ExcelUploadButton({
         <Upload /> Upload
       </Button>
 
-      <FormDialog open={open} onOpenChange={setOpen} formTitle="Upload Excel">
-        <ExcelUploadForm action={action} />
-      </FormDialog>
+      <AlertDialog open={open} onOpenChange={setOpen}>
+        <AlertDialogContent>
+          <ExcelUploadForm action={action} />
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }

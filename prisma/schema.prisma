@@ -205,11 +205,10 @@ model event_consultant {
 }
 
 model ao {
-  employee_id    String    @unique(map: "employee_id") @db.VarChar(6)
   full_name      String    @db.VarChar(150)
   designation    String    @db.VarChar(100)
   email          String    @db.VarChar(200)
-  group_name     String    @db.VarChar(10)
+  group_name     String    @db.VarChar(50)
   rm_code        String    @db.VarChar(6)
   zm_code        String    @db.VarChar(6)
   wing_code      String    @db.VarChar(6)
