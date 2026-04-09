@@ -428,16 +428,6 @@ enum event_current_status {
   rework
 }
 
-enum approver_type {
-  first
-  second
-  third
-  budget
-  forth
-  fifth
-  final
-}
-
 enum notification_is_marked {
   yes
   no
@@ -446,4 +436,14 @@ enum notification_is_marked {
 enum notification_status {
   action
   read_only
+}
+
+enum approver_type {
+  first
+  second
+  third
+  budget
+  fifth
+  final
+  fourth
 }

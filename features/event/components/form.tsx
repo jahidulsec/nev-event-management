@@ -145,7 +145,7 @@ export default function EventForm({
     const minDate = new Date(today);
     let addedDays = 0;
 
-    while (addedDays < 5) {
+    while (addedDays < 6) {
       minDate.setDate(minDate.getDate() + 1);
 
       const d = minDate.getDay();
