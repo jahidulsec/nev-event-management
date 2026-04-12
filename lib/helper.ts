@@ -2,6 +2,7 @@
 
 import { db } from "@/config/db";
 import { Prisma } from "./generated/prisma";
+import { EventSingleProps } from "@/features/event/lib/event";
 
 export const getApproverWorkArea = async (
   event: Prisma.eventGetPayload<{
@@ -190,3 +191,5 @@ export const getApproverDetails = async (
     ...userDetails?.[firstApproverRole as "ao"],
   };
 };
+
+

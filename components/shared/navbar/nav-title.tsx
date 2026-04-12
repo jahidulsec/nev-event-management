@@ -39,7 +39,7 @@ export default function NavTitle({
       >
         <TextAlignStart /> <span className="sr-only">Menu</span>
       </Button>
-      <AppLogo width={80} height={100} />
+      <AppLogo width={120} height={100} />
 
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="left" className="min-h-svh h-full">

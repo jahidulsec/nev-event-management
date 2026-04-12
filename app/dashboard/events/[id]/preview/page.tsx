@@ -9,6 +9,7 @@ import {
   SectionHeading2,
   SectionHeadingWithBackButton,
 } from "@/components/shared/typography/heading";
+import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import ECApprovalForm from "@/features/event/components/ec-approval-form";
 import EventSection from "@/features/event/components/event-section";
@@ -19,6 +20,7 @@ import TrackingEventForm from "@/features/event/components/tracking-form";
 import { getEvent } from "@/features/event/lib/event";
 import { getEventStatusHistories } from "@/features/event/lib/status-history";
 import { getAuthUser, getDashboardRole } from "@/lib/dal";
+import { getApproverEventStatus } from "@/lib/event";
 import { event_current_status } from "@/lib/generated/prisma";
 import { AuthUser } from "@/types/auth-user";
 import { Params } from "@/types/search-params";
@@ -56,19 +58,41 @@ const EventDetailsSection = async ({ params }: { params: Params }) => {
   const user = await getAuthUser();
   const role = await getDashboardRole();
 
-  const canBypassStatusCheck = ["ec", "superadmin"].includes(role ?? "");
+  const canBypassStatusCheck = ["ec", "superadmin"].some((i) => i == role);
   const isFinalStatus = ["approved", "rejected"].includes(
     res.data?.current_status ?? "",
   );
 
   if (!res.data) return notFound();
 
-  if (!canBypassStatusCheck && isFinalStatus) {
-    return (
-      <EventStatusSection
-        status={res.data.current_status as event_current_status}
-      />
-    );
+  const { currentUserSubmission, eventTypeRole } = getApproverEventStatus(
+    res.data,
+    role as string,
+  );
+
+  if (!canBypassStatusCheck) {
+    if (currentUserSubmission !== 'pending') {
+      return (
+        <Section className="border p-6 rounded-md mt-10">
+          <div className="flex flex-col gap-6 max-w-4xl mx-auto">
+            <SectionHeading2>Event Current Status</SectionHeading2>
+            <Separator />
+            <p className="text-center">
+              This event - ({res.data.product.name}) /{" "}
+              {res.data.event_type?.title} / <strong>{res.data.title}</strong>{" "}
+              is <em>{currentUserSubmission}</em> by you.
+            </p>
+          </div>
+        </Section>
+      );
+    }
+    if (isFinalStatus) {
+      return (
+        <EventStatusSection
+          status={res.data.current_status as event_current_status}
+        />
+      );
+    }
   }
 
   return (

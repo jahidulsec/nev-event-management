@@ -45,7 +45,13 @@ export default function EventTable({
 
   const columns: ColumnDef<EventMultiProps>[] = [
     serialColumn,
-    { accessorKey: "title", header: "Title" },
+    {
+      accessorKey: "title",
+      header: "Title",
+      cell: ({ row }) => (
+        <p className="min-w-88 text-wrap">{row.original.title}</p>
+      ),
+    },
     {
       accessorKey: "event_date",
       header: "Event Date",
@@ -66,7 +72,7 @@ export default function EventTable({
         const eventType = row.original.event_type;
 
         return (
-          <p>
+          <p className="text-wrap min-w-40">
             {eventType?.title} ({getCostLimitText(eventType as any)})
           </p>
         );
@@ -167,7 +173,7 @@ export default function EventTable({
               <Eye /> <span className="sr-only">Preview</span>
             </TableActionButton>
             {authUser?.role.includes("ec") ||
-              authUser?.role.includes("superadmin") && (
+              (authUser?.role.includes("superadmin") && (
                 <>
                   {["processing", "rework"].includes(
                     row.original.current_status ?? "",
@@ -183,20 +189,20 @@ export default function EventTable({
                     </TableActionButton>
                   )}
                 </>
-              )}
+              ))}
 
             {(authUser?.role.includes("ec") ||
               authUser?.role.includes("superadmin")) && (
-                <TableActionButton tooltip="Print" variant={"edit"}>
-                  <a
-                    href={`/print/event/${value.id}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Printer /> <span className="sr-only">Print</span>
-                  </a>
-                </TableActionButton>
-              )}
+              <TableActionButton tooltip="Print" variant={"edit"}>
+                <a
+                  href={`/print/event/${value.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Printer /> <span className="sr-only">Print</span>
+                </a>
+              </TableActionButton>
+            )}
 
             {authUser?.role.includes("superadmin") && (
               <TableActionButton

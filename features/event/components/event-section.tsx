@@ -47,7 +47,7 @@ export default function EventSection({
         <h3 className="text-2xl font-bold text-primary mb-6 w-full">
           Event Details
         </h3>
-        {role === "ec" && (
+        {(role === "ec" || role === "superadmin") && (
           <Button asChild>
             <a
               href={`/print/event/${prevData.id}`}
