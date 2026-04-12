@@ -14,7 +14,7 @@ import {
   SectionHeading,
   SectionHeadingIcon,
 } from "@/components/shared/typography/heading";
-import { createEmployees } from "@/features/employee/actions/employee";
+import { createAOs, createEmployees } from "@/features/employee/actions/employee";
 import CreateEmployeeButton from "@/features/employee/components/create-button";
 import EmployeeTable from "@/features/employee/components/table";
 import { getEmployees } from "@/features/employee/lib/employee";
@@ -52,7 +52,7 @@ export default async function DoctorsPage({
           <SectionActions>
             <SearchForm />
             <DownloadButton filePath="/public/templates/quiz_template.xlsx" />
-            <ExcelUploadButton action={createEmployees} />
+            <ExcelUploadButton action={createAOs} />
             <CreateEmployeeButton />
           </SectionActions>
         </SectionHeader>

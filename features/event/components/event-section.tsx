@@ -1,11 +1,8 @@
-import { AuthUser, AuthUserRole } from "@/types/auth-user";
+import { AuthUserRole } from "@/types/auth-user";
 import React from "react";
-import { EventTypeMultiProps } from "../lib/type";
 import { EventSingleProps } from "../lib/event";
 import {
   Field,
-  FieldContent,
-  FieldDescription,
   FieldGroup,
   FieldLabel,
   FieldTitle,
@@ -73,7 +70,7 @@ export default function EventSection({
           <CustomField title="Work Area" value={prevData?.user_id} />{" "}
           <CustomField
             title="Employee ID"
-            value={prevData?.user.ao?.employee_id}
+            value={prevData?.user.ao?.employee_id ?? ""}
           />{" "}
           <CustomField
             title="Designation"
@@ -101,7 +98,7 @@ export default function EventSection({
         <CustomField title="Venue Name, Address" value={prevData?.venue} />
         <FieldGroup className="flex-row">
           <CustomField
-            title="Venue Appropiateness"
+            title="Venue Appropriateness"
             value={getTitleCase(prevData?.venue_appropriateness)}
           />
           <CustomField title="Food Supplier" value={prevData?.food_supplier} />
@@ -137,7 +134,7 @@ export default function EventSection({
         <FieldGroup className="flex-row">
           <CustomField
             title="Approved Material"
-            value={prevData.approved_material}
+            value={getTitleCase(prevData.approved_material)}
           />
           <CustomField
             title="Material Code"

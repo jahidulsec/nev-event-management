@@ -153,8 +153,8 @@ export const approverTypeList = [
     value: "third",
   },
   {
-    label: "Forth",
-    value: "forth",
+    label: "Fourth",
+    value: "fourth",
   },
   {
     label: "Fifth",

@@ -28,6 +28,7 @@ import { cn } from "@/lib/utils";
 import { ApproverTypeBadge } from "@/components/shared/badge/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { getTitleCase } from "@/utils/formatter";
+import { notFound } from "next/navigation";
 
 export default function EventStatusUpdateForm({
   authUser,
@@ -100,7 +101,10 @@ export default function EventStatusUpdateForm({
       currentUserLastStatus?.remarks?.includes(eventType as string) &&
       currentUserSubmission === "approved") ||
     currentUserSubmission === "rejected"
-  )
+  ) {
+    if (role !== "ec") {
+      return notFound();
+    }
     return (
       <Empty>
         <EmptyHeader>
@@ -125,11 +129,15 @@ export default function EventStatusUpdateForm({
         </EmptyHeader>
       </Empty>
     );
+  }
 
   return (
     <Form className="w-full max-w-2xl" onSubmit={form.handleSubmit(onSubmit)}>
       <p className="text-mguted-foreground">
-        Approve as <strong className="text-foreground">{eventTypeRole.toUpperCase()}</strong>{" "}
+        Approve as{" "}
+        <strong className="text-foreground">
+          {eventTypeRole.toUpperCase()}
+        </strong>{" "}
         <ApproverTypeBadge type={eventType as any}>
           {eventType}
         </ApproverTypeBadge>
@@ -163,11 +171,11 @@ export default function EventStatusUpdateForm({
           name="remarks"
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
-              <FieldLabel>Remarks (optional)</FieldLabel>
+              <FieldLabel>Remarks</FieldLabel>
               <Textarea
                 {...field}
                 id={field.name}
-                placeholder="Enter remarks (optional)"
+                placeholder="Enter remarks"
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
@@ -180,8 +188,8 @@ export default function EventStatusUpdateForm({
         className="max-w-sm"
         disabled={
           role === "ec" &&
-          !event.event_consultant.some(
-            (i) => i.event_consultant_approval?.created_at,
+          !event?.event_consultant?.every(
+            (i) => i?.event_consultant_approval?.created_at,
           )
         }
       >

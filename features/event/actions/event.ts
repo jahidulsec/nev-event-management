@@ -13,9 +13,10 @@ import { getApproverDetails } from "@/lib/helper";
 import { sendEmail } from "@/services/email";
 import RequestorInitMail from "@/features/email/template/ao-init-mail";
 import ApproverRequestMail from "@/features/email/template/approver-mail";
-import { formatDateTime } from "@/utils/formatter";
+import { formatDateTime, getTitleCase } from "@/utils/formatter";
 import EventCompletionMail from "@/features/email/template/completion-mail";
 import { generateTrackingID } from "@/utils/tracking-id";
+import ApproverStatusUpdateMail from "@/features/email/template/status-update";
 
 export const createEvent = async (data: EventType) => {
   const devEmail = process.env.EMAIL_DEV_ADDRESS;
@@ -539,7 +540,6 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
 
       // push email
       if (postApprover.email) {
-        console.log(postApprover.email);
         sendEmail({
           to: [devEmail || postApprover.email],
           subject: "Event approval request",
@@ -553,6 +553,31 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
             typeTitle: event.event_type?.title ?? "",
           }),
         }).catch((err) => console.error(err));
+
+        // send status update to ao
+        await createNotification({
+          work_area_code: event?.user_id ?? "",
+          is_marked: "no",
+          event_id: event?.id ?? "",
+          status: "read_only",
+          message: `Status Update: ${data.user_id} (${data.user_role}) has ${status} the event`,
+        });
+
+        if (event.user.ao?.email) {
+          sendEmail({
+            to: [devEmail || event.user.ao?.email],
+            subject: "Event approval status update",
+            html: ApproverStatusUpdateMail({
+              product: getTitleCase(event.product_id),
+              eventTitle: event.title,
+              typeTitle: event.event_type?.title ?? "",
+              status,
+              eventDate: formatDateTime(event.event_date),
+              approverName: rest.user_id,
+              remarks,
+            }),
+          }).catch((err) => console.error(err));
+        }
       }
 
       await createNotification({
