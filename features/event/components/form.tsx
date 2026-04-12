@@ -1,13 +1,12 @@
 "use client";
 
-import { event_type, product } from "@/lib/generated/prisma";
+import { product } from "@/lib/generated/prisma";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Form } from "@/components/shared/form/form";
 import {
   Field,
-  FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
@@ -117,15 +116,35 @@ export default function EventForm({
   const validType = findEventTypeByCost(eventTypes, eventType, totalBudget);
 
   async function onSubmit(data: EventType) {
-    const res = prevData
-      ? await updateEvent(prevData.id, data)
-      : await createEvent(data);
-    toast[res.success ? "success" : "error"](res.message);
-
-    if (res.success) {
-      router.push("/dashboard");
-    }
     console.log(data);
+
+    if (!prevData) {
+      if (data.eventBudget.length === 0) {
+        toast.info("You must submit event budget");
+        return;
+      }
+
+      if (data.eventConsultant.length === 0) {
+        toast.info("You must submit event consultant list");
+        return;
+      }
+
+      if (data.eventAttachment.length === 0) {
+        toast.info(
+          "You must submit event required files and documents in attachments",
+        );
+        return;
+      }
+    }
+
+    // const res = prevData
+    //   ? await updateEvent(prevData.id, data)
+    //   : await createEvent(data);
+    // toast[res.success ? "success" : "error"](res.message);
+
+    // if (res.success) {
+    //   router.push("/dashboard");
+    // }
   }
 
   const isDisabled = (date: Date) => {
@@ -160,8 +179,6 @@ export default function EventForm({
     // Disable dates before minDate
     return date < minDate;
   };
-
-
 
   // get event type
   React.useEffect(() => {
@@ -346,7 +363,8 @@ export default function EventForm({
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor={field.name}>
-                Institute Name, Customer Code of the Institute, Address
+                Area Name, Institute Name, Customer Code of the Institute,
+                Address
               </FieldLabel>
               <Input
                 {...field}
@@ -469,7 +487,7 @@ export default function EventForm({
                   field.onChange(value);
                 }}
               />
-              {((eventType &&
+              {/* {((eventType &&
                 types.slice(0, 4).some((i) => i === eventType) === false) ||
                 eventType?.length === 0) && (
                 <Input
@@ -482,7 +500,7 @@ export default function EventForm({
                   autoComplete="off"
                   className="max-w-sm"
                 />
-              )}
+              )} */}
 
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
