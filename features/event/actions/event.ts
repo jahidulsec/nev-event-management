@@ -538,6 +538,11 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
         postApproverIndex,
       );
 
+      const lastApprover = await getApproverDetails(
+        event as any,
+        postApproverIndex - 1,
+      );
+
       // push email
       if (postApprover.email) {
         sendEmail({
@@ -560,7 +565,7 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
           is_marked: "no",
           event_id: event?.id ?? "",
           status: "read_only",
-          message: `Status Update: ${data.user_id} (${data.user_role}) has ${status} the event`,
+          message: `Status Update: ${lastApprover.full_name} (${data.user_id}) (${data.user_role}) has ${status} the event`,
         });
 
         if (event.user.ao?.email) {
@@ -573,7 +578,7 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
               typeTitle: event.event_type?.title ?? "",
               status,
               eventDate: formatDateTime(event.event_date),
-              approverName: rest.user_id,
+              approverName: `${lastApprover.full_name} (${data.user_id})`,
               remarks,
             }),
           }).catch((err) => console.error(err));
