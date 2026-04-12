@@ -70,8 +70,6 @@ const TableSection = async ({
   const authUser = await getAuthUser();
   const dashboardRole = await getDashboardRole();
 
-  if (dashboardRole === "ao") return notFound();
-
   const res = await getEvents({
     page: Number(page),
     size: Number(size),

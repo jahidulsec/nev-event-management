@@ -6,7 +6,7 @@ import {
   useTableSerialColumn,
 } from "@/components/shared/table/data-table";
 import { deleteToastTemplate } from "@/lib/template";
-import { formatDate } from "@/utils/formatter";
+import { formatDate, getTitleCase } from "@/utils/formatter";
 import { ColumnDef } from "@tanstack/react-table";
 import { Edit, Eye, Printer, Trash2, Workflow } from "lucide-react";
 import React from "react";
@@ -49,7 +49,7 @@ export default function EventTable({
       accessorKey: "title",
       header: "Title",
       cell: ({ row }) => (
-        <p className="min-w-88 text-wrap">{row.original.title}</p>
+        <p title={row.original.title} className="min-w-40 text-wrap line-clamp-2">{row.original.title}</p>
       ),
     },
     {
@@ -63,7 +63,7 @@ export default function EventTable({
     },
     {
       accessorKey: "user_id",
-      header: "Work area code",
+      header: "Work Area",
     },
     {
       accessorKey: "event_type",
@@ -78,7 +78,7 @@ export default function EventTable({
         );
       },
     },
-    { accessorKey: "product_id", header: "Product" },
+    { accessorKey: "product", header: "Product", cell:({row}) => <p>{getTitleCase(row.original.product_id)}</p> },
     {
       id: "current_status",
       header: "Event Status",
@@ -163,15 +163,17 @@ export default function EventTable({
             >
               <Workflow /> <span className="sr-only">Workflow</span>
             </TableActionButton>
-            <TableActionButton
-              tooltip="Preview"
-              variant={"edit"}
-              onClick={() =>
-                router.push(`/dashboard/events/${value.id}/preview`)
-              }
-            >
-              <Eye /> <span className="sr-only">Preview</span>
-            </TableActionButton>
+            {authUser?.role.toString() !== "ao" && (
+              <TableActionButton
+                tooltip="Preview"
+                variant={"edit"}
+                onClick={() =>
+                  router.push(`/dashboard/events/${value.id}/preview`)
+                }
+              >
+                <Eye /> <span className="sr-only">Preview</span>
+              </TableActionButton>
+            )}
             {authUser?.role.includes("ec") ||
               (authUser?.role.includes("superadmin") && (
                 <>
