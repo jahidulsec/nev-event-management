@@ -103,7 +103,7 @@ export const calculateHonorarium = (
     hours?: number
   },
 ) => {
-  const hRate = Number(tier.hr_rate || 0) * (option.hours || 1);
+  const hRate = Number(tier.hr_rate || 0) * (option.hours || 0);
   const spearkerPercentage = option.isSpeaker
     ? Number(tier.speaker_percentage || 0)
     : 0;

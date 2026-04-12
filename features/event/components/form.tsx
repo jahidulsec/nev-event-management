@@ -137,14 +137,14 @@ export default function EventForm({
       }
     }
 
-    // const res = prevData
-    //   ? await updateEvent(prevData.id, data)
-    //   : await createEvent(data);
-    // toast[res.success ? "success" : "error"](res.message);
+    const res = prevData
+      ? await updateEvent(prevData.id, data)
+      : await createEvent(data);
+    toast[res.success ? "success" : "error"](res.message);
 
-    // if (res.success) {
-    //   router.push("/dashboard");
-    // }
+    if (res.success) {
+      router.push("/dashboard");
+    }
   }
 
   const isDisabled = (date: Date) => {
