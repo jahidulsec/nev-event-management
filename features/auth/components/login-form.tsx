@@ -13,11 +13,12 @@ import {
 } from "@/components/ui/field";
 import { toast } from "sonner";
 import { Form } from "@/components/shared/form/form";
-import { LogoFull } from "@/components/shared/logo/logo";
+import { LogoFull } from "@/components/shared/logo/company";
 import { PasswordInput } from "@/components/shared/inputs/password";
 import { LoginSchema, LoginType } from "../actions/schema";
 import { FormButton } from "@/components/shared/button/button";
 import { userLogin } from "../actions/login";
+import { AppLogo } from "@/components/shared/logo/app";
 
 export default function LoginForm() {
   const form = useForm<LoginType>({
@@ -43,7 +44,7 @@ export default function LoginForm() {
     <Form onSubmit={form.handleSubmit(onSubmit)}>
       <div className="text-center w-full">
         <div className="flex items-center justify-center">
-          <LogoFull width={200} height={100} />
+          <AppLogo width={150} height={100} />
         </div>
         <h2 className="text-center text-2xl text-secondary font-semibold">
           Welcome Back

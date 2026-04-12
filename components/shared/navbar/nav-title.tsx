@@ -13,10 +13,11 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { LogoFull } from "../logo/logo";
+import { LogoFull } from "../logo/company";
 import { navlist } from "@/lib/data";
 import { ProfileButton } from "../button/profile-button";
 import RoleSelect from "./role-select";
+import { AppLogo } from "../logo/app";
 
 export default function NavTitle({
   role,
@@ -38,12 +39,13 @@ export default function NavTitle({
       >
         <TextAlignStart /> <span className="sr-only">Menu</span>
       </Button>
-      <LogoFull width={120} />
+      <AppLogo width={80} height={100} />
 
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="left" className="min-h-svh h-full">
           <SheetHeader>
-            <LogoFull width={100} />
+            <AppLogo width={80} height={100} />
+
             <SheetTitle className="sr-only">Nevian</SheetTitle>
           </SheetHeader>
 
