@@ -74,9 +74,28 @@ const getMulti = async (query: EventQueryType) => {
     // extract params
     const filter: Prisma.eventWhereInput = {
       ...(params.search && {
-        title: {
-          contains: params.search,
-        },
+        OR: [
+          {
+            title: {
+              contains: params.search,
+            },
+          },
+          {
+            id: {
+              contains: params.search,
+            },
+          },
+          {
+            track_no: {
+              startsWith: params.search,
+            },
+          },
+          {
+            user_id: {
+              startsWith: params.search,
+            },
+          }
+        ]
       }),
       ...(params.work_area_code &&
         params.role === "ao" && {
