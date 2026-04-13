@@ -45,7 +45,7 @@
     "next": "16.1.4",
     "next-themes": "^0.4.6",
     "nodemailer": "^8.0.4",
-    "pdfjs-dist": "^5.5.207",
+    "pdfjs-dist": "^5.6.205",
     "radix-ui": "^1.4.3",
     "react": "19.2.3",
     "react-day-picker": "^9.13.0",

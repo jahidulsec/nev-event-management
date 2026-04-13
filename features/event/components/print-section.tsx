@@ -114,7 +114,7 @@ const EventBasicInformationSection = ({
 
   return (
     <View>
-      <View style={{ borderRight: 1, borderBottom: 1 }}>
+      <View style={{ borderRightWidth: 1, borderBottomWidth: 1 }}>
         {/* basic information */}
         <View>
           <FieldGroup>
@@ -218,7 +218,7 @@ const EventBasicInformationSection = ({
                 paddingVertical: 2,
                 textAlign: "center",
                 flex: 1,
-                borderLeft: 1,
+                borderLeftWidth: 1,
                 fontWeight: "bold",
                 backgroundColor: color.muted,
               }}
@@ -313,8 +313,8 @@ const EventBasicInformationSection = ({
                   textAlign: "center",
                   paddingVertical: 10,
                   fontSize: 11,
-                  borderBottom: 1,
-                  borderRight: 1,
+                  borderBottomWidth: 1,
+                  borderRightWidth: 1,
                 }}
               >
                 No data.
@@ -396,7 +396,7 @@ const EventBasicInformationSection = ({
                       maxWidth: 150,
                       width: "100%",
                       paddingHorizontal: 6,
-                      borderRight: 1,
+                      borderRightWidth: 1,
                     }}
                   >
                     <Field
@@ -412,7 +412,7 @@ const EventBasicInformationSection = ({
                         item.event_consultant_approval?.is_suitable ?? "",
                       )}
                     />
-                    <View style={{ borderBottom: 1 }} />
+                    <View style={{ borderBottomWidth: 1 }} />
                     <Field
                       name="Honorarium Check:"
                       value={getTitleCase(
@@ -440,8 +440,8 @@ const EventBasicInformationSection = ({
                   textAlign: "center",
                   paddingVertical: 10,
                   fontSize: 11,
-                  borderBottom: 1,
-                  borderRight: 1,
+                  borderBottomWidth: 1,
+                  borderRightWidth: 1,
                 }}
               >
                 No data.
@@ -497,8 +497,8 @@ const EventBasicInformationSection = ({
                   textAlign: "center",
                   paddingVertical: 10,
                   fontSize: 11,
-                  borderBottom: 1,
-                  borderRight: 1,
+                  borderBottomWidth: 1,
+                  borderRightWidth: 1,
                 }}
               >
                 No data.
@@ -529,7 +529,7 @@ const CustomField = ({
           paddingHorizontal: 4,
           paddingVertical: 1,
           flexWrap: "wrap",
-          borderLeft: 1,
+          borderLeftWidth: 1,
           minWidth: 180,
         },
         style,
@@ -555,8 +555,8 @@ const Table = ({ style, ...props }: React.ComponentProps<typeof View>) => {
     <View
       style={[
         {
-          borderLeft: 1,
-          borderTop: 1,
+          borderLeftWidth: 1,
+          borderTopWidth: 1,
         },
         style as any,
       ]}
@@ -573,7 +573,7 @@ const TableCell = ({ style, ...props }: React.ComponentProps<typeof Text>) => {
           fontSize: 9,
           padding: 1,
           paddingHorizontal: 6,
-          borderRight: 1,
+          borderRightWidth: 1,
         },
         style as any,
       ]}
@@ -589,7 +589,7 @@ const TableRow = ({ style, ...props }: React.ComponentProps<typeof View>) => {
         {
           flexDirection: "row",
           justifyContent: "space-between",
-          borderBottom: 1,
+          borderBottomWidth: 1,
         },
         style as any,
       ]}
@@ -606,7 +606,7 @@ const TableHead = ({ style, ...props }: React.ComponentProps<typeof Text>) => {
           fontSize: 9,
           padding: 1,
           fontWeight: "bold",
-          borderRight: 1,
+          borderRightWidth: 1,
           flex: 1,
           paddingHorizontal: 6,
           textAlign: "center",
@@ -622,7 +622,7 @@ const FieldGroup = ({ style, ...props }: React.ComponentProps<typeof View>) => {
   return (
     <View
       style={[
-        { borderTop: 1, flexDirection: "row", justifyContent: "space-between" },
+        { borderTopWidth: 1, flexDirection: "row", justifyContent: "space-between" },
       ]}
       {...props}
     />

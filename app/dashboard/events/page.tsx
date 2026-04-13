@@ -1,4 +1,6 @@
 import { ErrorBoundary } from "@/components/shared/boundary/error-boundary";
+import { DownloadButton } from "@/components/shared/button/download";
+import { ExcelUploadButton } from "@/components/shared/button/excel-upload";
 import { SearchForm } from "@/components/shared/inputs/search";
 import PagePagination from "@/components/shared/pagination/pagination";
 import {
@@ -13,6 +15,7 @@ import {
   SectionHeadingIcon,
 } from "@/components/shared/typography/heading";
 import CreateEventButton from "@/features/event/components/create-button";
+import ExportButton from "@/features/event/components/export-button";
 import EventTable from "@/features/event/components/table";
 import { getEvents } from "@/features/event/lib/event";
 import { getAuthUser, getDashboardRole } from "@/lib/dal";
@@ -48,6 +51,7 @@ export default async function EventsPage({
         <SectionActions>
           <SearchForm />
           {user?.role.includes("ao") && <CreateEventButton />}
+          {user?.role.some((i) => i === "ec") && <ExportButton />}
         </SectionActions>
       </SectionHeader>
 

@@ -281,4 +281,21 @@ const getSingle = async (id: string) => {
   }
 };
 
-export { getMulti as getEvents, getSingle as getEvent };
+const getEventsExportInformation = async () => {
+  try {
+    return apiResponse.multi<any>({
+      message: "Get leaderboard successful",
+      data: ["serializedData as any[]"],
+      count: 0, // serializedData?.[0]?.total_count,
+    });
+  } catch (error) {
+    console.error(error);
+    return apiResponse.error({ error });
+  }
+};
+
+export {
+  getMulti as getEvents,
+  getSingle as getEvent,
+  getEventsExportInformation,
+};

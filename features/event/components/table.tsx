@@ -49,7 +49,12 @@ export default function EventTable({
       accessorKey: "title",
       header: "Title",
       cell: ({ row }) => (
-        <p title={row.original.title} className="min-w-40 text-wrap line-clamp-2">{row.original.title}</p>
+        <p
+          title={row.original.title}
+          className="min-w-40 text-wrap line-clamp-2"
+        >
+          {row.original.title}
+        </p>
       ),
     },
     {
@@ -78,7 +83,11 @@ export default function EventTable({
         );
       },
     },
-    { accessorKey: "product", header: "Product", cell:({row}) => <p>{getTitleCase(row.original.product_id)}</p> },
+    {
+      accessorKey: "product",
+      header: "Product",
+      cell: ({ row }) => <p>{getTitleCase(row.original.product_id)}</p>,
+    },
     {
       id: "current_status",
       header: "Event Status",
@@ -163,7 +172,7 @@ export default function EventTable({
             >
               <Workflow /> <span className="sr-only">Workflow</span>
             </TableActionButton>
-            {authUser?.role.toString() !== "ao" && (
+            {authUser?.role.includes("ao") && (
               <TableActionButton
                 tooltip="Preview"
                 variant={"edit"}
@@ -193,7 +202,7 @@ export default function EventTable({
                 </>
               ))}
 
-            {(authUser?.role.includes("ec") ||
+            {(authUser?.role.some((i) => i === "ec") ||
               authUser?.role.includes("superadmin")) && (
               <TableActionButton tooltip="Print" variant={"edit"}>
                 <a
