@@ -30,7 +30,7 @@ export const convertToCSV = <T extends Record<string, unknown>>(
     return escaped;
   };
 
-  let csv = headers.map((item) => item.name ?? item.header).join(",") + "\r\n";
+  let csv = headers.map((item) => item.name ? `"${item.name}"` : item.header).join(",") + "\r\n";
 
   for (const row of data) {
     const line = headers

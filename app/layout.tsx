@@ -10,7 +10,7 @@ const inter = localFont({
   declarations: [{ prop: "font-feature-settings", value: "'ss01'" }],
 });
 export const metadata: Metadata = {
-  title: "SWIFT - Event Management App",
+  title: "SWiFT - Event Management App",
   description: "An event management system by Nevian LifeScience PLC",
 };
 

@@ -3,14 +3,14 @@
 import { Download } from "lucide-react";
 import React from "react";
 import { toast } from "sonner";
-import { useSearchParams } from "next/navigation";
 import { convertToCSV } from "@/utils/csv";
 import { ActionButton } from "@/components/shared/button/button";
 import { getEventsExportInformation } from "../lib/event";
+import { getTitleCase, numberToWords } from "@/utils/formatter";
+import { format } from "date-fns";
 
 export default function ExportButton() {
   const [isPending, startTransition] = React.useTransition();
-  const params = useSearchParams();
 
   const downloadCSV = async (name: string) => {
     const res = await getEventsExportInformation();
@@ -27,58 +27,173 @@ export default function ExportButton() {
 
     const header = [
       {
-        header: "ranking",
-        name: "Rank",
+        header: "track_no",
+        name: "Tracking No.",
       },
       {
-        header: "zone_name",
-        name: "Zone Name",
+        header: "work_area",
+        name: "Work Area",
       },
       {
-        header: "region_name",
-        name: "Region Name",
-      },
-      {
-        header: "area_name",
-        name: "Area Name",
-      },
-      {
-        header: "sap_id",
-        name: "SAP MIO Code",
+        header: "employee_id",
+        name: "Employee ID",
       },
       {
         header: "full_name",
-        name: "MIO Name",
+        name: "Activity Owner",
       },
       {
-        header: "mobile",
-        name: "MIO Mobile",
+        header: "group_name",
+        name: "Franchise",
       },
       {
-        header: "team",
-        name: "Team",
+        header: "title",
+        name: "Event Type",
       },
       {
-        header: "total_mark",
-        name: "Marks",
+        header: "product",
+        name: "Product",
       },
       {
-        header: "total_duration_s",
-        name: "Duration (minutes)",
+        header: "event_title",
+        name: "Event Title & Topic",
+      },
+      {
+        header: "rm_name",
+        name: "RM Name",
+      },
+      {
+        header: "rm_code",
+        name: "Region",
+      },
+      {
+        header: "created_at",
+        name: "Request Date",
+      },
+      {
+        header: "event_date",
+        name: "Proposed Event Date",
+      },
+      {
+        header: "venue",
+        name: "Venue Name with Address",
+      },
+      {
+        header: "institute",
+        name: "Institute Name, Customer Code of the Institute & Address",
+      },
+      {
+        header: "institute_dept",
+        name: "Department/Specialty",
+      },
+      {
+        header: "food_supplier",
+        name: "Food Supplier",
+      },
+      {
+        header: "total_participants",
+        name: "Total Participants",
+      },
+
+      {
+        header: "venue_charge",
+        name: "Venue Charge",
+      },
+      {
+        header: "food_cost",
+        name: "Food",
+      },
+      {
+        header: "transportation",
+        name: "Transportation",
+      },
+      {
+        header: "projector",
+        name: "Projector-Screen",
+      },
+      {
+        header: "sound_system",
+        name: "Sound System",
+      },
+      {
+        header: "other_cost",
+        name: "Logistics/Others",
+      },
+      {
+        header: "total_budget",
+        name: "Total Event Budget(Food & Logistics)",
+      },
+      {
+        header: "total_eb_h",
+        name: "Total Budget(EB+Honor)",
+      },
+      {
+        header: "dr_child_id",
+        name: "Consultant ID",
+      },
+      {
+        header: "dr_name",
+        name: "Name",
+      },
+      {
+        header: "honorarium",
+        name: "Honorarium",
+      },
+      {
+        header: "h_words",
+        name: "Honorarium (In Word)",
+      },
+      {
+        header: "nth_engagement",
+        name: "Nth Engagement",
+      },
+      {
+        header: "current_status",
+        name: "Event Approval Status",
       },
     ];
+
+    let prevId = '';
+
+    const formattedData = res?.data?.map((item) => {
+      item.h_words = numberToWords(item.honorarium);
+      if (prevId === item.id) {
+        return {
+          dr_child_id: item.dr_child_id,
+          dr_name: item.dr_name,
+          honorarium: item.honorarium,
+          h_words: item.h_words,
+          nth_engagement: item.nth_engagement,
+        };
+      }
+
+      prevId = item.id;
+      return item;
+    }) ?? [];
 
     const csvData = new Blob(
       [
         convertToCSV(
-          res?.data ?? [],
+          formattedData,
           header,
           [],
           [
             {
-              headerName: "total_duration_s",
+              headerName: "created_at",
               format: (value) => {
-                return (Number(value) / 60).toFixed(2);
+                return value ? format(new Date(value as any), 'dd/MM/yy - h:mm aaa') : '-';
+              },
+            },
+            {
+              headerName: "event_date",
+              format: (value) => {
+                return value ? format(new Date(value as any), 'dd/MM/yy - h:mm aaa') : '-';
+              },
+            },
+            {
+              headerName: "current_status",
+              format: (value) => {
+                return getTitleCase(value as string);
               },
             },
           ],
@@ -105,12 +220,7 @@ export default function ExportButton() {
           startTransition(
             async () =>
               await downloadCSV(
-                "quiz_leaderboard__" +
-                  (params.get("team") || "") +
-                  "_" +
-                  (params.get("month") || "") +
-                  "_" +
-                  (params.get("quiz_id") || ""),
+                "event_proposals_till_" + format(new Date(), 'dd-MM-yyyy')
               ),
           )
         }
