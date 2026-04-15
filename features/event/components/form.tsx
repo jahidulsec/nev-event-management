@@ -24,7 +24,7 @@ import ConsultantSection from "./consultant-section";
 import AttachmentSection from "./attachment-section";
 import { AuthUser } from "@/types/auth-user";
 import { EventSingleProps } from "../lib/event";
-import { formatNumber, getTitleCase } from "@/utils/formatter";
+import { formatNumber } from "@/utils/formatter";
 import { useParams } from "next/navigation";
 import { useRouter } from "@bprogress/next";
 import { calculateEventBudget, findEventTypeByCost } from "@/utils/helper";
@@ -116,12 +116,10 @@ export default function EventForm({
   const validType = findEventTypeByCost(eventTypes, eventType, totalBudget);
 
   const isWithoutSpeaker = eventType
-    .toLowerCase()
+    ?.toLowerCase()
     .startsWith("without speaker");
 
   async function onSubmit(data: EventType) {
-    console.log(data);
-
     if (!prevData) {
       if (data.eventBudget.length === 0) {
         toast.info("You must submit event budget");
@@ -659,7 +657,7 @@ export default function EventForm({
 
       <Separator className="bg-secondary/50" />
 
-      {isWithoutSpeaker && (
+      {!isWithoutSpeaker && (
         <>
           <ConsultantSection form={form} user={authUser} />
 
