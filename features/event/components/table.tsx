@@ -172,7 +172,7 @@ export default function EventTable({
             >
               <Workflow /> <span className="sr-only">Workflow</span>
             </TableActionButton>
-            {authUser?.role.includes("ao") && (
+            {!authUser?.role.includes("ao") && (
               <TableActionButton
                 tooltip="Preview"
                 variant={"edit"}

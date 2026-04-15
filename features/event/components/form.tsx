@@ -115,6 +115,10 @@ export default function EventForm({
 
   const validType = findEventTypeByCost(eventTypes, eventType, totalBudget);
 
+  const isWithoutSpeaker = eventType
+    .toLowerCase()
+    .startsWith("without speaker");
+
   async function onSubmit(data: EventType) {
     console.log(data);
 
@@ -124,12 +128,12 @@ export default function EventForm({
         return;
       }
 
-      if (data.eventConsultant.length === 0) {
+      if (!isWithoutSpeaker && data.eventConsultant.length === 0) {
         toast.info("You must submit event consultant list");
         return;
       }
 
-      if (data.eventAttachment.length === 0) {
+      if (!isWithoutSpeaker && data.eventAttachment.length === 0) {
         toast.info(
           "You must submit event required files and documents in attachments",
         );
@@ -264,18 +268,7 @@ export default function EventForm({
                 }}
                 defaultValue={prevData?.product_id}
               />
-              {/* <Select
-                placeholder="Select a product"
-                pending={pending}
-                defaultValue={prevData?.product_id ?? undefined}
-                data={products.map((item) => ({
-                  label: getTitleCase(item.name),
-                  value: item.id,
-                }))}
-                onValueChange={(value) => {
-                  field.onChange(value);
-                }}
-              /> */}
+
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}
@@ -666,11 +659,15 @@ export default function EventForm({
 
       <Separator className="bg-secondary/50" />
 
-      <ConsultantSection form={form} user={authUser} />
+      {isWithoutSpeaker && (
+        <>
+          <ConsultantSection form={form} user={authUser} />
 
-      <Separator className="bg-secondary/50" />
+          <Separator className="bg-secondary/50" />
 
-      <AttachmentSection form={form} user={authUser} />
+          <AttachmentSection form={form} user={authUser} />
+        </>
+      )}
 
       <FormButton
         isPending={form.formState.isSubmitting}
