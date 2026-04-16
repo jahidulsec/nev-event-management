@@ -47,7 +47,11 @@ export type EventSingleProps = Prisma.eventGetPayload<{
         event_consultant_approval: true;
       };
     };
-    product: true;
+    product: {
+      select: {
+        name: true;
+      };
+    };
     event_type: {
       include: {
         approver: true;
@@ -59,7 +63,14 @@ export type EventSingleProps = Prisma.eventGetPayload<{
       };
     };
     user: {
-      include: { ao: true };
+      select: {
+        ao: {
+          select: {
+            full_name: true;
+            work_area_code: true;
+          };
+        };
+      };
     };
   };
 }>;
@@ -94,96 +105,96 @@ const getMulti = async (query: EventQueryType) => {
             user_id: {
               startsWith: params.search,
             },
-          }
-        ]
+          },
+        ],
       }),
       ...(params.work_area_code &&
         params.role === "ao" && {
-        user_id: params.work_area_code,
-      }),
+          user_id: params.work_area_code,
+        }),
       ...(params.role === "flm" &&
         params.work_area_code && {
-        user: {
-          ao: {
-            rm_code: params.work_area_code,
-          },
-        },
-        event_type: {
-          approver: {
-            some: {
-              user_type: params.role,
+          user: {
+            ao: {
+              rm_code: params.work_area_code,
             },
           },
-        },
-      }),
+          event_type: {
+            approver: {
+              some: {
+                user_type: params.role,
+              },
+            },
+          },
+        }),
       ...(params.role === "slm" &&
         params.work_area_code && {
-        user: {
-          ao: {
-            zm_code: params.work_area_code,
-          },
-        },
-        event_type: {
-          approver: {
-            some: {
-              user_type: params.role,
+          user: {
+            ao: {
+              zm_code: params.work_area_code,
             },
           },
-        },
-      }),
+          event_type: {
+            approver: {
+              some: {
+                user_type: params.role,
+              },
+            },
+          },
+        }),
       ...(params.role === "franchise_head" &&
         params.work_area_code && {
-        user: {
-          ao: {
-            wing_code: params.work_area_code,
-          },
-        },
-        event_type: {
-          approver: {
-            some: {
-              user_type: params.role,
+          user: {
+            ao: {
+              wing_code: params.work_area_code,
             },
           },
-        },
-      }),
+          event_type: {
+            approver: {
+              some: {
+                user_type: params.role,
+              },
+            },
+          },
+        }),
       ...(params.role === "director_sales" &&
         params.work_area_code && {
-        event_type: {
-          approver: {
-            some: {
-              user_type: params.role,
+          event_type: {
+            approver: {
+              some: {
+                user_type: params.role,
+              },
             },
           },
-        },
-      }),
+        }),
       ...(params.role?.includes("marketing") &&
         params.work_area_code && {
-        product: {
-          product_user: {
-            some: {
-              work_area_code: params.work_area_code,
+          product: {
+            product_user: {
+              some: {
+                work_area_code: params.work_area_code,
+              },
             },
           },
-        },
-        event_type: {
-          approver: {
-            some: {
-              user_type: params.role,
+          event_type: {
+            approver: {
+              some: {
+                user_type: params.role,
+              },
             },
           },
-        },
-      }),
+        }),
       ...(params.role === "ec" &&
         params.work_area_code && {
-        product: {
-          product_user: {
-            some: {
-              work_area_code: params.work_area_code,
+          product: {
+            product_user: {
+              some: {
+                work_area_code: params.work_area_code,
+              },
             },
           },
-        },
-        // current_status: "approved",
-      }),
+          // current_status: "approved",
+        }),
 
       ...(params.status && {
         current_status: params.status,
@@ -257,10 +268,19 @@ const getSingle = async (id: string) => {
             event_consultant_approval: true,
           },
         },
-        product: true,
+        product: {
+          select: {
+            name: true,
+          },
+        },
         user: {
-          include: {
-            ao: true,
+          select: {
+            ao: {
+              select: {
+                full_name: true,
+                work_area_code: true,
+              },
+            },
           },
         },
         event_type: {
@@ -302,7 +322,6 @@ const getSingle = async (id: string) => {
 
 const getEventsExportInformation = async () => {
   try {
-
     const baseQuery = `
     WITH ev AS (
       SELECT 
@@ -381,11 +400,9 @@ const getEventsExportInformation = async () => {
     LEFT JOIN doctor d on d.id=ec.doctor_id
     LEFT join event_consultant_approval eca on ec.id =eca.consultant_Id
     order by ev.created_at
-    `
+    `;
 
-    const res = await db.$queryRawUnsafe(
-      baseQuery
-    )
+    const res = await db.$queryRawUnsafe(baseQuery);
 
     return apiResponse.multi<any>({
       message: "Get leaderboard successful",

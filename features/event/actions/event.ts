@@ -163,7 +163,6 @@ export const createEvent = async (data: EventType) => {
 
     // push email to creator mail if email exist
     if (firstApprover.email) {
-      console.log(firstApprover.email);
       sendEmail({
         to: [devEmail || firstApprover.email], //
         subject: "New event creation request",
@@ -181,13 +180,15 @@ export const createEvent = async (data: EventType) => {
         .catch((err) => console.error(err));
     }
 
-    await createNotification({
-      work_area_code: firstApprover.work_area_code ?? "",
-      is_marked: "no",
-      event_id: etype.id,
-      status: "action",
-      message: "You have a new event proposal approval request",
-    });
+    if (firstApprover.work_area_code) {
+      await createNotification({
+        work_area_code: firstApprover.work_area_code ?? "",
+        is_marked: "no",
+        event_id: etype.id,
+        status: "action",
+        message: "You have a new event proposal approval request",
+      });
+    }
 
     return response({
       success: true,

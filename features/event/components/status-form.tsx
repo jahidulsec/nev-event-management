@@ -28,7 +28,6 @@ import { cn } from "@/lib/utils";
 import { ApproverTypeBadge } from "@/components/shared/badge/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { getTitleCase } from "@/utils/formatter";
-import { notFound } from "next/navigation";
 import { getApproverEventStatus } from "@/lib/event";
 
 export default function EventStatusUpdateForm({
@@ -74,6 +73,9 @@ export default function EventStatusUpdateForm({
       router.replace("/dashboard/events");
     }
   };
+
+  // get first approver for consultant approver check
+  const firstApproverRole = event.event_type?.approver?.[0]?.user_type;
 
   if (
     role !== eventTypeRole ||
@@ -164,10 +166,14 @@ export default function EventStatusUpdateForm({
         size={"lg"}
         className="max-w-sm"
         disabled={
-          role === "ec" &&
-          !event?.event_consultant?.every(
-            (i) => i?.event_consultant_approval?.created_at,
-          )
+          (role === "ec" &&
+            !event?.event_consultant?.every(
+              (i) => i?.event_consultant_approval?.ec_id,
+            )) ||
+          (role === firstApproverRole &&
+            !event?.event_consultant?.every(
+              (i) => i?.event_consultant_approval?.first_approver_id,
+            ))
         }
       >
         Submit

@@ -2,7 +2,6 @@
 
 import { db } from "@/config/db";
 import { Prisma } from "./generated/prisma";
-import { EventSingleProps } from "@/features/event/lib/event";
 
 export const getApproverWorkArea = async (
   event: Prisma.eventGetPayload<{
@@ -114,7 +113,7 @@ export const getApproverDetails = async (
   }>,
   index: number = 0,
 ) => {
-  const firstApproverRole = event.event_type?.approver?.[index].user_type;
+  const firstApproverRole = event.event_type?.approver?.[index]?.user_type;
   const productUser = event.product.product_user.find((i) =>
     i.user.user_role.some((r) => r.role === firstApproverRole),
   );

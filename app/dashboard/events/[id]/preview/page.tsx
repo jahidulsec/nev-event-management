@@ -9,7 +9,6 @@ import {
   SectionHeading2,
   SectionHeadingWithBackButton,
 } from "@/components/shared/typography/heading";
-import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import ECApprovalForm from "@/features/event/components/ec-approval-form";
 import EventSection from "@/features/event/components/event-section";
@@ -107,7 +106,7 @@ const EventDetailsSection = async ({ params }: { params: Params }) => {
         eventData={res.data}
       />
 
-      {role === "ec" && (
+      {(role === "ec" || role === 'superadmin') && (
         <SectionContent className="border rounded-md p-6">
           <div className="max-w-4xl mx-auto w-full flex flex-col gap-6">
             <SectionHeading2>Tracking No.</SectionHeading2>
