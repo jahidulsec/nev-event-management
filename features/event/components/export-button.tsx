@@ -166,6 +166,13 @@ export default function ExportButton() {
       if (prevId === item.id) {
         return {
           track_no: item.track_no,
+          employee_id: item.employee_id,
+          full_name: item.full_name,
+          group_name: item.group_name,
+          product: item.product,
+          created_at: item.created_at,
+          event_date: item.event_date,
+          
           current_status: item.current_status,
           dr_child_id: item.dr_child_id,
           dr_name: item.dr_name,
