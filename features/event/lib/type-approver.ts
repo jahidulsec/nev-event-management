@@ -30,6 +30,9 @@ const getMulti = async (query: EventTypeApproverQueryType) => {
           },
         },
       }),
+      ...(params.type_id && {
+        event_type_id: params.type_id,
+      }),
     };
 
     const [data, count] = await Promise.all([

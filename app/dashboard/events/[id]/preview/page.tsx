@@ -64,7 +64,7 @@ const EventDetailsSection = async ({ params }: { params: Params }) => {
 
   if (!res.data) return notFound();
 
-  const { currentUserSubmission, eventTypeRole } = getApproverEventStatus(
+  const { currentUserSubmission } = getApproverEventStatus(
     res.data,
     role as string,
   );

@@ -29,7 +29,9 @@ export const EventTypeApproverSchema = z.object({
   type: eventApproverTypeEnum,
 });
 
-export const EventTypeApproverQuerySchema = QuerySchema.extend({});
+export const EventTypeApproverQuerySchema = QuerySchema.extend({
+  type_id: z.string().optional(),
+});
 
 export type EventTypeApproverType = z.infer<typeof EventTypeApproverSchema>;
 export type EventTypeApproverQueryType = z.infer<

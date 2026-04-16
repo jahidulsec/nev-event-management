@@ -18,10 +18,10 @@ export default function TabSection({
       name: "Event Type",
       url: "/dashboard/permission/event-type",
     },
-    {
-      name: "Approver",
-      url: "/dashboard/permission/approver",
-    },
+    // {
+    //   name: "Approver",
+    //   url: "/dashboard/permission/approver",
+    // },
   ];
 
   return (

@@ -8,7 +8,7 @@ import {
 import { deleteToastTemplate } from "@/lib/template";
 import { formatDate } from "@/utils/formatter";
 import { ColumnDef } from "@tanstack/react-table";
-import { Edit, Trash2, Workflow } from "lucide-react";
+import { Edit, Eye, PlusCircle, Trash2, Workflow } from "lucide-react";
 import React from "react";
 import { deleteEventType } from "../../actions/type";
 import { TableActionButton } from "@/components/shared/button/button";
@@ -18,6 +18,7 @@ import { getCostLimitText } from "@/utils/helper";
 import { EventTypeMultiProps } from "../../lib/type";
 import { FormDialog } from "@/components/shared/modal/modal";
 import { ApproverFlowChart } from "@/components/shared/flowchart/approver";
+import { useRouter } from "@bprogress/next";
 
 export default function EventTypeTable({
   data,
@@ -30,6 +31,8 @@ export default function EventTypeTable({
   >(false);
   const [del, setDel] = React.useState<string | boolean>(false);
   const [pending, startTransition] = React.useTransition();
+  const router = useRouter();
+
   const serialColumn = useTableSerialColumn<EventTypeMultiProps>();
 
   const columns: ColumnDef<EventTypeMultiProps>[] = [
@@ -62,6 +65,16 @@ export default function EventTypeTable({
 
         return (
           <div className="flex justify-end items-center gap-1">
+            <TableActionButton
+              tooltip="Approvers"
+              onClick={() =>
+                router.push(
+                  `/dashboard/permission/event-type/${row.original.id}`,
+                )
+              }
+            >
+              <PlusCircle /> <span className="sr-only">View</span>
+            </TableActionButton>
             <TableActionButton
               tooltip="Flowchart"
               onClick={() => setFlowchart(value)}

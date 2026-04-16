@@ -25,6 +25,7 @@ import {
 } from "../../actions/type-approver";
 import { getEventTypes } from "../../lib/type";
 import { getCostLimitText } from "@/utils/helper";
+import { useParams } from "next/navigation";
 
 export default function EventTypeApproverForm({
   onClose,
@@ -36,10 +37,12 @@ export default function EventTypeApproverForm({
   const [type, setType] = React.useState<event_type[]>([]);
   const [pending, startTransition] = React.useTransition();
 
+  const params = useParams();
+
   const form = useForm<EventTypeApproverType>({
     resolver: zodResolver(EventTypeApproverSchema),
     defaultValues: {
-      event_type_id: prevData?.event_type_id,
+      event_type_id: params?.typeId?.toString() ?? prevData?.event_type_id,
       type: prevData?.type,
       user_type: prevData?.user_type as any,
     },
@@ -81,7 +84,7 @@ export default function EventTypeApproverForm({
               <FieldLabel>Event Type</FieldLabel>
               <Select
                 placeholder="Select a type"
-                defaultValue={prevData?.event_type_id}
+                defaultValue={params?.typeId?.toString() ?? prevData?.event_type_id}
                 data={type.map((item) => ({
                   label: `${item.title} (${getCostLimitText(item)})`,
                   value: item.id,

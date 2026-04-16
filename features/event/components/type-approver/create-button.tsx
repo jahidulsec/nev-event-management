@@ -17,7 +17,11 @@ export default function CreatEventTypeApproverButton() {
         <PlusCircle /> {title}
       </Button>
 
-      <FormSheet open={open} onOpenChange={setOpen} formTitle={`Create ${title}`}>
+      <FormSheet
+        open={open}
+        onOpenChange={setOpen}
+        formTitle={`Create ${title}`}
+      >
         <EventTypeApproverForm onClose={() => setOpen(false)} />
       </FormSheet>
     </>
