@@ -19,10 +19,16 @@ import CreateDoctorButton from "@/features/doctor/components/create-button";
 import DoctorTable from "@/features/doctor/components/table";
 import { getDoctors } from "@/features/doctor/lib/doctor";
 import { getDashboardRole } from "@/lib/dal";
+import { AppMetaData } from "@/lib/data";
 import { SearchParams } from "@/types/search-params";
 import { getPageData } from "@/utils/helper";
+import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+
+export const metadata: Metadata = {
+  title: `Doctors`,
+};
 
 export default async function DoctorsPage({
   searchParams,

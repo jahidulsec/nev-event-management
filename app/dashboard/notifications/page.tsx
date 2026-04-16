@@ -18,7 +18,12 @@ import { getAuthUser } from "@/lib/dal";
 import { SearchParams } from "@/types/search-params";
 import { DEFAULT_PAGE_SIZE } from "@/utils/settings";
 import { Bell } from "lucide-react";
+import { Metadata } from "next";
 import { Suspense } from "react";
+
+export const metadata: Metadata = {
+  title: `Notifications`,
+};
 
 export default function NotificationsPage({
   searchParams,

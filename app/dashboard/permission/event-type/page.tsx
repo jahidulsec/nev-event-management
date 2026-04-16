@@ -17,6 +17,11 @@ import EventTypeTable from "@/features/event/components/type/table";
 import PagePagination from "@/components/shared/pagination/pagination";
 import { getEventTypes } from "@/features/event/lib/type";
 import { SearchParams } from "@/types/search-params";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: `Event Type - Permission`,
+};
 
 export default function PermissionEventTypePage({
   searchParams,

@@ -14,15 +14,20 @@ import {
   SectionHeading,
   SectionHeadingIcon,
 } from "@/components/shared/typography/heading";
-import { createAOs, createEmployees } from "@/features/employee/actions/employee";
+import { createAOs } from "@/features/employee/actions/employee";
 import CreateEmployeeButton from "@/features/employee/components/create-button";
 import EmployeeTable from "@/features/employee/components/table";
 import { getEmployees } from "@/features/employee/lib/employee";
-import { getAuthUser, getDashboardRole } from "@/lib/dal";
+import { getDashboardRole } from "@/lib/dal";
 import { SearchParams } from "@/types/search-params";
 import { getPageData } from "@/utils/helper";
+import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+
+export const metadata: Metadata = {
+  title: `Employees`,
+};
 
 export default async function DoctorsPage({
   searchParams,
@@ -33,8 +38,8 @@ export default async function DoctorsPage({
 
   const pageData = getPageData(pageTitle, "superadmin");
 
-    const role = await getDashboardRole();
-    if (role !== "superadmin") return notFound();
+  const role = await getDashboardRole();
+  if (role !== "superadmin") return notFound();
 
   return (
     <>

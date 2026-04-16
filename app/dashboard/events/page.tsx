@@ -24,6 +24,12 @@ import { SearchParams } from "@/types/search-params";
 import { getPageData } from "@/utils/helper";
 import { Suspense } from "react";
 import { getTitleCase } from "@/utils/formatter";
+import { Metadata } from "next";
+import { AppMetaData } from "@/lib/data";
+
+export const metadata: Metadata = {
+  title: `Events`,
+};
 
 export default async function EventsPage({
   searchParams,

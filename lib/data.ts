@@ -215,3 +215,9 @@ export const yesNoList = [
     value: "no",
   },
 ];
+
+
+export const AppMetaData = {
+  title: "SWiFT",
+  desc: 'An event management system by Nevian LifeScience PLC'
+}

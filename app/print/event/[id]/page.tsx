@@ -3,8 +3,12 @@ import { getEvent } from "@/features/event/lib/event";
 import { getEventApprovers } from "@/features/event/lib/event-approver";
 import { getDashboardRole } from "@/lib/dal";
 import { Params } from "@/types/search-params";
+import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import React from "react";
+
+export const metadata: Metadata = {
+  title: `Print - Event`,
+};
 
 export default async function EventFormPrintPage({
   params,
