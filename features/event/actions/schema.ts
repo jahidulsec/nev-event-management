@@ -5,7 +5,7 @@ import {
   yesNoEnum,
 } from "@/schemas/common";
 import { QuerySchema } from "@/schemas/query";
-import z, { TypeOf } from "zod";
+import z from "zod";
 
 export const EventTypeSchema = z.object({
   title: z
@@ -159,6 +159,15 @@ export const EventQuerySchema = QuerySchema.extend({
     .optional(),
 });
 
+export const EventExportQuerySchema = EventQuerySchema.omit({
+  work_area_code: true,
+  role: true,
+  page: true,
+  size: true,
+  sort: true,
+  search: true,
+});
+
 export const EventStatusSchema = z.object({
   event_id: z.string(),
   user_id: z.string(),
@@ -170,6 +179,7 @@ export const EventStatusSchema = z.object({
 
 export type EventType = z.infer<typeof EventSchema>;
 export type EventQueryType = z.infer<typeof EventQuerySchema>;
+export type EventExportQueryType = z.infer<typeof EventExportQuerySchema>;
 export type EventStatusSchemaType = z.infer<typeof EventStatusSchema>;
 
 export const EventStatusHistoryQuerySchema = QuerySchema.omit({}).extend({

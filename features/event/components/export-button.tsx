@@ -8,12 +8,18 @@ import { ActionButton } from "@/components/shared/button/button";
 import { getEventsExportInformation } from "../lib/event";
 import { getTitleCase, numberToWords } from "@/utils/formatter";
 import { format } from "date-fns";
+import { useSearchParams } from "next/navigation";
 
 export default function ExportButton() {
   const [isPending, startTransition] = React.useTransition();
+  const searchParams = useSearchParams()
 
   const downloadCSV = async (name: string) => {
-    const res = await getEventsExportInformation();
+    const res = await getEventsExportInformation({
+      start: searchParams.get('start') ?? undefined,
+      end: searchParams.get('end') ?? undefined,
+      status: searchParams.get('status') as 'approved' ?? undefined,
+    });
 
     if (res.success === false) {
       toast.error(res?.message);

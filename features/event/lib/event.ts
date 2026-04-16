@@ -4,7 +4,12 @@ import { db } from "@/config/db";
 import { Prisma } from "@/lib/generated/prisma";
 import { apiResponse } from "@/lib/response";
 import { getCleanData } from "@/utils/formatter";
-import { EventQuerySchema, EventQueryType } from "../actions/schema";
+import {
+  EventExportQuerySchema,
+  EventExportQueryType,
+  EventQuerySchema,
+  EventQueryType,
+} from "../actions/schema";
 import { getSerializeData } from "@/utils/helper";
 import { endOfDay, startOfDay } from "date-fns";
 
@@ -312,8 +317,13 @@ const getSingle = async (id: string) => {
   }
 };
 
-const getEventsExportInformation = async () => {
+const getEventsExportInformation = async (query: EventExportQueryType) => {
   try {
+    const cleanData = getCleanData(query);
+
+    // validated searchparams
+    const params = EventExportQuerySchema.parse(cleanData);
+
     const baseQuery = `
     WITH ev AS (
       SELECT 
@@ -391,6 +401,9 @@ const getEventsExportInformation = async () => {
     LEFT JOIN event_consultant ec ON ec.event_id = ev.id
     LEFT JOIN doctor d on d.id=ec.doctor_id
     LEFT join event_consultant_approval eca on ec.id =eca.consultant_Id
+    where 1=1
+    ${params.start && params.end ? ` AND ev.created_at >= '${startOfDay(new Date(params.start)).toISOString()}' AND ev.created_at <= '${endOfDay(new Date(params.end)).toISOString()}' ` : ""}
+    ${params.status ? ` AND ev.current_status = '${params.status}' ` : ""}
     order by ev.created_at
     `;
 

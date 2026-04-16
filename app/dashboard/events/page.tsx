@@ -23,7 +23,7 @@ import { AuthUser } from "@/types/auth-user";
 import { SearchParams } from "@/types/search-params";
 import { getPageData } from "@/utils/helper";
 import { Suspense } from "react";
-import { startOfDay, endOfDay } from "date-fns";
+import { getTitleCase } from "@/utils/formatter";
 
 export default async function EventsPage({
   searchParams,
@@ -60,8 +60,8 @@ export default async function EventsPage({
         <Select
           placeholder="Filter by status"
           paramsName="status"
-          data={["approved", "rejected", "processing"].map((item) => ({
-            label: item,
+          data={["approved", "processing", "rejected"].map((item) => ({
+            label: getTitleCase(item),
             value: item,
           }))}
         />
