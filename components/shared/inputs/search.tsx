@@ -7,13 +7,16 @@ import { useRouter } from "@bprogress/next";
 import { usePathname, useSearchParams } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { Button } from "../../ui/button";
+import { cn } from "@/lib/utils";
 
 function Search({
   placeholder = "Search...",
   type = "search",
+  className,
 }: {
   placeholder?: string;
   type?: string;
+  className?: string;
 }) {
   const searchParams = useSearchParams();
   const [search, setSearch] = useState(searchParams.get("search") || "");
@@ -38,7 +41,10 @@ function Search({
   return (
     <form
       onSubmit={handleSubmit}
-      className="relative shrink flex-1 w-full sm:w-fit sm:flex-none sm:max-w-xl min-w-40"
+      className={cn(
+        "relative shrink flex-1 w-full sm:w-fit sm:flex-none sm:max-w-xl min-w-40",
+        className,
+      )}
     >
       <Input
         type={type}

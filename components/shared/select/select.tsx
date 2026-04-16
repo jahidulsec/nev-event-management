@@ -14,6 +14,8 @@ import { SelectProps } from "@radix-ui/react-select";
 import { cn } from "@/lib/utils";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useRouter } from "@bprogress/next";
+import { Button } from "@/components/ui/button";
+import { X } from "lucide-react";
 
 const Select = ({
   data,
@@ -58,6 +60,26 @@ const Select = ({
       >
         <SelectValue id={id} placeholder={placeholder ?? "Select"} />
       </SelectTrigger>
+
+      {/* clear button for searchparams select */}
+      {paramsName && searchParams.has(paramsName) && (
+        <Button
+          variant={"outline"}
+          size={"icon"}
+          className="-ml-1.5"
+          title="Clear"
+          onClick={() => {
+            const params = new URLSearchParams(searchParams);
+            params.delete(paramsName);
+            router.push(`${pathname}?${params.toString()}`);
+          }}
+        >
+          <X />
+          <span className="sr-only">Clear</span>
+        </Button>
+      )}
+
+      {/* list */}
       <SelectContent>
         <SelectGroup>
           {data.length > 0 ? (

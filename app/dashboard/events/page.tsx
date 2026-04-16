@@ -49,15 +49,15 @@ export default async function EventsPage({
         </SectionHeading>
 
         <SectionActions>
-          <SearchForm />
           {user?.role.includes("ao") && <CreateEventButton />}
           {user?.role.some((i) => i === "ec") && <ExportButton />}
         </SectionActions>
       </SectionHeader>
 
-      <div className="flex my-6 items-center gap-1.5">
-        <DatePickerWithRange />
+      <div className="flex items-center gap-1.5 my-6 flex-col sm:flex-row bg-muted/35 p-3 rounded-xl">
+        <DatePickerWithRange className="w-full sm:w-fit" />
         <Select
+          className="w-full sm:w-fit"
           placeholder="Filter by status"
           paramsName="status"
           data={["approved", "processing", "rejected"].map((item) => ({
@@ -65,6 +65,7 @@ export default async function EventsPage({
             value: item,
           }))}
         />
+        <SearchForm className="sm:ml-auto bg-background" />
       </div>
 
       <SectionContent>

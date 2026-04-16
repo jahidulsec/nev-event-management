@@ -14,8 +14,9 @@ import {
 } from "@/components/ui/popover";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useRouter } from "@bprogress/next";
+import { cn } from "@/lib/utils";
 
-export function DatePickerWithRange() {
+export function DatePickerWithRange({ className }: { className?: string }) {
   const [date, setDate] = React.useState<DateRange | undefined>({
     from: undefined,
     to: undefined,
@@ -31,7 +32,7 @@ export function DatePickerWithRange() {
         <Button
           variant="outline"
           id="date-picker-range"
-          className="justify-start px-2.5 font-normal"
+          className={cn("justify-start px-2.5 font-normal", className)}
         >
           <CalendarIcon />
           {date?.from ? (
