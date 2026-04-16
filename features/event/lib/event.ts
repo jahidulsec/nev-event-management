@@ -64,6 +64,9 @@ export type EventSingleProps = Prisma.eventGetPayload<{
           select: {
             full_name: true;
             work_area_code: true;
+            employee_id: true;
+            designation: true;
+            rm_code: true;
           };
         };
       };
@@ -276,6 +279,9 @@ const getSingle = async (id: string) => {
               select: {
                 full_name: true,
                 work_area_code: true,
+                employee_id: true,
+                designation: true,
+                rm_code: true,
               },
             },
           },
