@@ -165,6 +165,8 @@ export default function ExportButton() {
       item.h_words = numberToWords(item.honorarium);
       if (prevId === item.id) {
         return {
+          track_no: item.track_no,
+          current_status: item.current_status,
           dr_child_id: item.dr_child_id,
           dr_name: item.dr_name,
           honorarium: item.honorarium,
