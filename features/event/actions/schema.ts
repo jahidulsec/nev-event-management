@@ -149,6 +149,14 @@ export const EventQuerySchema = QuerySchema.extend({
   work_area_code: z.string().optional(),
   role: userRoleSchema.optional(),
   status: z.enum(["approved", "rejected", "processing"]).optional(),
+  start: z
+    .string()
+    .regex(new RegExp(/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/))
+    .optional(),
+  end: z
+    .string()
+    .regex(new RegExp(/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/))
+    .optional(),
 });
 
 export const EventStatusSchema = z.object({

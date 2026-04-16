@@ -6,6 +6,7 @@ import { apiResponse } from "@/lib/response";
 import { getCleanData } from "@/utils/formatter";
 import { EventQuerySchema, EventQueryType } from "../actions/schema";
 import { getSerializeData } from "@/utils/helper";
+import { endOfDay, startOfDay } from "date-fns";
 
 export type EventMultiProps = Prisma.eventGetPayload<{
   include: {
@@ -189,6 +190,13 @@ const getMulti = async (query: EventQueryType) => {
       ...(params.status && {
         current_status: params.status,
       }),
+      ...(params.start &&
+        params.end && {
+          created_at: {
+            gte: startOfDay(new Date(params.start)),
+            lte: endOfDay(new Date(params.end)),
+          },
+        }),
     };
 
     const [data, count] = await Promise.all([

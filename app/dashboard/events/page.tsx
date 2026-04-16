@@ -22,8 +22,8 @@ import { getAuthUser, getDashboardRole } from "@/lib/dal";
 import { AuthUser } from "@/types/auth-user";
 import { SearchParams } from "@/types/search-params";
 import { getPageData } from "@/utils/helper";
-import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { startOfDay, endOfDay } from "date-fns";
 
 export default async function EventsPage({
   searchParams,
@@ -58,7 +58,7 @@ export default async function EventsPage({
       <div className="flex my-6 items-center gap-1.5">
         <DatePickerWithRange />
         <Select
-        placeholder="Filter by status"
+          placeholder="Filter by status"
           paramsName="status"
           data={["approved", "rejected", "processing"].map((item) => ({
             label: item,
@@ -81,7 +81,7 @@ const TableSection = async ({
 }: {
   searchParams: SearchParams;
 }) => {
-  const { page, size, search, status } = await searchParams;
+  const { page, size, search, status, start, end } = await searchParams;
 
   const authUser = await getAuthUser();
   const dashboardRole = await getDashboardRole();
@@ -95,6 +95,8 @@ const TableSection = async ({
     status: ["ec", "superadmin"].includes(dashboardRole ?? "")
       ? (status?.toString() as "approved")
       : "processing",
+    start: start?.toString(),
+    end: end?.toString(),
   });
 
   return (
