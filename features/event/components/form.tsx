@@ -117,7 +117,7 @@ export default function EventForm({
 
   const isWithoutSpeaker = eventType
     ?.toLowerCase()
-    .startsWith("without speaker");
+    .includes("without speaker");
 
   async function onSubmit(data: EventType) {
     if (!prevData) {

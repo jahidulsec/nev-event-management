@@ -1,6 +1,5 @@
 import { ErrorBoundary } from "@/components/shared/boundary/error-boundary";
-import { DownloadButton } from "@/components/shared/button/download";
-import { ExcelUploadButton } from "@/components/shared/button/excel-upload";
+import { DatePickerWithRange } from "@/components/shared/date-picker/date-range-picker";
 import { SearchForm } from "@/components/shared/inputs/search";
 import PagePagination from "@/components/shared/pagination/pagination";
 import {
@@ -9,6 +8,7 @@ import {
   SectionContent,
   SectionHeader,
 } from "@/components/shared/section/section";
+import { Select } from "@/components/shared/select/select";
 import { TableSkeleton } from "@/components/shared/skeleton/table";
 import {
   SectionHeading,
@@ -55,6 +55,18 @@ export default async function EventsPage({
         </SectionActions>
       </SectionHeader>
 
+      <div className="flex my-6 items-center gap-1.5">
+        <DatePickerWithRange />
+        <Select
+        placeholder="Filter by status"
+          paramsName="status"
+          data={["approved", "rejected", "processing"].map((item) => ({
+            label: item,
+            value: item,
+          }))}
+        />
+      </div>
+
       <SectionContent>
         <Suspense fallback={<TableSkeleton />}>
           <TableSection searchParams={searchParams} />
@@ -69,7 +81,7 @@ const TableSection = async ({
 }: {
   searchParams: SearchParams;
 }) => {
-  const { page, size, search } = await searchParams;
+  const { page, size, search, status } = await searchParams;
 
   const authUser = await getAuthUser();
   const dashboardRole = await getDashboardRole();
@@ -81,7 +93,7 @@ const TableSection = async ({
     work_area_code: authUser?.workAreaCode,
     role: dashboardRole as any,
     status: ["ec", "superadmin"].includes(dashboardRole ?? "")
-      ? undefined
+      ? (status?.toString() as "approved")
       : "processing",
   });
 
