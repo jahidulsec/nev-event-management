@@ -4,7 +4,7 @@ set -e
 
 PROCESS="local"
 app_name="nev-event-management"
-PORT="5017"
+PORT="5018"
 
 
 # Parse --process flag value
