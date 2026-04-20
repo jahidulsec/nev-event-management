@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev -p 5016",
     "build": "next build",
-    "start": "next start -p 5016",
+    "start": "next start",
     "lint": "eslint",
     "db:postinstall": "npx prisma generate",
     "db:generate": "npx prisma generate",

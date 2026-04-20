@@ -4,6 +4,7 @@ set -e
 
 PROCESS="local"
 app_name="nev-event-management"
+PORT="5017"
 
 
 # Parse --process flag value
@@ -30,7 +31,7 @@ if [[ "$PROCESS" = "docker" ]]; then
 else
     # pm2 run
     echo "1.Install Packages"
-    npm i
+    npm ci
 
     echo ""
     echo "2. Generate DB"
@@ -46,6 +47,6 @@ else
         pm2 restart $app_name
     else
         echo "App not found"
-        pm2 start 'npm run start' --name $app_name
+        pm2 start "npm run start -- --port $PORT" --name $app_name
     fi
 fi

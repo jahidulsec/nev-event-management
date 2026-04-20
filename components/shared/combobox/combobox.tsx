@@ -2,7 +2,7 @@
 
 import React from "react";
 
-import { CheckIcon, ChevronsUpDownIcon, Search } from "lucide-react";
+import { CheckIcon, ChevronsUpDownIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import {
