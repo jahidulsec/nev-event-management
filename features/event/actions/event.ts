@@ -562,7 +562,7 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
           is_marked: "no",
           event_id: event?.id ?? "",
           status: "read_only",
-          message: `Status Update: ${postApprover.full_name} (${data.user_id}) (${data.user_role}) has ${status} the event`,
+          message: `Status Update: ${postApprover.full_name ?? ''} (${data.user_id}) (${data.user_role}) has ${status} the event`,
         });
 
         // send status update mail to ao
@@ -576,7 +576,7 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
               typeTitle: event.event_type?.title ?? "",
               status,
               eventDate: formatDateTime(event.event_date),
-              approverName: `${postApprover.full_name} (${data.user_id})`,
+              approverName: `${postApprover.full_name ?? ''} (${data.user_id})`,
               remarks,
             }),
           }).catch((err) => console.error(err));
