@@ -201,7 +201,9 @@ export default function EventForm({
   React.useEffect(() => {
     if (validType) {
       form.setValue("event_type_id", validType.id);
+      console.log(validType)
     }
+
   }, [validType]);
 
   return (
@@ -439,17 +441,17 @@ export default function EventForm({
               {((objective &&
                 objectiveList.slice(0, 3).includes(objective) === false) ||
                 objective?.length === 0) && (
-                <Input
-                  defaultValue={objective}
-                  onChange={(e) => {
-                    form.setValue("objective", e.target.value);
-                  }}
-                  aria-invalid={fieldState.invalid}
-                  placeholder="Others"
-                  autoComplete="off"
-                  className="max-w-sm"
-                />
-              )}
+                  <Input
+                    defaultValue={objective}
+                    onChange={(e) => {
+                      form.setValue("objective", e.target.value);
+                    }}
+                    aria-invalid={fieldState.invalid}
+                    placeholder="Others"
+                    autoComplete="off"
+                    className="max-w-sm"
+                  />
+                )}
 
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
@@ -622,8 +624,8 @@ export default function EventForm({
         <strong className="text-secondary text-lg">
           {formatNumber(
             internalParticipants +
-              externalParticipants +
-              (otherParticipants || 0) || 0,
+            externalParticipants +
+            (otherParticipants || 0) || 0,
           )}
         </strong>
       </p>

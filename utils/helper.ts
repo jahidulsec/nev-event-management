@@ -82,26 +82,26 @@ export function findEventTypeByCost(
 
   if (exact) return exact;
 
-  // 2. If not in range → find closest
-  let closest = filtered[0];
-  let minDiff = Infinity;
 
-  for (const e of filtered) {
-    const lower = Number(e.lower_limit) || -Infinity;
-    const upper = Number(e.upper_limit) || Infinity;
 
-    let diff = 0;
+  const upperLimitFilter = filtered.find(e => {
+    const upperOk = (e.upper_limit === null || cost <= Number(e.upper_limit)) && !e.lower_limit;
+    console.log("upperOk", upperOk)
 
-    if (cost < lower) diff = lower - cost;
-    else if (cost > upper) diff = cost - upper;
+    return upperOk
+  })
 
-    if (diff < minDiff) {
-      minDiff = diff;
-      closest = e;
-    }
-  }
+  const lowerLimitFilter = filtered.find(e => {
+    const lowerOk = (e.lower_limit === null || cost >= Number(e.lower_limit)) && !e.upper_limit;
+    console.log("lowerOk", lowerOk)
+    return lowerOk
+  })
 
-  return closest;
+
+  if (lowerLimitFilter) return lowerLimitFilter;
+  else if (upperLimitFilter) return upperLimitFilter;
+
+  return filtered[0]
 }
 
 export function calculateEventBudget(
