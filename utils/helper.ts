@@ -66,19 +66,42 @@ export function findEventTypeByCost(
   title: string,
   cost: number,
 ): EventTypeMultiProps | null {
+
   const filtered = eventTypes.filter(
     (e) => e.title?.toLowerCase() === title?.toLowerCase(),
   );
 
-  return (
-    filtered.find((e) => {
-      const lowerOk = e.lower_limit === null || cost >= Number(e.lower_limit);
+  if (!filtered.length) return null;
 
-      const upperOk = e.upper_limit === null || cost <= Number(e.upper_limit);
+  // 1. Try exact match (within range)
+  const exact = filtered.find((e) => {
+    const lowerOk = e.lower_limit === null || cost >= Number(e.lower_limit);
+    const upperOk = e.upper_limit === null || cost <= Number(e.upper_limit);
+    return lowerOk && upperOk;
+  });
 
-      return lowerOk && upperOk;
-    }) ?? filtered[0]
-  );
+  if (exact) return exact;
+
+  // 2. If not in range → find closest
+  let closest = filtered[0];
+  let minDiff = Infinity;
+
+  for (const e of filtered) {
+    const lower = Number(e.lower_limit) || -Infinity;
+    const upper = Number(e.upper_limit) || Infinity;
+
+    let diff = 0;
+
+    if (cost < lower) diff = lower - cost;
+    else if (cost > upper) diff = cost - upper;
+
+    if (diff < minDiff) {
+      minDiff = diff;
+      closest = e;
+    }
+  }
+
+  return closest;
 }
 
 export function calculateEventBudget(
