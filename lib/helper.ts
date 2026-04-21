@@ -187,7 +187,7 @@ export const getApproverDetails = async (
 
   return {
     work_area_code: userDetails?.work_area_code,
-    ...userDetails?.[firstApproverRole as "ao"],
+    ...userDetails?.[firstApproverRole === 'director_sales' ? "franchise_head" as 'ao' : firstApproverRole as "ao"],
   };
 };
 
