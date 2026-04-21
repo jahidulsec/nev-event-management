@@ -158,7 +158,7 @@ export const approverTypeList = [
   },
   {
     label: "Fifth",
-    value: "Fifth",
+    value: "fifth",
   },
   {
     label: "Final",
