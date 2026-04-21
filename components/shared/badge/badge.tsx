@@ -44,7 +44,7 @@ const UserRoleBadge = ({
       variant={variant}
       {...props}
       className={cn(
-        type === "director"
+        type === "director_sales"
           ? "text-lime-800 bg-lime-50"
           : type === "marketing"
             ? "text-green-800 bg-green-50"

@@ -10,7 +10,51 @@ import { Prisma } from "@/lib/generated/prisma";
 export type EventStatusHistoryMultiProps =
   Prisma.event_status_historyGetPayload<{
     include: {
-      event_approver: true;
+      event_approver: {
+        include: {
+          user: {
+            select: {
+              ao: {
+                select: {
+                  full_name: true,
+                  designation: true,
+                },
+              },
+              flm: {
+                select: {
+                  full_name: true,
+                  designation: true,
+                },
+              },
+              slm: {
+                select: {
+                  full_name: true,
+                  designation: true,
+                },
+              },
+              marketing: {
+                select: {
+                  full_name: true,
+                  designation: true,
+                },
+              },
+              ec: {
+                select: {
+                  full_name: true,
+                  designation: true,
+                },
+              },
+              franchise_head: {
+                select: {
+                  full_name: true,
+                  designation: true,
+                },
+              },
+            },
+          },
+        }
+      };
+
     };
   }>;
 
@@ -32,7 +76,51 @@ export const getEventStatusHistories = async (
       db.event_status_history.findMany({
         where: filter,
         include: {
-          event_approver: true,
+          event_approver: {
+            include: {
+              user: {
+                select: {
+                  ao: {
+                    select: {
+                      full_name: true,
+                      designation: true,
+                    },
+                  },
+                  flm: {
+                    select: {
+                      full_name: true,
+                      designation: true,
+                    },
+                  },
+                  slm: {
+                    select: {
+                      full_name: true,
+                      designation: true,
+                    },
+                  },
+                  marketing: {
+                    select: {
+                      full_name: true,
+                      designation: true,
+                    },
+                  },
+                  ec: {
+                    select: {
+                      full_name: true,
+                      designation: true,
+                    },
+                  },
+                  franchise_head: {
+                    select: {
+                      full_name: true,
+                      designation: true,
+                    },
+                  },
+                },
+              },
+            }
+          },
+
         },
         skip: (params.page - 1) * params.size,
         take: params.size,

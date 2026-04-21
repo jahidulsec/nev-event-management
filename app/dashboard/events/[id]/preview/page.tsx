@@ -1,3 +1,4 @@
+import { ApproverTypeBadge, UserRoleBadge } from "@/components/shared/badge/badge";
 import { Step, StepContainer } from "@/components/shared/progress/step";
 import {
   Section,
@@ -23,6 +24,7 @@ import { getApproverEventStatus } from "@/lib/event";
 import { event_current_status } from "@/lib/generated/prisma";
 import { AuthUser } from "@/types/auth-user";
 import { Params } from "@/types/search-params";
+import { QuoteIcon } from "lucide-react";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
@@ -163,15 +165,35 @@ const EventStatusHistorySection = async ({ params }: { params: Params }) => {
         <SectionHeading2>Event Approval History</SectionHeading2>
         <Separator />
         <StepContainer>
-          {res.data?.map((item, index) => (
-            <Step
-              key={item.id}
-              status={item.status}
-              description={`${item.event_approver.user_role} (${item.event_approver.user_id}) - ${item.remarks}`}
-              createdAt={item.created_at as Date}
-              isLast={res.count === index + 1}
-            />
-          ))}
+          {res.data?.map((item, index) => {
+            const approverFullName = item?.event_approver.user[
+              (item?.event_approver.user_role === "director_sales"
+                ? "franchise_head"
+                : item?.event_approver.user_role) as "ao"
+            ]?.["full_name"] ?? ''
+
+            const approverType = item.remarks?.split(':')[0]
+            const comment = item.remarks?.split(':')[1]
+
+            return (
+              <Step
+                key={item.id}
+                status={item.status}
+                description={<><br /><strong>
+                  {approverFullName} </strong>
+                  <em className="text-sm">({item.event_approver.user_id})</em>{" "}: {" "}
+                  <UserRoleBadge type={item.event_approver.user_role}>{item.event_approver.user_role}</UserRoleBadge>
+                  <ApproverTypeBadge type={approverType as 'final'}>{approverType}</ApproverTypeBadge>
+                  <br />
+                  <blockquote className="relative border rounded-md p-8 py-4 bg-background text-sm mt-3 isolate">
+                    <QuoteIcon className="size-3.5 fill-muted text-muted absolute rotate-180 -z-1 top-3 left-2" />
+                    {comment}
+                  </blockquote></>}
+                createdAt={item.created_at as Date}
+                isLast={res.count === index + 1}
+              />
+            )
+          })}
         </StepContainer>
       </div>
     </div>

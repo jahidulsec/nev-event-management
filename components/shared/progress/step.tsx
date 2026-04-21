@@ -2,8 +2,9 @@
 
 import { event_current_status } from "@/lib/generated/prisma";
 import { cn } from "@/lib/utils";
-import { formatDate, formatDateTime } from "@/utils/formatter";
+import { formatDate, formatDateTime, getTitleCase } from "@/utils/formatter";
 import { SquareCheck, SquareX } from "lucide-react";
+import { StatusBadge } from "../badge/badge";
 
 const Step = ({
   status,
@@ -11,7 +12,7 @@ const Step = ({
   createdAt,
   isLast,
 }: {
-  description: string;
+  description: React.ReactNode;
   createdAt: Date;
   isLast?: boolean;
   status: event_current_status;
@@ -42,13 +43,16 @@ const Step = ({
           )}
         </div>
       </div>
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1 bg-muted/35 w-full px-3 py-1.5 rounded-md">
         <p></p>
-        <p className="text-foreground">
+        <div className="text-foreground">
           {" "}
-          <strong>{status.replaceAll("_", " ")}:</strong> {description}
-        </p>
-        <p className="text-sm block lg:hidden">{formatDateTime(createdAt)}</p>
+          <StatusBadge type={status}>{getTitleCase(status.replaceAll("_", " "))}</StatusBadge>
+          <p className="">
+            {description}
+          </p>
+        </div>
+        <p className="block lg:hidden py-3 lg:py-0 text-muted-foreground text-xs">{formatDateTime(createdAt)}</p>
       </div>
     </div>
   );
