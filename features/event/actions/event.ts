@@ -539,18 +539,14 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
         postApproverIndex,
       );
 
-      const lastApprover = await getApproverDetails(
-        event as any,
-        postApproverIndex - 1,
-      );
-
       // push email
       if (postApprover.email) {
+        // send mail to post approver
         sendEmail({
           to: [devEmail || postApprover.email],
           subject: "Event approval request",
           html: ApproverRequestMail({
-            approverName: postApprover.full_name,
+            approverName: postApprover?.full_name ?? '',
             eventId: event?.id,
             eventTitle: event.title,
             eventDate: formatDateTime(event.event_date),
@@ -566,9 +562,10 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
           is_marked: "no",
           event_id: event?.id ?? "",
           status: "read_only",
-          message: `Status Update: ${lastApprover.full_name} (${data.user_id}) (${data.user_role}) has ${status} the event`,
+          message: `Status Update: ${postApprover.full_name} (${data.user_id}) (${data.user_role}) has ${status} the event`,
         });
 
+        // send status update mail to ao
         if (event.user.ao?.email) {
           sendEmail({
             to: [devEmail || event.user.ao?.email],
@@ -579,7 +576,7 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
               typeTitle: event.event_type?.title ?? "",
               status,
               eventDate: formatDateTime(event.event_date),
-              approverName: `${lastApprover.full_name} (${data.user_id})`,
+              approverName: `${postApprover.full_name} (${data.user_id})`,
               remarks,
             }),
           }).catch((err) => console.error(err));
