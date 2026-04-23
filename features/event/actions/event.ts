@@ -510,7 +510,7 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
       // Push email to requestor
       if (event?.user.ao?.email) {
         sendEmail({
-          to: [devEmail || event.user.ao.email],
+          to: [devEmail || event.user.ao.email.toLowerCase()],
           subject: "Event status update",
           html: EventCompletionMail({
             eventTitle: event.title,
@@ -553,7 +553,7 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
       if (postApprover.email) {
         // send mail to post approver
         sendEmail({
-          to: [devEmail || postApprover.email],
+          to: [devEmail || postApprover.email.toLowerCase()],
           subject: "Event approval request",
           html: ApproverRequestMail({
             approverName: postApprover?.full_name ?? "",
@@ -578,7 +578,7 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
         // send status update mail to ao
         if (event.user.ao?.email) {
           sendEmail({
-            to: [devEmail || event.user.ao?.email],
+            to: [devEmail || event.user.ao?.email.toLowerCase()],
             subject: "Event approval status update",
             html: ApproverStatusUpdateMail({
               product: getTitleCase(event.product_id),
@@ -638,7 +638,7 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
 
       if (event?.user.ao?.email) {
         sendEmail({
-          to: [devEmail || event.user.ao.email],
+          to: [devEmail || event.user.ao.email.toLowerCase()],
           subject: "Event status update",
           html: EventCompletionMail({
             eventTitle: event.title,
