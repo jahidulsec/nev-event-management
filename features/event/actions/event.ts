@@ -532,6 +532,16 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
         ? approvedApproverCount
         : undefined;
 
+    const currentApproverIndex =
+      approvedApproverCount > 0 && approvedApproverCount < eventApproverCount
+        ? approvedApproverCount - 1
+        : 0;
+
+    const currentApprover = await getApproverDetails(
+      event as any,
+      currentApproverIndex,
+    );
+
     // create notificaiton for post approver
     if (postApproverIndex && event) {
       const postApprover = await getApproverDetails(
@@ -546,7 +556,7 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
           to: [devEmail || postApprover.email],
           subject: "Event approval request",
           html: ApproverRequestMail({
-            approverName: postApprover?.full_name ?? '',
+            approverName: postApprover?.full_name ?? "",
             eventId: event?.id,
             eventTitle: event.title,
             eventDate: formatDateTime(event.event_date),
@@ -556,13 +566,13 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
           }),
         }).catch((err) => console.error(err));
 
-        // send status update to ao
+        // send status update to ao with current approver details
         await createNotification({
           work_area_code: event?.user_id ?? "",
           is_marked: "no",
           event_id: event?.id ?? "",
           status: "read_only",
-          message: `Status Update: ${postApprover.full_name ?? ''} (${data.user_id}) (${data.user_role}) has ${status} the event`,
+          message: `Status Update: ${currentApprover.full_name ?? ""} (${data.user_id}) (${data.user_role}) has ${status} the event`,
         });
 
         // send status update mail to ao
@@ -576,7 +586,7 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
               typeTitle: event.event_type?.title ?? "",
               status,
               eventDate: formatDateTime(event.event_date),
-              approverName: `${postApprover.full_name ?? ''} (${data.user_id})`,
+              approverName: `${currentApprover.full_name ?? ""} (${data.user_id})`,
               remarks,
             }),
           }).catch((err) => console.error(err));
