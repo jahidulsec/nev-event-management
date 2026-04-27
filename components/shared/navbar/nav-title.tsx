@@ -13,11 +13,10 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { LogoFull } from "../logo/company";
 import { navlist } from "@/lib/data";
-import { ProfileButton } from "../button/profile-button";
 import RoleSelect from "./role-select";
 import { AppLogo } from "../logo/app";
+import { useRouter } from "@bprogress/next";
 
 export default function NavTitle({
   role,
@@ -28,6 +27,7 @@ export default function NavTitle({
 }) {
   const [open, setOpen] = React.useState(false);
   const pathname = usePathname();
+  const router = useRouter();
 
   return (
     <div className="flex items-center">
@@ -59,15 +59,16 @@ export default function NavTitle({
                     className={cn(
                       "justify-start rounded-full shadow-none text-left font-medium w-full",
                     )}
-                    asChild
+                    onClick={() => {
+                      setOpen(false);
+                      router.push(item.url);
+                    }}
                   >
-                    <Link href={item.url}>
-                      <item.icon
-                        className={`transition-all duration-300 fill-primary/40 text-primary/90 
+                    <item.icon
+                      className={`transition-all duration-300 fill-primary/40 text-primary/90 
                     `}
-                      />
-                      {item.title}
-                    </Link>
+                    />
+                    {item.title}
                   </Button>
                 </li>
               ))}
