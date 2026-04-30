@@ -52,7 +52,7 @@ export const getApproverWorkArea = async (
       firstApproverWorkArea = ao?.zm_code ?? "";
       break;
     case "franchise_head":
-      firstApproverWorkArea = ao?.wing_code ?? "";
+      firstApproverWorkArea = productUser?.work_area_code ?? ""; //ao?.wing_code ?? ""
       break;
     case "marketing":
       firstApproverWorkArea = productUser?.work_area_code ?? "";
@@ -128,7 +128,7 @@ export const getApproverDetails = async (
       firstApproverWorkArea = ao?.zm_code ?? "";
       break;
     case "franchise_head":
-      firstApproverWorkArea = ao?.wing_code ?? "";
+      firstApproverWorkArea = productUser?.work_area_code ?? "";  //ao?.wing_code ?? ""
       break;
     case "marketing":
       firstApproverWorkArea = productUser?.work_area_code ?? "";

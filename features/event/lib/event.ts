@@ -109,102 +109,109 @@ const getMulti = async (query: EventQueryType) => {
       }),
       ...(params.work_area_code &&
         params.role === "ao" && {
-          user_id: params.work_area_code,
-        }),
+        user_id: params.work_area_code,
+      }),
       ...(params.role === "flm" &&
         params.work_area_code && {
-          user: {
-            ao: {
-              rm_code: params.work_area_code,
+        user: {
+          ao: {
+            rm_code: params.work_area_code,
+          },
+        },
+        event_type: {
+          approver: {
+            some: {
+              user_type: params.role,
             },
           },
-          event_type: {
-            approver: {
-              some: {
-                user_type: params.role,
-              },
-            },
-          },
-        }),
+        },
+      }),
       ...(params.role === "slm" &&
         params.work_area_code && {
-          user: {
-            ao: {
-              zm_code: params.work_area_code,
+        user: {
+          ao: {
+            zm_code: params.work_area_code,
+          },
+        },
+        event_type: {
+          approver: {
+            some: {
+              user_type: params.role,
             },
           },
-          event_type: {
-            approver: {
-              some: {
-                user_type: params.role,
-              },
-            },
-          },
-        }),
+        },
+      }),
       ...(params.role === "franchise_head" &&
         params.work_area_code && {
-          user: {
-            ao: {
-              wing_code: params.work_area_code,
+        // user: {
+        //   ao: {
+        //     wing_code: params.work_area_code,
+        //   },
+        // },
+        product: {
+          product_user: {
+            some: {
+              work_area_code: params.work_area_code,
             },
           },
-          event_type: {
-            approver: {
-              some: {
-                user_type: params.role,
-              },
+        },
+        event_type: {
+          approver: {
+            some: {
+              user_type: params.role,
             },
           },
-        }),
+        },
+      }),
       ...(params.role === "director_sales" &&
         params.work_area_code && {
-          event_type: {
-            approver: {
-              some: {
-                user_type: params.role,
-              },
+        event_type: {
+          approver: {
+            some: {
+              user_type: params.role,
             },
           },
-        }),
+        },
+      }),
       ...(params.role?.includes("marketing") &&
         params.work_area_code && {
-          product: {
-            product_user: {
-              some: {
-                work_area_code: params.work_area_code,
-              },
+        product: {
+          product_user: {
+            some: {
+              work_area_code: params.work_area_code,
             },
           },
-          event_type: {
-            approver: {
-              some: {
-                user_type: params.role,
-              },
+        },
+        event_type: {
+          approver: {
+            some: {
+              user_type: params.role,
             },
           },
-        }),
+        },
+      }),
       ...(params.role === "ec" &&
         params.work_area_code && {
-          product: {
-            product_user: {
-              some: {
-                work_area_code: params.work_area_code,
-              },
+        product: {
+          product_user: {
+            some: {
+              work_area_code: params.work_area_code,
             },
           },
-          // current_status: "approved",
-        }),
+        },
+        // current_status: "approved",
+      }),
 
       ...(params.status && {
         current_status: params.status,
       }),
       ...(params.start &&
         params.end && {
-          created_at: {
-            gte: startOfDay(new Date(params.start)),
-            lte: endOfDay(new Date(params.end)),
-          },
-        }),
+        created_at: {
+          gte: startOfDay(new Date(params.start)),
+          lte: endOfDay(new Date(params.end)),
+        },
+      }),
     };
 
     const [data, count] = await Promise.all([
