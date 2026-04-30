@@ -357,6 +357,9 @@ const getEventsExportInformation = async (query: EventExportQueryType) => {
         e.institute,
         e.institute_dept,
         e.food_supplier,
+        e.internal_participants,
+        e.external_participants,
+        e.other_participants,
         (e.internal_participants + e.external_participants + e.other_participants) AS total_participants,
         e.current_status
       FROM event e
@@ -372,6 +375,8 @@ const getEventsExportInformation = async (query: EventExportQueryType) => {
         
         SUM(CASE WHEN item = 'Venue Charge' THEN unit_cost * unit ELSE 0 END) AS venue_charge,
         SUM(CASE WHEN item = 'Food' THEN unit_cost * unit ELSE 0 END) AS food_cost,
+        SUM(CASE WHEN item = 'Food' THEN unit ELSE 0 END) AS food_unit,
+        SUM(CASE WHEN item = 'Food' THEN unit_cost ELSE 0 END) AS food_per_cost,
         SUM(CASE WHEN item = 'Transportation' THEN unit_cost * unit ELSE 0 END) AS transportation,
         SUM(CASE WHEN item = 'Projector-Screen' THEN unit_cost * unit ELSE 0 END) AS projector,
         SUM(CASE WHEN item = 'Sound System' THEN unit_cost * unit ELSE 0 END) AS sound_system,
@@ -395,6 +400,8 @@ const getEventsExportInformation = async (query: EventExportQueryType) => {
       -- Budget
       b.venue_charge,
       b.food_cost,
+      b.food_per_cost,
+      b.food_unit,
       b.transportation,
       b.projector,
       b.sound_system,

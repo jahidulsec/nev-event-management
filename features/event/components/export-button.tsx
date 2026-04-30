@@ -81,6 +81,10 @@ export default function ExportButton() {
         name: "Proposed Event Date",
       },
       {
+        header: "event_date",
+        name: "Plan Event Time",
+      },
+      {
         header: "venue",
         name: "Venue Name with Address",
       },
@@ -97,6 +101,14 @@ export default function ExportButton() {
         name: "Food Supplier",
       },
       {
+        header: "internal_participants",
+        name: "Number of External Participant",
+      },
+      {
+        header: "external_participants",
+        name: "Number of Internal Participant",
+      },
+      {
         header: "total_participants",
         name: "Total Participants",
       },
@@ -106,8 +118,16 @@ export default function ExportButton() {
         name: "Venue Charge",
       },
       {
+        header: "food_unit",
+        name: "Food Unit",
+      },
+      {
+        header: "food_per_cost",
+        name: "Food per Unit Price",
+      },
+       {
         header: "food_cost",
-        name: "Food",
+        name: "Total Food Cost",
       },
       {
         header: "transportation",
@@ -172,7 +192,7 @@ export default function ExportButton() {
           product: item.product,
           created_at: item.created_at,
           event_date: item.event_date,
-          
+
           current_status: item.current_status,
           dr_child_id: item.dr_child_id,
           dr_name: item.dr_name,
@@ -200,9 +220,17 @@ export default function ExportButton() {
               },
             },
             {
-              headerName: "event_date",
+              headerName: '',
+              fieldName: "Proposed Event Date",
               format: (value) => {
-                return value ? format(new Date(value as any), 'dd/MM/yy - h:mm aaa') : '-';
+                return value ? format(new Date(value as any), 'dd/MM/yy') : '-';
+              },
+            },
+            {
+              headerName: "",
+              fieldName: "Plan Event Time",
+              format: (value) => {
+                return value ? format(new Date(value as any), 'h:mm aaa') : '-';
               },
             },
             {
