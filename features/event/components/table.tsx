@@ -176,11 +176,10 @@ export default function EventTable({
               <TableActionButton
                 tooltip="Preview"
                 variant={"edit"}
-                onClick={() =>
-                  router.push(`/dashboard/events/${value.id}/preview`)
-                }
               >
-                <Eye /> <span className="sr-only">Preview</span>
+                <a href={`/dashboard/events/${value.id}/preview`}>
+                  <Eye /> <span className="sr-only">Preview</span>
+                </a>
               </TableActionButton>
             )}
             {authUser?.role.includes("ec") ||
@@ -189,31 +188,31 @@ export default function EventTable({
                   {["processing", "rework"].includes(
                     row.original.current_status ?? "",
                   ) && (
-                    <TableActionButton
-                      tooltip="Edit"
-                      variant={"edit"}
-                      onClick={() =>
-                        router.push(`/dashboard/events/${value.id}`)
-                      }
-                    >
-                      <Edit /> <span className="sr-only">Edit</span>
-                    </TableActionButton>
-                  )}
+                      <TableActionButton
+                        tooltip="Edit"
+                        variant={"edit"}
+                        onClick={() =>
+                          router.push(`/dashboard/events/${value.id}`)
+                        }
+                      >
+                        <Edit /> <span className="sr-only">Edit</span>
+                      </TableActionButton>
+                    )}
                 </>
               ))}
 
             {(authUser?.role.some((i) => i === "ec") ||
               authUser?.role.includes("superadmin")) && (
-              <TableActionButton tooltip="Print" variant={"edit"}>
-                <a
-                  href={`/print/event/${value.id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Printer /> <span className="sr-only">Print</span>
-                </a>
-              </TableActionButton>
-            )}
+                <TableActionButton tooltip="Print" variant={"edit"}>
+                  <a
+                    href={`/print/event/${value.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Printer /> <span className="sr-only">Print</span>
+                  </a>
+                </TableActionButton>
+              )}
 
             {authUser?.role.includes("superadmin") && (
               <TableActionButton
