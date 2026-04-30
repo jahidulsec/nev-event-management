@@ -523,151 +523,145 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
       }
 
 
-      revalidatePath("/dashboard");
-      revalidatePath("/dashboard/events");
 
-      return response({
-        success: true,
-        message: "Event status is submitted successfully",
-        data: res,
-      });
-    }
+    } else {
 
-    // get post approval information
-    const approvedApproverCount = event?.event_approver.length ?? 0;
-    const eventApproverCount = event?.event_type?.approver.length ?? 0;
+      // get post approval information
+      const approvedApproverCount = event?.event_approver.length ?? 0;
+      const eventApproverCount = event?.event_type?.approver.length ?? 0;
 
-    const postApproverIndex =
-      approvedApproverCount < eventApproverCount
-        ? approvedApproverCount
-        : undefined;
+      const postApproverIndex =
+        approvedApproverCount < eventApproverCount
+          ? approvedApproverCount
+          : undefined;
 
-    const currentApproverIndex =
-      approvedApproverCount > 0 && approvedApproverCount < eventApproverCount
-        ? approvedApproverCount - 1
-        : 0;
+      const currentApproverIndex =
+        approvedApproverCount > 0 && approvedApproverCount < eventApproverCount
+          ? approvedApproverCount - 1
+          : 0;
 
-    const currentApprover = await getApproverDetails(
-      event as any,
-      currentApproverIndex,
-    );
-
-    // create notificaiton for post approver
-    if (postApproverIndex && event) {
-      const postApprover = await getApproverDetails(
+      const currentApprover = await getApproverDetails(
         event as any,
-        postApproverIndex,
+        currentApproverIndex,
       );
 
-      // push email
-      if (postApprover.email) {
-        // send mail to post approver
-        sendEmail({
-          to: [devEmail || postApprover.email.toLowerCase()],
-          subject: "Event approval request",
-          html: ApproverRequestMail({
-            approverName: postApprover?.full_name ?? "",
-            eventId: event?.id,
-            eventTitle: event.title,
-            eventDate: formatDateTime(event.event_date),
-            requestorName: event.user.ao?.full_name ?? "",
-            product: event.product_id.toUpperCase(),
-            typeTitle: event.event_type?.title ?? "",
-          }),
-        }).catch((err) => console.error(err));
+      // create notificaiton for post approver
+      if (postApproverIndex && event) {
+        const postApprover = await getApproverDetails(
+          event as any,
+          postApproverIndex,
+        );
 
-        // send status update to ao with current approver details
-        await createNotification({
-          work_area_code: event?.user_id ?? "",
-          is_marked: "no",
-          event_id: event?.id ?? "",
-          status: "read_only",
-          message: `Status Update: ${currentApprover.full_name ?? ""} (${data.user_id}) (${data.user_role}) has ${status} the event`,
-        });
-
-        // send status update mail to ao
-        if (event.user.ao?.email) {
+        // push email
+        if (postApprover.email) {
+          // send mail to post approver
           sendEmail({
-            to: [devEmail || event.user.ao?.email.toLowerCase()],
-            subject: "Event approval status update",
-            html: ApproverStatusUpdateMail({
-              product: getTitleCase(event.product_id),
+            to: [devEmail || postApprover.email.toLowerCase()],
+            subject: "Event approval request",
+            html: ApproverRequestMail({
+              approverName: postApprover?.full_name ?? "",
+              eventId: event?.id,
               eventTitle: event.title,
-              typeTitle: event.event_type?.title ?? "",
-              status,
               eventDate: formatDateTime(event.event_date),
-              approverName: `${currentApprover.full_name ?? ""} (${data.user_id})`,
-              remarks,
+              requestorName: event.user.ao?.full_name ?? "",
+              product: event.product_id.toUpperCase(),
+              typeTitle: event.event_type?.title ?? "",
             }),
           }).catch((err) => console.error(err));
+
+          // send status update to ao with current approver details
+          await createNotification({
+            work_area_code: event?.user_id ?? "",
+            is_marked: "no",
+            event_id: event?.id ?? "",
+            status: "read_only",
+            message: `Status Update: ${currentApprover.full_name ?? ""} (${data.user_id}) (${data.user_role}) has ${status} the event`,
+          });
+
+          // send status update mail to ao
+          if (event.user.ao?.email) {
+            sendEmail({
+              to: [devEmail || event.user.ao?.email.toLowerCase()],
+              subject: "Event approval status update",
+              html: ApproverStatusUpdateMail({
+                product: getTitleCase(event.product_id),
+                eventTitle: event.title,
+                typeTitle: event.event_type?.title ?? "",
+                status,
+                eventDate: formatDateTime(event.event_date),
+                approverName: `${currentApprover.full_name ?? ""} (${data.user_id})`,
+                remarks,
+              }),
+            }).catch((err) => console.error(err));
+          }
         }
+
+        await createNotification({
+          work_area_code: postApprover?.work_area_code ?? "",
+          is_marked: "no",
+          event_id: data.event_id,
+          status: "action",
+          message: "You have a new event proposal approval request",
+        });
       }
 
-      await createNotification({
-        work_area_code: postApprover?.work_area_code ?? "",
-        is_marked: "no",
-        event_id: data.event_id,
-        status: "action",
-        message: "You have a new event proposal approval request",
-      });
-    }
+      // if approved by last approver, set event current status approver
+      if (
+        event?.event_approver.length === event?.event_type?.approver.length &&
+        status === "approved"
+      ) {
+        const eventData = await db.event.update({
+          where: {
+            id: data.event_id,
+          },
+          data: {
+            current_status: "approved",
+          },
+        });
 
-    // if approved by last approver, set event current status approver
-    if (
-      event?.event_approver.length === event?.event_type?.approver.length &&
-      status === "approved"
-    ) {
-      const eventData = await db.event.update({
-        where: {
-          id: data.event_id,
-        },
-        data: {
-          current_status: "approved",
-        },
-      });
-
-      // get suserpadmin
-      const admins = await db.user.findMany({
-        where: {
-          user_role: {
-            some: {
-              role: "superadmin",
+        // get suserpadmin
+        const admins = await db.user.findMany({
+          where: {
+            user_role: {
+              some: {
+                role: "superadmin",
+              },
             },
           },
-        },
-      });
+        });
 
-      // create notification for requestor
-      await createNotification({
-        work_area_code: eventData.user_id ?? "",
-        is_marked: "no",
-        event_id: eventData.id,
-        status: "read_only",
-        message: "Approved",
-      });
-
-      if (event?.user.ao?.email) {
-        sendEmail({
-          to: [devEmail || event.user.ao.email.toLowerCase()],
-          subject: "Event status update",
-          html: EventCompletionMail({
-            eventTitle: event.title,
-            eventDate: formatDateTime(event.event_date),
-            typeTitle: event.event_type?.title ?? "",
-            status: "approved",
-            product: event.product_id.toUpperCase(),
-          }),
-        }).catch((err) => console.error(err));
-      }
-
-      for (const i of admins) {
+        // create notification for requestor
         await createNotification({
-          work_area_code: i.work_area_code ?? "",
+          work_area_code: eventData.user_id ?? "",
           is_marked: "no",
           event_id: eventData.id,
           status: "read_only",
-          message: "Event proposal has been approved",
+          message: "Approved",
         });
+
+        if (event?.user.ao?.email) {
+          sendEmail({
+            to: [devEmail || event.user.ao.email.toLowerCase()],
+            subject: "Event status update",
+            html: EventCompletionMail({
+              eventTitle: event.title,
+              eventDate: formatDateTime(event.event_date),
+              typeTitle: event.event_type?.title ?? "",
+              status: "approved",
+              product: event.product_id.toUpperCase(),
+            }),
+          }).catch((err) => console.error(err));
+        }
+
+        for (const i of admins) {
+          await createNotification({
+            work_area_code: i.work_area_code ?? "",
+            is_marked: "no",
+            event_id: eventData.id,
+            status: "read_only",
+            message: "Event proposal has been approved",
+          });
+        }
       }
     }
 
