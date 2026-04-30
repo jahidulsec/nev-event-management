@@ -3,9 +3,8 @@ import path from "path";
 import fs from "fs";
 import mime from "mime-types";
 import { db } from "@/config/db";
-import { Params } from "@/types/search-params";
 
-export async function GET(req: NextRequest, { params }: { params: Params }) {
+export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const fPath = searchParams.get("file_path") ?? "";
 

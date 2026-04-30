@@ -1,10 +1,10 @@
-import PrintSection from "@/features/event/components/print-section";
 import { getEvent } from "@/features/event/lib/event";
 import { getEventApprovers } from "@/features/event/lib/event-approver";
 import { getDashboardRole } from "@/lib/dal";
 import { Params } from "@/types/search-params";
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import PrintContainer from "@/features/event/components/print/print-container";
 
 export const metadata: Metadata = {
   title: `Print - Event`,
@@ -27,7 +27,7 @@ export default async function EventFormPrintPage({
 
   return (
     <div>
-      <PrintSection
+      <PrintContainer
         eventApprover={eventApproverData.data as any[]}
         eventData={res.data}
       />

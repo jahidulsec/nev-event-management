@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { EventSingleProps } from "../lib/event";
+import { EventSingleProps } from "../../lib/event";
 import {
   Document,
   Font,
@@ -18,8 +18,10 @@ import {
   formatNumber,
   getTitleCase,
 } from "@/utils/formatter";
-import { EventApproverMultProps } from "../lib/event-approver";
+import { EventApproverMultProps } from "../../lib/event-approver";
 import { convertPdfToImage } from "@/lib/pdf";
+
+
 
 Font.register({
   family: "Roboto",
@@ -29,6 +31,7 @@ Font.register({
     { src: "/fonts/Poppins-Italic.ttf", fontStyle: "italic" }, // Italic
   ],
 });
+
 
 export default function PrintSection({
   eventData,
@@ -247,8 +250,8 @@ const EventBasicInformationSection = ({
               name="Total"
               value={formatNumber(
                 data.internal_participants +
-                  data.external_participants +
-                  (data.other_participants || 0),
+                data.external_participants +
+                (data.other_participants || 0),
               )}
             />
           </FieldGroup>
@@ -472,9 +475,9 @@ const EventBasicInformationSection = ({
                   <TableCell style={{ flex: 1 }}>
                     {
                       item?.user[
-                        (item?.user_role === "director_sales"
-                          ? "franchise_head"
-                          : item?.user_role) as "ao"
+                      (item?.user_role === "director_sales"
+                        ? "franchise_head"
+                        : item?.user_role) as "ao"
                       ]?.["full_name"]
                     }
                   </TableCell>
