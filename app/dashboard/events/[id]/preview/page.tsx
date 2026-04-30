@@ -81,7 +81,7 @@ const EventDetailsSection = async ({ params }: { params: Params }) => {
             <p className="text-center">
               This event - ({res.data.product.name}) /{" "}
               {res.data.event_type?.title} / <strong>{res.data.title}</strong>{" "}
-              is <em>{currentUserSubmission}</em> by you.
+              is <em>{currentUserSubmission}</em> {res.data?.current_status === 'rejected' ? '' : 'by you'}.
             </p>
           </div>
         </Section>

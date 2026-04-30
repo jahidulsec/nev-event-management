@@ -74,8 +74,11 @@ export default function EventStatusUpdateForm({
     }
   };
 
+  if (role === 'superadmin') return null
+
   // get first approver for consultant approver check
   const firstApproverRole = event.event_type?.approver?.[0]?.user_type;
+
 
   if (
     role !== eventTypeRole ||
