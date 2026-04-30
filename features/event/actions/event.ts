@@ -116,6 +116,7 @@ export const createEvent = async (data: EventType) => {
       etype.event_type?.title ?? "",
       etype.product_id,
       totalEventCount,
+      etype.event_date
     );
 
     //  update tracking id
@@ -521,8 +522,6 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
           }),
         }).catch((err) => console.error(err));
       }
-
-
 
     } else {
 

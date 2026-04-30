@@ -177,7 +177,7 @@ export default function EventTable({
                 tooltip="Preview"
                 variant={"edit"}
               >
-                <a href={`/dashboard/events/${value.id}/preview`}>
+                <a target="_blank" href={`/dashboard/events/${value.id}/preview`}>
                   <Eye /> <span className="sr-only">Preview</span>
                 </a>
               </TableActionButton>
