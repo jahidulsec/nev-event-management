@@ -521,6 +521,16 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
           }),
         }).catch((err) => console.error(err));
       }
+
+
+      revalidatePath("/dashboard");
+      revalidatePath("/dashboard/events");
+
+      return response({
+        success: true,
+        message: "Event status is submitted successfully",
+        data: res,
+      });
     }
 
     // get post approval information
