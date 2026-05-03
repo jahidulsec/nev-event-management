@@ -39,6 +39,7 @@ export default async function EventPreviewPage({ params }: { params: Params }) {
         <SectionHeadingWithBackButton
           title="Events"
           subtitle="dashboard / event / preview"
+          href={'/dashboard/events'}
         />
       </SectionHeader>
 

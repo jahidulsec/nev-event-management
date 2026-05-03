@@ -42,11 +42,12 @@ const SectionHeadingWithBackButton = ({
   title,
   className,
   subtitle,
+  href,
   ...props
-}: React.ComponentProps<"div"> & { subtitle?: string }) => {
+}: React.ComponentProps<"div"> & { subtitle?: string, href?: string }) => {
   return (
     <div className={cn("flex gap-2", className)} {...props}>
-      <BackButton />
+      <BackButton href={href} />
       <div className="flex flex-col gap-0">
         <SectionHeading>{title}</SectionHeading>
         <SectionSubTitle>{subtitle}</SectionSubTitle>

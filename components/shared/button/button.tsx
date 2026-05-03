@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/tooltip";
 import { cva, VariantProps } from "class-variance-authority";
 
-const BackButton = () => {
+const BackButton = ({ href }: { href?: string }) => {
   const router = useRouter();
 
   return (
@@ -21,7 +21,13 @@ const BackButton = () => {
       size={"icon"}
       variant={"outline"}
       className="rounded-full text-primary"
-      onClick={() => router.back()}
+      onClick={() => {
+        if (href) {
+          router.replace(href)
+        } else {
+          router.back()
+        }
+      }}
     >
       <ArrowLeft /> <span className="sr-only">Back to previous page</span>
     </Button>
