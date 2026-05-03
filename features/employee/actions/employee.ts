@@ -151,6 +151,11 @@ export const createAOs = async (data: AOsType) => {
               ...rest,
             },
           },
+          user_role: {
+            create: {
+              role: 'ao'
+            }
+          }
         },
         update: {
           ao: {
