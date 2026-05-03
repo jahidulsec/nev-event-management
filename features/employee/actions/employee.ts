@@ -138,6 +138,7 @@ export const createAOs = async (data: AOsType) => {
     for (let i = 0; i < validatedData.length; i++) {
       const { work_area_code, ...rest } = validatedData[i];
 
+      // create user
       await db.user.upsert({
         where: {
           work_area_code,
@@ -151,11 +152,6 @@ export const createAOs = async (data: AOsType) => {
               ...rest,
             },
           },
-          user_role: {
-            create: {
-              role: 'ao'
-            }
-          }
         },
         update: {
           ao: {
@@ -170,6 +166,22 @@ export const createAOs = async (data: AOsType) => {
           },
         },
       });
+
+      // create user role or update
+      await db.user_role.upsert({
+        where: {
+          work_area_code_role: {
+            work_area_code: work_area_code,
+            role: "ao"
+          },
+        },
+        create: {
+          work_area_code: work_area_code,
+          role: "ao"
+        }, update: {
+          role: "ao"
+        }
+      })
     }
 
     revalidatePath("/dashboard");
