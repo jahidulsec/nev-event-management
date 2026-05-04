@@ -169,13 +169,13 @@ export default function EventForm({
     while (addedDays < 6) {
       minDate.setDate(minDate.getDate() + 1);
 
-      const d = minDate.getDay();
+      // const d = minDate.getDay();
 
       // Skip Friday (5) & Saturday (6)
-      if (d !== 5) {
+      // if (d !== 5) {
         //&& d !== 6
         addedDays++;
-      }
+      // }
     }
 
     // Disable dates before minDate
