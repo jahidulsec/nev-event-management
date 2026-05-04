@@ -88,7 +88,7 @@ export const createDoctors = async (data: DoctorsType) => {
     for (let i = 0; i < validatedData.length; i++) {
       await db.doctor.upsert({
         where: {
-          territory_code_dr_master_id_dr_child_id: {
+          territory_code_dr_child_id_dr_master_id: {
             territory_code: validatedData[i].TerritoryCode,
             dr_master_id: validatedData[i].DrMasterID,
             dr_child_id: validatedData[i].DrChildID ?? '',

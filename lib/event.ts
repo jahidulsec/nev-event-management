@@ -19,7 +19,7 @@ export const getApproverEventStatus = (
     (item) => item.user_role === role,
   );
 
-  // if previous approver rejectes
+  // if previous approver rejects
   const prevRejected = event.event_approver.filter(
     (i) => i.event_status_history[0]?.status === "rejected",
   );

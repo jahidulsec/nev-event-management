@@ -74,6 +74,38 @@ export type EventSingleProps = Prisma.eventGetPayload<{
   };
 }>;
 
+
+/**
+ * used for get pending list of event for approver
+ * @param work_area_code 
+ * @returns 
+ */
+const eventFilterForApprover = (work_area_code: string) => ({
+  event_approver: {
+    none: {
+      user_id: work_area_code,
+    }
+  }
+})
+
+
+/**
+ * user for get event based on user role
+ * @param role string
+ * @returns 
+ */
+const eventApproverRoleFilter = (role: string) => {
+  return {
+    event_type: {
+      approver: {
+        some: {
+          user_type: role,
+        },
+      },
+    },
+  }
+}
+
 const getMulti = async (query: EventQueryType) => {
   try {
     const cleanData = getCleanData(query);
@@ -118,13 +150,9 @@ const getMulti = async (query: EventQueryType) => {
             rm_code: params.work_area_code,
           },
         },
-        event_type: {
-          approver: {
-            some: {
-              user_type: params.role,
-            },
-          },
-        },
+        ...(eventApproverRoleFilter(params.role)),
+        ...(eventFilterForApprover(params.work_area_code)),
+
       }),
       ...(params.role === "slm" &&
         params.work_area_code && {
@@ -133,13 +161,8 @@ const getMulti = async (query: EventQueryType) => {
             zm_code: params.work_area_code,
           },
         },
-        event_type: {
-          approver: {
-            some: {
-              user_type: params.role,
-            },
-          },
-        },
+        ...(eventApproverRoleFilter(params.role)),
+        ...(eventFilterForApprover(params.work_area_code)),
       }),
       ...(params.role === "franchise_head" &&
         params.work_area_code && {
@@ -155,23 +178,13 @@ const getMulti = async (query: EventQueryType) => {
             },
           },
         },
-        event_type: {
-          approver: {
-            some: {
-              user_type: params.role,
-            },
-          },
-        },
+        ...(eventApproverRoleFilter(params.role)),
+        ...(eventFilterForApprover(params.work_area_code)),
       }),
       ...(params.role === "director_sales" &&
         params.work_area_code && {
-        event_type: {
-          approver: {
-            some: {
-              user_type: params.role,
-            },
-          },
-        },
+        ...(eventApproverRoleFilter(params.role)),
+        ...(eventFilterForApprover(params.work_area_code)),
       }),
       ...(params.role?.includes("marketing") &&
         params.work_area_code && {
@@ -182,13 +195,8 @@ const getMulti = async (query: EventQueryType) => {
             },
           },
         },
-        event_type: {
-          approver: {
-            some: {
-              user_type: params.role,
-            },
-          },
-        },
+        ...(eventApproverRoleFilter(params.role)),
+        ...(eventFilterForApprover(params.work_area_code)),
       }),
       ...(params.role === "ec" &&
         params.work_area_code && {
