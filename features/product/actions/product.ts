@@ -17,7 +17,7 @@ export const createProduct = async (data: ProductType) => {
     });
 
     revalidatePath("/dashboard");
-    revalidatePath("/dashboardd/products");
+    revalidatePath("/dashboard/products");
 
     return response({
       success: true,
@@ -39,12 +39,13 @@ export const updateProduct = async (id: string, data: ProductType) => {
     const product = await db.product.update({
       where: { id },
       data: {
+        id: generateSlug(data.name),
         ...data,
       },
     });
 
     revalidatePath("/dashboard");
-    revalidatePath("/dashboardd/products");
+    revalidatePath("/dashboard/products");
 
     return response({
       success: true,
@@ -68,7 +69,7 @@ export const deleteProduct = async (id: string) => {
     });
 
     revalidatePath("/dashboard");
-    revalidatePath("/dashboardd/products");
+    revalidatePath("/dashboard/products");
 
     return response({
       success: true,
