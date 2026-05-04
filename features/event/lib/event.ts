@@ -361,7 +361,12 @@ const getEventsExportInformation = async (query: EventExportQueryType) => {
         e.external_participants,
         e.other_participants,
         (e.internal_participants + e.external_participants + e.other_participants) AS total_participants,
-        e.current_status
+        e.current_status, 
+        CASE 
+          WHEN e.current_status = 'approved'
+            THEN e.updated_at
+          ELSE NULL
+        END AS approval_date
       FROM event e
       LEFT JOIN ao a ON a.work_area_code = e.user_id
       LEFT JOIN event_type et ON et.id = e.event_type_id
@@ -414,7 +419,8 @@ const getEventsExportInformation = async (query: EventExportQueryType) => {
       d.dr_child_id,
       d.full_name dr_name,
       (ec.honorarium * ec.duration_h) as honorarium,
-      eca.nth_engagement
+      eca.nth_engagement,
+      ec.role
     FROM ev
     LEFT JOIN budget b ON b.event_id = ev.id
     LEFT JOIN h ON h.event_id = ev.id      

@@ -101,18 +101,17 @@ export default function ExportButton() {
         name: "Food Supplier",
       },
       {
-        header: "internal_participants",
+        header: "external_participants",
         name: "Number of External Participant",
       },
       {
-        header: "external_participants",
+        header: "internal_participants",
         name: "Number of Internal Participant",
       },
       {
         header: "total_participants",
         name: "Total Participants",
       },
-
       {
         header: "venue_charge",
         name: "Venue Charge",
@@ -125,7 +124,7 @@ export default function ExportButton() {
         header: "food_per_cost",
         name: "Food per Unit Price",
       },
-       {
+      {
         header: "food_cost",
         name: "Total Food Cost",
       },
@@ -162,6 +161,10 @@ export default function ExportButton() {
         name: "Name",
       },
       {
+        header: "role",
+        name: "Role",
+      },
+      {
         header: "honorarium",
         name: "Honorarium",
       },
@@ -177,6 +180,11 @@ export default function ExportButton() {
         header: "current_status",
         name: "Event Approval Status",
       },
+      {
+        header: "approval_date",
+        name: "Approval Date",
+      },
+
     ];
 
     let prevId = '';
@@ -196,6 +204,7 @@ export default function ExportButton() {
           current_status: item.current_status,
           dr_child_id: item.dr_child_id,
           dr_name: item.dr_name,
+          role: item.role,
           honorarium: item.honorarium,
           h_words: item.h_words,
           nth_engagement: item.nth_engagement,
@@ -237,6 +246,12 @@ export default function ExportButton() {
               headerName: "current_status",
               format: (value) => {
                 return getTitleCase(value as string);
+              },
+            },
+            {
+              headerName: "approval_date",
+              format: (value) => {
+                return value ? format(new Date(value as any), 'dd/MM/yy - h:mm aaa') : '-';
               },
             },
           ],
