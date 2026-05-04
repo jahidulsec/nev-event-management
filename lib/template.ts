@@ -1,7 +1,7 @@
 import { toast } from "sonner";
 
 const deleteToastTemplate = (
-  action: () => Promise<{ success: boolean; message: string; data: any }>,
+  action: () => Promise<{ success: boolean; message?: string; data: any }>,
 ) => {
   return toast.promise(action, {
     loading: "Deleting...",
@@ -10,7 +10,7 @@ const deleteToastTemplate = (
       return data.message;
     },
     error: (data) => {
-      return data.message;
+      return data?.message ?? 'Something went wrong';
     },
   });
 };

@@ -34,7 +34,7 @@ model doctor {
   chamber          String?            @db.Text
   event_consultant event_consultant[]
 
-  @@unique([territory_code, dr_master_id, dr_child_id], map: "dr_terr_child_chamber_uniq")
+  @@unique([territory_code, dr_child_id, dr_master_id], map: "doctor_index_2")
 }
 
 model event {
@@ -62,9 +62,9 @@ model event {
   venue_appropriateness event_venue_appropriateness
   track_no              String?                     @default("NULL") @db.VarChar(50)
   event_type_id         String?                     @db.VarChar(21)
-  product               product                     @relation(fields: [product_id], references: [id], onUpdate: Restrict, map: "event_ibfk_2")
   event_type            event_type?                 @relation(fields: [event_type_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "event_ibfk_3")
   user                  user                        @relation(fields: [user_id], references: [work_area_code], onUpdate: Restrict, map: "event_ibfk_1")
+  product               product                     @relation(fields: [product_id], references: [id], map: "event_ibfk_2")
   event_approver        event_approver[]
   event_attachment      event_attachment[]
   event_budget          event_budget[]
@@ -73,8 +73,8 @@ model event {
 
   @@index([user_id], map: "user_id")
   @@index([type], map: "event_type_id")
-  @@index([product_id], map: "product_id")
   @@index([event_type_id], map: "event_type_id_2")
+  @@index([product_id], map: "product_fk")
 }
 
 model event_approver {
@@ -271,7 +271,7 @@ model marketing {
 model product_user {
   work_area_code String    @db.VarChar(6)
   product_slug   String    @db.VarChar(150)
-  id             String    @id @db.VarChar(21)
+  id             String    @id @default(nanoid()) @db.VarChar(21)
   created_at     DateTime? @default(now()) @db.Timestamp(0)
   updated_at     DateTime? @default(now()) @db.Timestamp(0)
   user           user      @relation(fields: [work_area_code], references: [work_area_code], onUpdate: Restrict, map: "product_user_ibfk_1")

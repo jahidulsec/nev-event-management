@@ -3,7 +3,7 @@ import { QuerySchema } from "@/schemas/query";
 import z from "zod";
 
 //
-// ✅ Employee Base Schema
+// Employee Base Schema
 //
 export const EmployeeSchema = z.object({
   work_area_code: z
@@ -19,7 +19,7 @@ export const EmployeeSchema = z.object({
 });
 
 //
-// ✅ Update Schema (at least one field required)
+// Update Schema (at least one field required)
 //
 export const UpdateEmployeeSchema = EmployeeSchema.partial().refine(
   (data) => Object.keys(data).length > 0,
@@ -29,17 +29,17 @@ export const UpdateEmployeeSchema = EmployeeSchema.partial().refine(
 );
 
 //
-// ✅ Query Schema
+// Query Schema
 //
 export const EmployeeQuerySchema = QuerySchema.extend({});
 
 //
-// ✅ Array Schema
+// Array Schema
 //
 export const EmployeesSchema = z.array(EmployeeSchema);
 
 //
-// ✅ AO Schema (clean & validated)
+// AO Schema (clean & validated)
 //
 export const AOSchema = z.object({
   employee_id: z.string(),
@@ -53,7 +53,7 @@ export const AOSchema = z.object({
 });
 
 //
-// ✅ AO + Employee Combined (clean merge)
+// AO + Employee Combined (clean merge)
 //
 export const AODetailsSchema = EmployeeSchema.omit({
   password: true,
@@ -62,11 +62,19 @@ export const AODetailsSchema = EmployeeSchema.omit({
 
 export const AOsSchema = z.array(AODetailsSchema);
 
+
+// product user
+export const ProductUserSchema = z.object({
+  work_area_code: z.string().min(1, "Enter user id"),
+  product_slug: z.string().min(1, "Select Product")
+})
+
 //
-// ✅ Types
+// Types
 //
 export type EmployeeType = z.infer<typeof EmployeeSchema>;
 export type EmployeesType = z.infer<typeof EmployeesSchema>;
 export type AOsType = z.infer<typeof AOsSchema>;
 export type UpdateEmployeeType = z.infer<typeof UpdateEmployeeSchema>;
 export type EmployeeQueryType = z.infer<typeof EmployeeQuerySchema>;
+export type ProductUserSchemaType = z.infer<typeof ProductUserSchema>;

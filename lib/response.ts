@@ -22,7 +22,7 @@ const error = ({ error }: { error: unknown }) => {
     const err = handleError(error)
 
     return {
-        success: false, message: err.message, data: null, count: 0
+        success: false, message: err.message ?? 'Something went wrong', data: null, count: 0
     }
 }
 

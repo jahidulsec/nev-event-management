@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/field";
 import { toast } from "sonner";
 import { Form } from "@/components/shared/form/form";
-import { LogoFull } from "@/components/shared/logo/company";
 import { PasswordInput } from "@/components/shared/inputs/password";
 import { LoginSchema, LoginType } from "../actions/schema";
 import { FormButton } from "@/components/shared/button/button";

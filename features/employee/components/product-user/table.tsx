@@ -2,7 +2,7 @@
 
 import AlertModal from "@/components/shared/alert-dialog/alert-dialog";
 import { DataTable } from "@/components/shared/table/data-table";
-import { doctor, user } from "@/lib/generated/prisma";
+import { product_user, user } from "@/lib/generated/prisma";
 import { deleteToastTemplate } from "@/lib/template";
 import { formatDate } from "@/utils/formatter";
 import { ColumnDef } from "@tanstack/react-table";
@@ -10,21 +10,19 @@ import { Edit, Trash2 } from "lucide-react";
 import React from "react";
 import { TableActionButton } from "@/components/shared/button/button";
 import { FormSheet } from "@/components/shared/sheet/sheet";
-import EmployeeForm from "./form";
-import { Badge } from "@/components/ui/badge";
-import { deleteEmployee } from "../actions/employee";
+import ProductUserForm from "./form";
+import { deleteProductUser } from "../../actions/product-user";
 
-export default function EmployeeTable({ data }: { data: user[] }) {
-  const [edit, setEdit] = React.useState<user | boolean>(false);
+export default function ProductUserTable({ data }: { data: product_user[] }) {
+  const [edit, setEdit] = React.useState<product_user | boolean>(false);
   const [del, setDel] = React.useState<string | boolean>(false);
   const [pending, startTransition] = React.useTransition();
 
-  const columns: ColumnDef<user>[] = [
+  const columns: ColumnDef<product_user>[] = [
     { accessorKey: "work_area_code", header: "Work Area Code" },
     {
-      accessorKey: "role",
-      header: "Role",
-      cell: ({ row }) => <Badge variant={"outline"}>{row.original.role}</Badge>,
+      accessorKey: "product_slug",
+      header: "Product",
     },
     {
       accessorKey: "created_at",
@@ -68,7 +66,7 @@ export default function EmployeeTable({ data }: { data: user[] }) {
       <DataTable data={data} columns={columns} />
 
       <FormSheet open={!!edit} onOpenChange={setEdit} formTitle="Edit Employee">
-        <EmployeeForm
+        <ProductUserForm
           onClose={() => setEdit(false)}
           prevData={typeof edit !== "boolean" ? edit : undefined}
         />
@@ -81,7 +79,7 @@ export default function EmployeeTable({ data }: { data: user[] }) {
           const id = typeof del !== "boolean" ? del : "";
 
           startTransition(() => {
-            deleteToastTemplate(() => deleteEmployee(id));
+            deleteToastTemplate(() => deleteProductUser(id));
           });
         }}
       />
