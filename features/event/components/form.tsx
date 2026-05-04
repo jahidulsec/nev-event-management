@@ -153,10 +153,10 @@ export default function EventForm({
     const dayNumber = date.getDay();
 
     // Disable Friday (5) & Saturday (6)
-    if (dayNumber === 5) {
+    // if (dayNumber === 5) {
       //|| dayNumber === 6
-      return true;
-    }
+      // return true;
+    // }
 
     // Normalize today's date
     const today = new Date();
