@@ -37,7 +37,7 @@ export default function EventTable({
   const [del, setDel] = React.useState<string | boolean>(false);
   const [pending, startTransition] = React.useTransition();
   const [flowchart, setFlowchart] = React.useState<
-    EventTypeMultiProps | boolean
+    string | boolean
   >(false);
   const serialColumn = useTableSerialColumn<EventMultiProps>();
 
@@ -163,7 +163,7 @@ export default function EventTable({
           <div className="flex justify-end items-center gap-1">
             <TableActionButton
               tooltip="Flowchart"
-            // onClick={() => setFlowchart(value.event_type?.approver as any)}
+              onClick={() => setFlowchart(value.type_id)}
             >
               <Workflow /> <span className="sr-only">Workflow</span>
             </TableActionButton>
@@ -246,9 +246,7 @@ export default function EventTable({
         onOpenChange={setFlowchart}
         formTitle="View approver flow"
       >
-        {typeof flowchart !== "boolean" && (
-          <ApproverFlowChart data={flowchart as any} />
-        )}
+        <ApproverFlowChart eventTypeId={typeof flowchart === 'string' ? flowchart : ''} />
       </FormDialog>
     </>
   );

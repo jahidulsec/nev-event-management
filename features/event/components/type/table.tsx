@@ -27,7 +27,7 @@ export default function EventTypeTable({
 }) {
   const [edit, setEdit] = React.useState<EventTypeMultiProps | boolean>(false);
   const [flowchart, setFlowchart] = React.useState<
-    EventTypeMultiProps | boolean
+    string | boolean
   >(false);
   const [del, setDel] = React.useState<string | boolean>(false);
   const [pending, startTransition] = React.useTransition();
@@ -44,7 +44,10 @@ export default function EventTypeTable({
       cell: ({ row }) => {
         const value = row.original;
 
-        const limit = getCostLimitText(value);
+        const limit = getCostLimitText({
+          upper_limit: Number(value.upper_limit),
+          lower_limit: Number(value.lower_limit)
+        });
 
         return <p>{limit}</p>;
       },
@@ -77,7 +80,7 @@ export default function EventTypeTable({
             </TableActionButton>
             <TableActionButton
               tooltip="Flowchart"
-              onClick={() => setFlowchart(value)}
+              onClick={() => setFlowchart(value.id)}
             >
               <Workflow /> <span className="sr-only">Workflow</span>
             </TableActionButton>
@@ -122,9 +125,8 @@ export default function EventTypeTable({
         onOpenChange={setFlowchart}
         formTitle="View approver flow"
       >
-        {typeof flowchart !== "boolean" && (
-          <ApproverFlowChart data={flowchart.approver} />
-        )}
+        <ApproverFlowChart eventTypeId={typeof flowchart === 'string' ? flowchart : ''} />
+
       </FormDialog>
 
       <AlertModal

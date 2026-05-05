@@ -47,7 +47,8 @@ export type EventMultiProps = {
   current_approver_role: string | null,
   type_title: string,
   upper_limit: number,
-  lower_limit: number
+  lower_limit: number,
+  type_id: string
 }
 
 export type EventSingleProps = Prisma.eventGetPayload<{
@@ -148,6 +149,7 @@ const getMulti = async (query: EventQueryType) => {
         et.title type_title,
         et.upper_limit,
         et.lower_limit,
+        et.id type_id,
 
         count(e.id) over() total,
 
@@ -220,8 +222,6 @@ const getMulti = async (query: EventQueryType) => {
     `
     baseQuery += ` ORDER BY e.created_at DESC `
     baseQuery += ` LIMIT ${(params.page - 1) * params.size}, ${params.size} `
-
-    console.log(baseQuery)
 
     const data: any[] = await db.$queryRawUnsafe(
       baseQuery
