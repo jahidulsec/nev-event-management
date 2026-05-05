@@ -47,7 +47,7 @@ export const getSerializeData = (data: any): any => {
   return data;
 };
 
-export const getCostLimitText = (value: event_type) => {
+export const getCostLimitText = (value: { upper_limit: number, lower_limit: number }) => {
   const upperLimit = Number(value.upper_limit);
   const lowerLimit = Number(value.lower_limit);
 

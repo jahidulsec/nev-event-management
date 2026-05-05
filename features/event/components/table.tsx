@@ -71,22 +71,25 @@ export default function EventTable({
       header: "Work Area",
     },
     {
-      accessorKey: "event_type",
+      id: "event_type",
       header: "Type",
       cell: ({ row }) => {
-        const eventType = row.original.event_type;
+        const value = row.original;
 
         return (
           <p className="text-wrap min-w-40">
-            {eventType?.title} ({getCostLimitText(eventType as any)})
+            {value.type_title} ({getCostLimitText({
+              upper_limit: value.upper_limit,
+              lower_limit: value.lower_limit
+            })})
           </p>
         );
       },
     },
     {
-      accessorKey: "product",
+      id: "product",
       header: "Product",
-      cell: ({ row }) => <p>{getTitleCase(row.original.product_id)}</p>,
+      cell: ({ row }) => <p>{getTitleCase(row.original.name)}</p>,
     },
     {
       id: "current_status",
@@ -115,38 +118,30 @@ export default function EventTable({
       cell: ({ row }) => {
         let status = "pending";
 
-        const eventType = row.original.event_type;
-        const eventStatus = row.original.event_approver;
-        const eventApproverCount =
-          row.original.event_type?.approver.length || 0;
+        const value = row.original;
 
-        const getApproverIndex =
-          eventStatus.length === 0
-            ? 0
-            : eventStatus.length - 1 < eventApproverCount
-              ? eventStatus.length - 1
-              : eventApproverCount;
-
-        const approverList = row.original.event_approver;
-        if (approverList.length > 0) {
-          status =
-            approverList[0]?.event_status_history?.[0]?.status ?? "pending";
-        }
+        const lastApproverRole = value.last_approver_role
+        status = lastApproverRole ?
+          value.current_status === 'rejected'
+            ? "rejected" : "approved"
+          : 'pending'
 
         return (
           <p>
-            <UserRoleBadge
-              type={eventType?.approver?.[getApproverIndex]?.user_type ?? ""}
-            >
-              {eventType?.approver?.[getApproverIndex]?.user_type}
-            </UserRoleBadge>
-            <ApproverTypeBadge
-              type={eventType?.approver?.[getApproverIndex]?.type as any}
-            >
-              {eventType?.approver?.[getApproverIndex]?.type}
-            </ApproverTypeBadge>
-            <StatusBadge type={status}>{status}</StatusBadge>
+            {lastApproverRole !== null ?
+              <>
+                <UserRoleBadge
+                  type={lastApproverRole}
+                >
+                  {lastApproverRole}
+                </UserRoleBadge>
+                <StatusBadge type={status}>{status}</StatusBadge>
+              </> : <>
+                <StatusBadge type={status}>{status}</StatusBadge>
+              </>
+            }
           </p>
+
         );
       },
     },
@@ -168,7 +163,7 @@ export default function EventTable({
           <div className="flex justify-end items-center gap-1">
             <TableActionButton
               tooltip="Flowchart"
-              onClick={() => setFlowchart(value.event_type?.approver as any)}
+            // onClick={() => setFlowchart(value.event_type?.approver as any)}
             >
               <Workflow /> <span className="sr-only">Workflow</span>
             </TableActionButton>

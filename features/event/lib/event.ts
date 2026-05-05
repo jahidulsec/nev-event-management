@@ -13,25 +13,42 @@ import {
 import { getSerializeData } from "@/utils/helper";
 import { endOfDay, startOfDay } from "date-fns";
 
-export type EventMultiProps = Prisma.eventGetPayload<{
-  include: {
-    event_type: {
-      include: {
-        approver: {
-          orderBy: {
-            created_at: "asc";
-          };
-        };
-      };
-    };
-    // product: true;
-    event_approver: {
-      include: {
-        event_status_history: true;
-      };
-    };
-  };
-}>;
+// export type EventMultiProps = Prisma.eventGetPayload<{
+//   include: {
+//     event_type: {
+//       include: {
+//         approver: {
+//           orderBy: {
+//             created_at: "asc";
+//           };
+//         };
+//       };
+//     };
+//     // product: true;
+//     event_approver: {
+//       include: {
+//         event_status_history: true;
+//       };
+//     };
+//   };
+// }>;
+
+export type EventMultiProps = {
+  id: string,
+  title: string,
+  event_date: Date,
+  user_id: string,
+  name: string,
+  current_status: string,
+  created_at: Date,
+  total: number,
+  last_approver_id: string | null,
+  last_approver_role: string | null,
+  current_approver_role: string | null,
+  type_title: string,
+  upper_limit: number,
+  lower_limit: number
+}
 
 export type EventSingleProps = Prisma.eventGetPayload<{
   include: {
@@ -74,38 +91,6 @@ export type EventSingleProps = Prisma.eventGetPayload<{
   };
 }>;
 
-
-/**
- * used for get pending list of event for approver
- * @param work_area_code 
- * @returns 
- */
-const eventFilterForApprover = (work_area_code: string) => ({
-  event_approver: {
-    none: {
-      user_id: work_area_code,
-    }
-  }
-})
-
-
-/**
- * user for get event based on user role
- * @param role string
- * @returns 
- */
-const eventApproverRoleFilter = (role: string) => {
-  return {
-    event_type: {
-      approver: {
-        some: {
-          user_type: role,
-        },
-      },
-    },
-  }
-}
-
 const getMulti = async (query: EventQueryType) => {
   try {
     const cleanData = getCleanData(query);
@@ -113,156 +98,139 @@ const getMulti = async (query: EventQueryType) => {
     // validated searchparams
     const params = EventQuerySchema.parse(cleanData);
 
-    // extract params
-    const filter: Prisma.eventWhereInput = {
-      ...(params.search && {
-        OR: [
-          {
-            title: {
-              contains: params.search,
-            },
-          },
-          {
-            id: {
-              contains: params.search,
-            },
-          },
-          {
-            track_no: {
-              startsWith: params.search,
-            },
-          },
-          {
-            user_id: {
-              startsWith: params.search,
-            },
-          },
-        ],
-      }),
-      ...(params.work_area_code &&
-        params.role === "ao" && {
-        user_id: params.work_area_code,
-      }),
-      ...(params.role === "flm" &&
-        params.work_area_code && {
-        user: {
-          ao: {
-            rm_code: params.work_area_code,
-          },
-        },
-        ...(eventApproverRoleFilter(params.role)),
-        ...(eventFilterForApprover(params.work_area_code)),
 
-      }),
-      ...(params.role === "slm" &&
-        params.work_area_code && {
-        user: {
-          ao: {
-            zm_code: params.work_area_code,
-          },
-        },
-        ...(eventApproverRoleFilter(params.role)),
-        ...(eventFilterForApprover(params.work_area_code)),
-      }),
-      ...(params.role === "franchise_head" &&
-        params.work_area_code && {
-        // user: {
-        //   ao: {
-        //     wing_code: params.work_area_code,
-        //   },
-        // },
-        product: {
-          product_user: {
-            some: {
-              work_area_code: params.work_area_code,
-            },
-          },
-        },
-        ...(eventApproverRoleFilter(params.role)),
-        ...(eventFilterForApprover(params.work_area_code)),
-      }),
-      ...(params.role === "director_sales" &&
-        params.work_area_code && {
-        ...(eventApproverRoleFilter(params.role)),
-        ...(eventFilterForApprover(params.work_area_code)),
-      }),
-      ...(params.role?.includes("marketing") &&
-        params.work_area_code && {
-        product: {
-          product_user: {
-            some: {
-              work_area_code: params.work_area_code,
-            },
-          },
-        },
-        ...(eventApproverRoleFilter(params.role)),
-        ...(eventFilterForApprover(params.work_area_code)),
-      }),
-      ...(params.role === "ec" &&
-        params.work_area_code && {
-        product: {
-          product_user: {
-            some: {
-              work_area_code: params.work_area_code,
-            },
-          },
-        },
-        // current_status: "approved",
-      }),
+    const productUserRoles = ["ec", 'marketing', 'franchise_head'];
+    const aoHierarchyRole = ["flm", "slm"]
 
-      ...(params.status && {
-        current_status: params.status,
-      }),
-      ...(params.start &&
-        params.end && {
-        created_at: {
-          gte: startOfDay(new Date(params.start)),
-          lte: endOfDay(new Date(params.end)),
-        },
-      }),
-    };
+    let baseQuery = `
+      WITH last_approver AS (
+        SELECT 
+          ea.event_id,
+          ea.user_id,
+          ea.user_role,
+          ea.created_at,
+          ROW_NUMBER() OVER (
+            PARTITION BY ea.event_id 
+            ORDER BY ea.created_at DESC
+          ) AS rn
+        FROM event_approver ea
+      ),
 
-    const [data, count] = await Promise.all([
-      db.event.findMany({
-        include: {
-          event_type: {
-            include: {
-              approver: {
-                orderBy: {
-                  created_at: "asc",
-                },
-              },
-            },
-          },
-          event_approver: {
-            include: {
-              event_status_history: {
-                orderBy: {
-                  created_at: "desc",
-                },
-              },
-            },
-            orderBy: {
-              created_at: "desc",
-            },
-          },
-        },
-        where: filter,
-        skip: (params.page - 1) * params.size,
-        take: params.size,
-        orderBy: {
-          created_at: params.sort ?? "desc",
-        },
-      }),
-      db.event.count({
-        where: filter,
-      }),
-    ]);
+      current_approver AS (
+        SELECT 
+          e.id AS event_id,
+          a.user_type,
+          a.type,
+          ROW_NUMBER() OVER (
+            PARTITION BY e.id 
+            ORDER BY a.created_at ASC
+          ) AS rn
+        FROM event e
+        JOIN approver a 
+          ON a.event_type_id = e.event_type_id
+
+        LEFT JOIN event_approver ea
+          ON ea.event_id = e.id 
+          AND ea.user_role = a.user_type   -- match by role
+
+        WHERE ea.user_role IS NULL   -- not yet approved
+      )
+
+      SELECT 
+        e.id,
+        e.title,
+        e.event_date,
+        e.user_id,
+        p.name,
+        e.current_status,
+        e.created_at,
+
+        et.title type_title,
+        et.upper_limit,
+        et.lower_limit,
+
+        count(e.id) over() total,
+
+        -- last approver (actual person)
+        la.user_id   AS last_approver_id,
+        la.user_role AS last_approver_role,
+
+        -- current approver (role)
+        ca.user_type AS current_approver_role
+
+      FROM event e
+
+      LEFT JOIN product p on p.id = e.product_id
+      LEFT JOIN event_type et on et.id = e.event_type_id
+
+      ${productUserRoles.includes(params.role as string) ?
+        ' LEFT JOIN product_user pu on pu.product_slug=p.id '
+        :
+        ''}
+        
+      -- 
+
+      ${aoHierarchyRole.includes(params.role as string) ?
+        ' LEFT JOIN ao a on a.work_area_code = e.user_id '
+        :
+        ''}
+
+    
+
+      LEFT JOIN last_approver la 
+        ON la.event_id = e.id AND la.rn = 1
+
+      LEFT JOIN current_approver ca 
+        ON ca.event_id = e.id AND ca.rn = 1
+
+        WHERE 1=1
+
+        -- this is for ao Hierarchy roles
+        ${params.role === 'flm' ?
+        ` AND a.rm_code="${params.work_area_code}" `
+        : params.role === 'slm' ? ` AND a.zm_code="${params.work_area_code}" `
+          : ''
+      }
+        
+        -- this is for product user
+        ${productUserRoles.includes(params.role as string) ?
+        ` AND pu.work_area_code = "${params.work_area_code}" `
+        : ''
+      }
+
+        -- current approver filter
+        ${params.role !== 'ec' && params.role !== 'superadmin' ?
+        ` AND ca.user_type="${params.role}" `
+        : ''
+      }
+
+      -- search filter
+      ${params.search ?
+        ` AND e.title LIKE "%${params.search}%" `
+        : ''
+      }
+        
+
+      -- status filter
+      ${params.status ?
+        ` AND e.current_status="${params.status}" `
+        : ''
+      }
+
+    `
+    baseQuery += ` ORDER BY e.created_at DESC `
+    baseQuery += ` LIMIT ${(params.page - 1) * params.size}, ${params.size} `
+
+    console.log(baseQuery)
+
+    const data: any[] = await db.$queryRawUnsafe(
+      baseQuery
+    );
 
     return apiResponse.multi<EventMultiProps>({
       message: "Get events successful",
       data: getSerializeData(data) as EventMultiProps[],
-      count,
+      count: Number(data?.[0]?.total || 0),
     });
   } catch (error) {
     console.error(error);
