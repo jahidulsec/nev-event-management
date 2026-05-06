@@ -8,7 +8,7 @@ import {
 import { deleteToastTemplate } from "@/lib/template";
 import { formatDate } from "@/utils/formatter";
 import { ColumnDef } from "@tanstack/react-table";
-import { Edit, Eye, PlusCircle, Trash2, Workflow } from "lucide-react";
+import { Edit, PlusCircle, Trash2, Workflow } from "lucide-react";
 import React from "react";
 import { deleteEventType } from "../../actions/type";
 import { TableActionButton } from "@/components/shared/button/button";

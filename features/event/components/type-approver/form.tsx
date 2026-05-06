@@ -86,7 +86,7 @@ export default function EventTypeApproverForm({
                 placeholder="Select a type"
                 defaultValue={params?.typeId?.toString() ?? prevData?.event_type_id}
                 data={type.map((item) => ({
-                  label: `${item.title} (${getCostLimitText(item)})`,
+                  label: `${item.title} (${getCostLimitText({ lower_limit: Number(item.lower_limit), upper_limit: Number(item.upper_limit) })})`,
                   value: item.id,
                 }))}
                 onValueChange={(value) => {
