@@ -2,7 +2,6 @@ import { navlist } from "@/lib/data";
 import {
   event_budget,
   event_consultant,
-  event_type,
   honorarium_calculation,
 } from "@/lib/generated/prisma";
 import { AuthUserRole } from "@/types/auth-user";

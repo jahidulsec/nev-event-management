@@ -85,6 +85,10 @@ export default function EventSection({
         <CustomField title="Event Title & Topic" value={prevData?.title} />
         <FieldGroup className="flex-row">
           <CustomField
+            title="Request Date"
+            value={format(prevData?.created_at as Date, "LLL dd, yyyy - h:mm aaa")}
+          />
+          <CustomField
             title="Proposed Event Date"
             value={format(prevData?.event_date, "LLL dd, yyyy - h:mm aaa")}
           />

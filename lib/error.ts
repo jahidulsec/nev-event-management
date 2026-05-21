@@ -1,5 +1,4 @@
 import { ZodError } from "zod";
-import { Prisma } from "@/lib/generated/prisma";
 
 
 export function handleError(error: any) {
