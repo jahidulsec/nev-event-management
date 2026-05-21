@@ -34,22 +34,22 @@ import { endOfDay, startOfDay } from "date-fns";
 // }>;
 
 export type EventMultiProps = {
-  id: string,
-  title: string,
-  event_date: Date,
-  user_id: string,
-  name: string,
-  current_status: string,
-  created_at: Date,
-  total: number,
-  last_approver_id: string | null,
-  last_approver_role: string | null,
-  current_approver_role: string | null,
-  type_title: string,
-  upper_limit: number,
-  lower_limit: number,
-  type_id: string
-}
+  id: string;
+  title: string;
+  event_date: Date;
+  user_id: string;
+  name: string;
+  current_status: string;
+  created_at: Date;
+  total: number;
+  last_approver_id: string | null;
+  last_approver_role: string | null;
+  current_approver_role: string | null;
+  type_title: string;
+  upper_limit: number;
+  lower_limit: number;
+  type_id: string;
+};
 
 export type EventSingleProps = Prisma.eventGetPayload<{
   include: {
@@ -99,9 +99,8 @@ const getMulti = async (query: EventQueryType) => {
     // validated searchparams
     const params = EventQuerySchema.parse(cleanData);
 
-
-    const productUserRoles = ["ec", 'marketing', 'franchise_head'];
-    const aoHierarchyRole = ["flm", "slm"]
+    const productUserRoles = ["ec", "marketing", "franchise_head"];
+    const aoHierarchyRole = ["flm", "slm"];
 
     let baseQuery = `
       WITH last_approver AS (
@@ -165,17 +164,19 @@ const getMulti = async (query: EventQueryType) => {
       LEFT JOIN product p on p.id = e.product_id
       LEFT JOIN event_type et on et.id = e.event_type_id
 
-      ${productUserRoles.includes(params.role as string) ?
-        ' LEFT JOIN product_user pu on pu.product_slug=p.id '
-        :
-        ''}
+      ${
+        productUserRoles.includes(params.role as string)
+          ? " LEFT JOIN product_user pu on pu.product_slug=p.id "
+          : ""
+      }
         
       -- 
 
-      ${aoHierarchyRole.includes(params.role as string) ?
-        ' LEFT JOIN ao a on a.work_area_code = e.user_id '
-        :
-        ''}
+      ${
+        aoHierarchyRole.includes(params.role as string)
+          ? " LEFT JOIN ao a on a.work_area_code = e.user_id "
+          : ""
+      }
 
     
 
@@ -188,44 +189,44 @@ const getMulti = async (query: EventQueryType) => {
         WHERE 1=1
 
         -- this is for ao Hierarchy roles
-        ${params.role === 'flm' ?
-        ` AND a.rm_code="${params.work_area_code}" `
-        : params.role === 'slm' ? ` AND a.zm_code="${params.work_area_code}" `
-          : ''
-      }
+        ${
+          params.role === "flm"
+            ? ` AND a.rm_code="${params.work_area_code}" `
+            : params.role === "slm"
+              ? ` AND a.zm_code="${params.work_area_code}" `
+              : ""
+        }
         
         -- this is for product user
-        ${productUserRoles.includes(params.role as string) ?
-        ` AND pu.work_area_code = "${params.work_area_code}" `
-        : ''
-      }
+        ${
+          productUserRoles.includes(params.role as string)
+            ? ` AND pu.work_area_code = "${params.work_area_code}" `
+            : ""
+        }
 
         -- current approver filter
-        ${params.role !== 'ec' && params.role !== 'superadmin' ?
-        ` AND ca.user_type="${params.role}" `
-        : ''
-      }
+        ${
+          params.role !== "ec" && params.role !== "superadmin"
+            ? ` AND ca.user_type="${params.role}" `
+            : ""
+        }
 
       -- search filter
-      ${params.search ?
-        ` AND e.title LIKE "%${params.search}%" `
-        : ''
+      ${
+        params.search
+          ? ` AND (e.user_id LIKE "%${params.search}%" OR e.title LIKE "%${params.search}%") `
+          : ""
       }
         
 
       -- status filter
-      ${params.status ?
-        ` AND e.current_status="${params.status}" `
-        : ''
-      }
+      ${params.status ? ` AND e.current_status="${params.status}" ` : ""}
 
-    `
-    baseQuery += ` ORDER BY e.created_at DESC `
-    baseQuery += ` LIMIT ${(params.page - 1) * params.size}, ${params.size} `
+    `;
+    baseQuery += ` ORDER BY e.created_at DESC `;
+    baseQuery += ` LIMIT ${(params.page - 1) * params.size}, ${params.size} `;
 
-    const data: any[] = await db.$queryRawUnsafe(
-      baseQuery
-    );
+    const data: any[] = await db.$queryRawUnsafe(baseQuery);
 
     return apiResponse.multi<EventMultiProps>({
       message: "Get events successful",
