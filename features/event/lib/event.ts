@@ -341,7 +341,11 @@ const getEventsExportInformation = async (query: EventExportQueryType) => {
         e.current_status, 
         CASE 
           WHEN e.current_status = 'approved'
-            THEN e.updated_at
+            THEN (
+              SELECT MAX(ea.updated_at)
+              FROM event_approver ea 
+              WHERE ea.event_id = e.id
+              )
           ELSE NULL
         END AS approval_date
       FROM event e

@@ -56,7 +56,7 @@ export default async function EventsPage({
 
         <SectionActions>
           {user?.role.includes("ao") && <CreateEventButton />}
-          {user?.role.some((i) => i === "ec") && <ExportButton />}
+          {user?.role.some((i) => i === "ec" || i === 'superadmin') && <ExportButton />}
         </SectionActions>
       </SectionHeader>
 
