@@ -16,7 +16,7 @@ const getMulti = async (query: EmployeeQueryType) => {
     // extract params
     const filter: Prisma.userWhereInput = {
       ...(params.search && {
-        employee_id: {
+        work_area_code: {
           contains: params.search,
         },
       }),
