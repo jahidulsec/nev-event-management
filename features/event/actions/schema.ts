@@ -143,6 +143,7 @@ export const EventSchema = z.object({
   eventBudget: z.array(EventBudgetSchema),
   eventConsultant: z.array(EventConsultantSchema),
   eventAttachment: z.array(EventAttachemntSchema),
+  is_archived: yesNoEnum.optional(),
 });
 
 export const EventQuerySchema = QuerySchema.extend({
@@ -157,6 +158,7 @@ export const EventQuerySchema = QuerySchema.extend({
     .string()
     .regex(new RegExp(/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/))
     .optional(),
+  is_archived: yesNoEnum.optional().default("no"),
 });
 
 export const EventExportQuerySchema = EventQuerySchema.omit({

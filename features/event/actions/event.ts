@@ -655,7 +655,7 @@ export const createEventStatus = async (data: EventStatusSchemaType) => {
         for (const i of admins) {
           await createNotification({
             work_area_code: i.work_area_code ?? "",
-            is_marked: "no",
+            is_marked: "yes",
             event_id: eventData.id,
             status: "read_only",
             message: "Event proposal has been approved",

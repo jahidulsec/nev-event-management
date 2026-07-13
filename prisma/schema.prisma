@@ -39,14 +39,14 @@ model doctor {
 
 model event {
   id                    String                      @id @default(nanoid()) @db.VarChar(21)
-  title                 String                      @db.VarChar(100)
+  title                 String                      @db.VarChar(250)
   event_date            DateTime                    @db.DateTime(0)
   user_id               String                      @db.VarChar(10)
   product_id            String                      @db.VarChar(21)
   venue                 String                      @db.VarChar(255)
   food_supplier         String                      @db.VarChar(200)
-  institute             String                      @db.VarChar(150)
-  institute_unit        String?                     @db.VarChar(50)
+  institute             String                      @db.VarChar(250)
+  institute_unit        String?                     @db.VarChar(150)
   institute_dept        String                      @db.VarChar(150)
   objective             String                      @db.VarChar(150)
   type                  String                      @db.VarChar(100)
@@ -62,6 +62,7 @@ model event {
   venue_appropriateness event_venue_appropriateness
   track_no              String?                     @default("NULL") @db.VarChar(50)
   event_type_id         String?                     @db.VarChar(21)
+  is_archived           event_is_archived?
   event_type            event_type?                 @relation(fields: [event_type_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "event_ibfk_3")
   user                  user                        @relation(fields: [user_id], references: [work_area_code], onUpdate: Restrict, map: "event_ibfk_1")
   product               product                     @relation(fields: [product_id], references: [id], map: "event_ibfk_2")
@@ -448,4 +449,9 @@ enum approver_type {
   fifth
   final
   fourth
+}
+
+enum event_is_archived {
+  yes
+  no
 }

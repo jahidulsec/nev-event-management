@@ -56,7 +56,9 @@ export default async function EventsPage({
 
         <SectionActions>
           {user?.role.includes("ao") && <CreateEventButton />}
-          {user?.role.some((i) => i === "ec" || i === 'superadmin') && <ExportButton />}
+          {user?.role.some((i) => i === "ec" || i === "superadmin") && (
+            <ExportButton />
+          )}
         </SectionActions>
       </SectionHeader>
 
@@ -88,7 +90,8 @@ const TableSection = async ({
 }: {
   searchParams: SearchParams;
 }) => {
-  const { page, size, search, status, start, end } = await searchParams;
+  const { page, size, search, status, start, end, is_archived } =
+    await searchParams;
 
   const authUser = await getAuthUser();
   const dashboardRole = await getDashboardRole();
@@ -104,6 +107,11 @@ const TableSection = async ({
       : "processing",
     start: start?.toString(),
     end: end?.toString(),
+    is_archived: is_archived
+      ? is_archived.toString() === "yes"
+        ? "yes"
+        : "no"
+      : "no",
   });
 
   return (

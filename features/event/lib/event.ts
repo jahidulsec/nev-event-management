@@ -97,7 +97,9 @@ const getMulti = async (query: EventQueryType) => {
     const cleanData = getCleanData(query);
 
     // validated searchparams
-    const params = EventQuerySchema.parse(cleanData);
+    const { is_archived, ...params } = EventQuerySchema.parse(cleanData);
+
+    console.log(is_archived)
 
     const productUserRoles = ["ec", "marketing", "franchise_head"];
     const aoHierarchyRole = ["flm", "slm"];
@@ -188,6 +190,8 @@ const getMulti = async (query: EventQueryType) => {
 
         WHERE 1=1
 
+        ${is_archived ? ` AND e.is_archived='${is_archived}'` : ""}
+
         -- this is for ao Hierarchy roles
         ${
           params.role === "flm"
@@ -225,6 +229,7 @@ const getMulti = async (query: EventQueryType) => {
     `;
     baseQuery += ` ORDER BY e.created_at DESC `;
     baseQuery += ` LIMIT ${(params.page - 1) * params.size}, ${params.size} `;
+
 
     const data: any[] = await db.$queryRawUnsafe(baseQuery);
 
