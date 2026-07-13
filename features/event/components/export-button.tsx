@@ -12,13 +12,14 @@ import { useSearchParams } from "next/navigation";
 
 export default function ExportButton() {
   const [isPending, startTransition] = React.useTransition();
-  const searchParams = useSearchParams()
+  const searchParams = useSearchParams();
 
   const downloadCSV = async (name: string) => {
     const res = await getEventsExportInformation({
-      start: searchParams.get('start') ?? undefined,
-      end: searchParams.get('end') ?? undefined,
-      status: searchParams.get('status') as 'approved' ?? undefined,
+      start: searchParams.get("start") ?? undefined,
+      end: searchParams.get("end") ?? undefined,
+      status: (searchParams.get("status") as "approved") ?? undefined,
+      is_archived: "no",
     });
 
     if (res.success === false) {
@@ -184,36 +185,36 @@ export default function ExportButton() {
         header: "approval_date",
         name: "Approval Date",
       },
-
     ];
 
-    let prevId = '';
+    // let prevId = "";
 
-    const formattedData = res?.data?.map((item) => {
-      item.h_words = numberToWords(item.honorarium);
-      if (prevId === item.id) {
-        return {
-          track_no: item.track_no,
-          employee_id: item.employee_id,
-          full_name: item.full_name,
-          group_name: item.group_name,
-          product: item.product,
-          created_at: item.created_at,
-          event_date: item.event_date,
+    const formattedData =
+      res?.data?.map((item) => {
+        item.h_words = numberToWords(item.honorarium);
+        // if (prevId === item.id) {
+        //   return {
+        //     track_no: item.track_no,
+        //     employee_id: item.employee_id,
+        //     full_name: item.full_name,
+        //     group_name: item.group_name,
+        //     product: item.product,
+        //     created_at: item.created_at,
+        //     event_date: item.event_date,
 
-          current_status: item.current_status,
-          dr_child_id: item.dr_child_id,
-          dr_name: item.dr_name,
-          role: item.role,
-          honorarium: item.honorarium,
-          h_words: item.h_words,
-          nth_engagement: item.nth_engagement,
-        };
-      }
+        //     current_status: item.current_status,
+        //     dr_child_id: item.dr_child_id,
+        //     dr_name: item.dr_name,
+        //     role: item.role,
+        //     honorarium: item.honorarium,
+        //     h_words: item.h_words,
+        //     nth_engagement: item.nth_engagement,
+        //   };
+        // }
 
-      prevId = item.id;
-      return item;
-    }) ?? [];
+        // prevId = item.id;
+        return item;
+      }) ?? [];
 
     const csvData = new Blob(
       [
@@ -225,21 +226,23 @@ export default function ExportButton() {
             {
               headerName: "created_at",
               format: (value) => {
-                return value ? format(new Date(value as any), 'dd/MM/yy - h:mm aaa') : '-';
+                return value
+                  ? format(new Date(value as any), "dd/MM/yy - h:mm aaa")
+                  : "-";
               },
             },
             {
-              headerName: '',
+              headerName: "",
               fieldName: "Proposed Event Date",
               format: (value) => {
-                return value ? format(new Date(value as any), 'dd/MM/yy') : '-';
+                return value ? format(new Date(value as any), "dd/MM/yy") : "-";
               },
             },
             {
               headerName: "",
               fieldName: "Plan Event Time",
               format: (value) => {
-                return value ? format(new Date(value as any), 'h:mm aaa') : '-';
+                return value ? format(new Date(value as any), "h:mm aaa") : "-";
               },
             },
             {
@@ -251,7 +254,9 @@ export default function ExportButton() {
             {
               headerName: "approval_date",
               format: (value) => {
-                return value ? format(new Date(value as any), 'dd/MM/yy - h:mm aaa') : '-';
+                return value
+                  ? format(new Date(value as any), "dd/MM/yy - h:mm aaa")
+                  : "-";
               },
             },
           ],
@@ -278,7 +283,7 @@ export default function ExportButton() {
           startTransition(
             async () =>
               await downloadCSV(
-                "event_proposals_till_" + format(new Date(), 'dd-MM-yyyy')
+                "event_proposals_till_" + format(new Date(), "dd-MM-yyyy"),
               ),
           )
         }
