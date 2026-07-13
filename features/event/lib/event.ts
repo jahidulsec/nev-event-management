@@ -99,7 +99,7 @@ const getMulti = async (query: EventQueryType) => {
     // validated searchparams
     const { is_archived, ...params } = EventQuerySchema.parse(cleanData);
 
-    console.log(is_archived)
+    console.log(is_archived);
 
     const productUserRoles = ["ec", "marketing", "franchise_head"];
     const aoHierarchyRole = ["flm", "slm"];
@@ -230,7 +230,6 @@ const getMulti = async (query: EventQueryType) => {
     baseQuery += ` ORDER BY e.created_at DESC `;
     baseQuery += ` LIMIT ${(params.page - 1) * params.size}, ${params.size} `;
 
-
     const data: any[] = await db.$queryRawUnsafe(baseQuery);
 
     return apiResponse.multi<EventMultiProps>({
@@ -344,6 +343,7 @@ const getEventsExportInformation = async (query: EventExportQueryType) => {
         e.other_participants,
         (e.internal_participants + e.external_participants + e.other_participants) AS total_participants,
         e.current_status, 
+        e.is_archived, 
         CASE 
           WHEN e.current_status = 'approved'
             THEN (
@@ -416,6 +416,7 @@ const getEventsExportInformation = async (query: EventExportQueryType) => {
     where 1=1
     ${params.start && params.end ? ` AND ev.created_at >= '${startOfDay(new Date(params.start)).toISOString()}' AND ev.created_at <= '${endOfDay(new Date(params.end)).toISOString()}' ` : ""}
     ${params.status ? ` AND ev.current_status = '${params.status}' ` : ""}
+    ${params.is_archived ? ` AND ev.is_archived = '${params.is_archived}' ` : ""}
     order by ev.created_at
     `;
 
