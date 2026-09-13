@@ -1,23 +1,31 @@
-"use client";
+"use client"
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
-import { Input } from "@/components/ui/input";
-import { useRouter } from "@bprogress/next/app";
-import { Asterisk } from "lucide-react";
+import { cn } from "cn"
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import {
   Field,
-  FieldError,
   FieldGroup,
   FieldLabel,
-} from "@/components/ui/field";
-import { toast } from "sonner";
-import { Form } from "@/components/shared/form/form";
-import { PasswordInput } from "@/components/shared/inputs/password";
-import { LoginSchema, LoginType } from "../actions/schema";
-import { FormButton } from "@/components/shared/button/button";
-import { userLogin } from "../actions/login";
-import { AppLogo } from "@/components/shared/logo/app";
+  FieldError
+} from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
+import { Controller, useForm } from "react-hook-form"
+import { LoginSchema, LoginType } from "@/features/auth/actions/schema"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Asterisk } from "lucide-react"
+import { PasswordInput } from "../../../components/shared/inputs/password"
+import { FormButton } from "../../../components/shared/button/button"
+import { AppLogo } from "@/components/shared/logo/app"
+import { useRouter } from "@bprogress/next"
+import { userLogin } from "../actions/login"
+import { toast } from "sonner"
 
 export function LoginForm({
   className,
@@ -44,64 +52,67 @@ export function LoginForm({
   }
 
   return (
-    <Form onSubmit={form.handleSubmit(onSubmit)}>
-      <div className="text-center w-full">
-        <div className="flex items-center justify-center">
-          <AppLogo width={150} height={100} />
-        </div>
-        <h2 className="text-center text-2xl text-secondary font-semibold">
-          Welcome Back
-        </h2>
-        <p className="text-xs text-muted-foreground">
-          Login with your credentials
-        </p>
+    <div className={cn("flex flex-col gap-6 w-full max-w-md", className)} {...props}>
+      <div className="mx-auto">
+        <AppLogo width={120} />
       </div>
-      <FieldGroup>
-        <Controller
-          control={form.control}
-          name='work_area_code'
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>
-                Work Area Code <Asterisk size={10} className="text-destructive" />
-              </FieldLabel>
-              <Input
-                {...field}
-                id={field.name}
-                aria-invalid={fieldState.invalid}
-                placeholder="WORK AREA CODE"
-                autoComplete="off"
+      <Card>
+        <CardHeader className="text-center flex justify-center items-center gap-0 flex-col">
+          <CardTitle className="text-2xl mt-6">Welcome to SWiFT</CardTitle>
+          <CardDescription className="text-sm">
+            Unlock your profile with Sign In
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <FieldGroup>
+              <Controller
+                control={form.control}
+                name='work_area_code'
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>
+                      Username <Asterisk size={10} className="text-destructive" />
+                    </FieldLabel>
+                    <Input
+                      {...field}
+                      id={field.name}
+                      aria-invalid={fieldState.invalid}
+                      placeholder="WORK AREA CODE"
+                      autoComplete="off"
+                    />
+                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  </Field>
+                )}
               />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-      </FieldGroup>
-
-      <FieldGroup>
-        <Controller
-          control={form.control}
-          name="password"
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>
-                Password <Asterisk size={10} className="text-destructive" />
-              </FieldLabel>
-              <PasswordInput
-                {...field}
-                id={field.name}
-                aria-invalid={fieldState.invalid}
-                placeholder="PASSWORD"
-                autoComplete="off"
+              <Controller
+                control={form.control}
+                name="password"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>
+                      Password <Asterisk size={10} className="text-destructive" />
+                    </FieldLabel>
+                    <PasswordInput
+                      {...field}
+                      id={field.name}
+                      aria-invalid={fieldState.invalid}
+                      placeholder="PASSWORD"
+                      autoComplete="off"
+                    />
+                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                  </Field>
+                )}
               />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-      </FieldGroup>
-      <FormButton isPending={form.formState.isSubmitting} size={"lg"}>
-        Login
-      </FormButton>
-    </Form>
-  );
+              <Field>
+                <FormButton variant={'secondary'} isPending={form.formState.isSubmitting} size={"lg"}>
+                  Login
+                </FormButton>
+              </Field>
+            </FieldGroup>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
+  )
 }

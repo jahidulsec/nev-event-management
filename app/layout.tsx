@@ -1,15 +1,18 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import ProgressProviders from "@/providers/progress-provider";
-import localFont from "next/font/local";
+import { Outfit, Raleway } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { AppMetaData } from "@/lib/data";
 
-const inter = localFont({
-  src: "./fonts/inter.ttf",
-  variable: "--font-inter",
-  declarations: [{ prop: "font-feature-settings", value: "'ss01'" }],
-});
+const outfit = Outfit({
+  subsets: ["latin"], variable: "--font-sans"
+})
+
+const raleway = Raleway({
+  subsets: ["latin"], variable: "--font-heading"
+})
+
 
 export const metadata: Metadata = {
   title: {
@@ -51,7 +54,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} antialiased font-inter`}>
+      <body className={`${outfit.variable} ${raleway.variable} antialiased font-sans`}>
         <ProgressProviders>
           {children}
           <Toaster closeButton richColors position="top-right" />

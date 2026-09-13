@@ -23,9 +23,9 @@ const BackButton = ({ href }: { href?: string }) => {
       className="rounded-full text-primary"
       onClick={() => {
         if (href) {
-          router.replace(href)
+          router.replace(href);
         } else {
-          router.back()
+          router.back();
         }
       }}
     >
