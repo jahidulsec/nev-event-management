@@ -7,7 +7,7 @@ export const generateTrackingID = (
   eventProposedDate: Date
 ) => {
   const currentYear = new Date(eventProposedDate).getFullYear();
-  const currentMonth = format(new Date(), "LLL");
+  const currentMonth = format(eventProposedDate, "LLL");
 
   const trackingID = `${currentYear}/${currentMonth.toUpperCase()}/${product.slice(0, 3).toUpperCase()}/${toAbbreviation(eventType)}/${totalEventCount.toString().padStart(4, "0")}`;
 
