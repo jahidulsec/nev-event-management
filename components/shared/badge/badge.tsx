@@ -14,7 +14,7 @@ const ApproverTypeBadge = ({
   return (
     <Badge
       variant={variant}
-      className={cn(
+      className={cn('border-transparent',
         type === "final"
           ? "text-lime-800 bg-lime-50"
           : type === "budget"
@@ -43,7 +43,7 @@ const UserRoleBadge = ({
     <Badge
       variant={variant}
       {...props}
-      className={cn(
+      className={cn('border-transparent',
         type === "director_sales"
           ? "text-lime-800 bg-lime-50"
           : type === "marketing"
@@ -53,8 +53,8 @@ const UserRoleBadge = ({
               : type === "flm"
                 ? "text-yellow-800 bg-yellow-50" :
                 type === 'franchise_head' ? "bg-violet-100/50 text-violet-700" :
-                type === 'director_sales' ? "bg-blue-100/50 text-blue-700"
-                : "text-rose-800 bg-rose-50",
+                  type === 'director_sales' ? "bg-blue-100/50 text-blue-700"
+                    : "text-rose-800 bg-rose-50",
         className,
       )}
     />
@@ -70,7 +70,7 @@ const StatusBadge = ({
   return (
     <Badge
       variant={variant}
-      className={cn(
+      className={cn('border-transparent',
         type === "approved"
           ? "bg-green-50 text-green-800"
           : type == "rejected"

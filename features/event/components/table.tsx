@@ -6,7 +6,7 @@ import {
   useTableSerialColumn,
 } from "@/components/shared/table/data-table";
 import { deleteToastTemplate } from "@/lib/template";
-import { formatDate, getTitleCase } from "@/utils/formatter";
+import { formatDate, formatTime, getTitleCase } from "@/utils/formatter";
 import { ColumnDef } from "@tanstack/react-table";
 import { Edit, Eye, Printer, Trash2, Workflow } from "lucide-react";
 import React from "react";
@@ -16,9 +16,7 @@ import { EventMultiProps } from "../lib/event";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "@bprogress/next";
 import { getCostLimitText } from "@/utils/helper";
-import { EventTypeMultiProps } from "../lib/type";
 import {
-  ApproverTypeBadge,
   StatusBadge,
   UserRoleBadge,
 } from "@/components/shared/badge/badge";
@@ -61,9 +59,16 @@ export default function EventTable({
       accessorKey: "event_date",
       header: "Event Date",
       cell: ({ row }) => (
-        <p>
-          {row.original.event_date ? formatDate(row.original.event_date) : "-"}
-        </p>
+        <div>
+
+          {row.original.event_date ?
+            <>
+              <p className="font-medium">{formatDate(row.original.event_date)}</p>
+              <p className="text-muted-foreground font-semibold text-xs">{formatTime(row.original.event_date)}</p>
+            </>
+            : "-"}
+
+        </div>
       ),
     },
     {
@@ -99,7 +104,7 @@ export default function EventTable({
         return (
           <Badge
             variant={"outline"}
-            className={cn(
+            className={cn('border-transparent',
               status === "approved"
                 ? "bg-green-50 text-green-700"
                 : status === "rejected"

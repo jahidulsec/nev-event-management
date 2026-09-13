@@ -37,6 +37,7 @@ export default function EventTypeTable({
 
   const columns: ColumnDef<EventTypeMultiProps>[] = [
     serialColumn,
+    { accessorKey: "id", header: "Title" },
     { accessorKey: "title", header: "Title" },
     {
       id: "cost_limit",

@@ -27,8 +27,7 @@ const NavData: any[] = [
     icon: LayoutPanelLeft,
     items: [
       { label: "Events", icon: Ticket, href: "/dashboard/events" },
-      { label: "Type", icon: ListTree, href: "/dashboard/events" },
-      { label: "Permission", icon: UserLock, href: "/dashboard/events" },
+      { label: "Type/Permission", icon: UserLock, href: "/dashboard/permission" },
     ],
   },
   {
@@ -46,8 +45,8 @@ const NavData: any[] = [
     label: "Others",
     icon: Grid2X2Plus,
     items: [
-      { label: "Doctors", icon: Stethoscope, href: "#" },
-      { label: "Product", icon: Pill, href: "#" },
+      { label: "Doctors", icon: Stethoscope, href: "/dashboard/doctors" },
+      { label: "Product", icon: Pill, href: "/dashboard/products" },
       { label: "Area", icon: LandPlot, href: "#" },
     ],
   },
