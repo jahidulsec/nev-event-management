@@ -11,7 +11,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { ChevronsUpDown, LogOut, User, UserLock } from "lucide-react";
+import { LogOut, User, UserLock } from "lucide-react";
 import { toast } from "sonner";
 import { FormSheet } from "../sheet/sheet";
 import { AuthUser } from "@/types/auth-user";

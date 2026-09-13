@@ -4,7 +4,6 @@ import { db } from "@/config/db";
 import { handleError } from "@/lib/error";
 import { response } from "@/lib/response";
 import { createSession, deleteSession } from "@/lib/session";
-import { AuthUserRole } from "@/types/auth-user";
 import { hashPassword } from "@/utils/password";
 import { revalidatePath } from "next/cache";
 import { ProfileType, ResetPasswordType } from "./schema";
