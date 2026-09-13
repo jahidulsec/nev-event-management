@@ -19,7 +19,11 @@ import { FormButton } from "@/components/shared/button/button";
 import { userLogin } from "../actions/login";
 import { AppLogo } from "@/components/shared/logo/app";
 
-export default function LoginForm() {
+export function LoginForm({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
+
   const form = useForm<LoginType>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
