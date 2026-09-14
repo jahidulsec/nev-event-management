@@ -6,7 +6,9 @@ import { userService } from "@/services/user";
 import { Prisma } from "@/lib/generated/prisma/client";
 import { ServerCacheOptions } from "@/lib/server-cache";
 
-export type UserMultiProps = Prisma.usersGetPayload<{}>;
+export type UserMultiProps = Prisma.usersGetPayload<{
+  include: { users_role: true };
+}>;
 
 export const getUsers = async (query: UserQueryType) => {
   try {
@@ -42,6 +44,7 @@ export const getUsers = async (query: UserQueryType) => {
         sort: {
           employee_id: "asc",
         },
+        options: { include: { users_role: true } },
       }),
       userService.getuserCount({ filter }),
     ]);

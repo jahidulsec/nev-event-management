@@ -29,18 +29,14 @@ export const createUserDTOSchema = z.object({
     .regex(/^01[3-9]{1}\d{8}$/, "Invalid phone number")
     .optional(),
 
-  sap_area_code: z
-    .string("Enter area code")
-    .min(3, "At least 3 characters")
-    .max(6, "not more than 6 character")
-    .optional(),
-
   group: z
     .string("Enter group")
     .max(50, "not more than 50 character")
     .optional(),
 
   status: z.enum(["active", "inactive"]).optional(),
+
+  roles: z.array(z.string()).min(1, "Select at least one role"),
 });
 
 export const userQuerySchema = QuerySchema.extend({});

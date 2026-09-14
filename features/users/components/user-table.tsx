@@ -15,7 +15,7 @@ import { deleteUser } from "../actions/users";
 import { TableActionButton } from "@/components/shared/button/button";
 import { UserMultiProps } from "../libs/users";
 import UserForm from "./user-form";
-import { StatusBadge } from "@/components/shared/badge/badge";
+import { StatusBadge, UserRoleBadge } from "@/components/shared/badge/badge";
 
 export default function UserTable({ data }: { data: UserMultiProps[] }) {
   const [edit, setEdit] = React.useState<UserMultiProps | boolean>(false);
@@ -31,14 +31,27 @@ export default function UserTable({ data }: { data: UserMultiProps[] }) {
     { accessorKey: "email", header: "Email" },
     { accessorKey: "designation", header: "Designation" },
     {
+      accessorKey: "users_role",
+      header: "Roles",
+      cell: ({ row }) => {
+        const roles = row.original.users_role;
+        if (!roles.length) return <p>-</p>;
+
+        return (
+          <div className="flex flex-wrap gap-1">
+            {roles.map((r) => (
+              <UserRoleBadge key={r.id} type={r.role}>
+                {r.role}
+              </UserRoleBadge>
+            ))}
+          </div>
+        );
+      },
+    },
+    {
       accessorKey: "mobile",
       header: "Mobile",
       cell: ({ row }) => <p>{row.original.mobile || "-"}</p>,
-    },
-    {
-      accessorKey: "sap_area_code",
-      header: "SAP Area Code",
-      cell: ({ row }) => <p>{row.original.sap_area_code || "-"}</p>,
     },
     {
       accessorKey: "group",
@@ -100,15 +113,15 @@ export default function UserTable({ data }: { data: UserMultiProps[] }) {
           prevData={
             typeof edit !== "boolean"
               ? {
-                employee_id: edit.employee_id,
-                full_name: edit.full_name,
-                email: edit.email,
-                designation: edit.designation,
-                mobile: edit.mobile ?? undefined,
-                sap_area_code: edit.sap_area_code ?? undefined,
-                group: edit.group ?? undefined,
-                status: edit.status ?? undefined,
-              }
+                  employee_id: edit.employee_id,
+                  full_name: edit.full_name,
+                  email: edit.email,
+                  designation: edit.designation,
+                  mobile: edit.mobile ?? undefined,
+                  group: edit.group ?? undefined,
+                  status: edit.status ?? undefined,
+                  roles: edit.users_role.map((r) => r.role),
+                }
               : undefined
           }
           onSuccess={() => setEdit(false)}

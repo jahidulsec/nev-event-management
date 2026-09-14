@@ -7,6 +7,7 @@ export const cacheTags = {
   areas: "areas",
   areasCount: "areas-count",
   permissions: "permissions",
+  roles: "roles",
 } as const;
 
 export type CacheTag = (typeof cacheTags)[keyof typeof cacheTags];

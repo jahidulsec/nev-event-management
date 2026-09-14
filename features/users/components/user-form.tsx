@@ -17,14 +17,10 @@ import {
   CreateUserDTOType,
   updateUserDTOSchema,
 } from "@/features/user/schema/schema";
-import { createUser, updateUser } from "../actions/users";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { createUser, getRoles, updateUser } from "../actions/users";
+import { Select } from "@/components/shared/select/select";
+import { ComboboxMultipleSelect } from "@/components/ui/multi-combobox";
+import { role } from "@/lib/generated/prisma/client";
 
 export default function UserForm({
   prevData,
@@ -38,9 +34,18 @@ export default function UserForm({
   onError?: (message: string) => void;
 }) {
   const form = useForm<any>({
-    defaultValues: { status: "active", ...prevData },
+    defaultValues: { status: "active", roles: [], ...prevData },
     resolver: zodResolver(editId ? updateUserDTOSchema : createUserDTOSchema),
   });
+
+  const [roles, setRoles] = React.useState<role[]>([]);
+
+  React.useEffect(() => {
+    (async () => {
+      const res = await getRoles();
+      setRoles(res.data ?? []);
+    })();
+  }, []);
 
   const onSubmit = async (data: CreateUserDTOType) => {
     const res = editId
@@ -170,25 +175,6 @@ export default function UserForm({
 
         <Controller
           control={form.control}
-          name="sap_area_code"
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor={field.name}>SAP Area Code</FieldLabel>
-              <Input
-                {...field}
-                value={field.value ?? ""}
-                id={field.name}
-                aria-invalid={fieldState.invalid}
-                placeholder="eg. 20089"
-                autoComplete="off"
-              />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-
-        <Controller
-          control={form.control}
           name="group"
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
@@ -212,18 +198,40 @@ export default function UserForm({
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor={field.name}>Status</FieldLabel>
-              <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger
-                  id={field.name}
-                  aria-invalid={fieldState.invalid}
-                >
-                  <SelectValue placeholder="Select status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
-                </SelectContent>
-              </Select>
+              <Select
+                data={[
+                  {
+                    label: "Active",
+                    value: "active",
+                  },
+                  {
+                    label: "Inactive",
+                    value: "inactive",
+                  },
+                ]}
+                defaultValue={prevData?.status}
+                onValueChange={field.onChange}
+              />
+
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+
+        <Controller
+          control={form.control}
+          name="roles"
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={field.name}>Roles</FieldLabel>
+              <ComboboxMultipleSelect
+                items={roles.map((item) => item.role)}
+                value={field.value}
+                onValueChange={field.onChange}
+                id={field.name}
+                placeholder="Select roles"
+                aria-invalid={fieldState.invalid}
+              />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
           )}

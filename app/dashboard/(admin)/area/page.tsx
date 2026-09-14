@@ -18,8 +18,8 @@ export default function AreaPage({
   searchParams: SearchParams;
 }) {
   return (
-    <>
-      <Section className="border  rounded-md p-6">
+    <Section>
+      <div className="border rounded-md p-4">
         <SectionHeader>
           <SectionHeading>Area</SectionHeading>
 
@@ -31,8 +31,8 @@ export default function AreaPage({
             <AreaPreview searchParams={searchParams} />
           </React.Suspense>
         </SectionContent>
-      </Section>
-    </>
+      </div>
+    </Section>
   );
 }
 
