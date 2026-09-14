@@ -126,7 +126,7 @@ const deleteArea = async <T extends Prisma.areaDefaultArgs>({
         where: filter,
         ...(options as Prisma.areaDefaultArgs),
       })) as Prisma.areaGetPayload<T> | null,
-    [cacheTags.areas, cacheTags.areas, ...(revalidateTags ?? [])],
+    [cacheTags.areas, cacheTags.areasCount, ...(revalidateTags ?? [])],
   );
 
 export const areaService = {

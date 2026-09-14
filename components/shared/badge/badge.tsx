@@ -111,9 +111,9 @@ const StatusBadge = ({
   return (
     <ColorBadge
       color={
-        type === "approved"
+        type === "approved" || type === "active"
           ? "green"
-          : type === "rejected"
+          : type === "rejected" || type === "inactive"
             ? "destructive"
             : "yellow"
       }

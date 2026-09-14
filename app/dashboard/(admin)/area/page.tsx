@@ -41,14 +41,14 @@ const AreaPreview = async ({
 }: {
   searchParams: SearchParams;
 }) => {
-  const { page, size, search } = await searchParams;
+  const { page, search } = await searchParams;
   const res = await getAreas({
     page: Number(page || 1),
     size: 1000,
     search: search?.toString(),
   });
   return (
-    <ErrorBoundary message="">
+    <ErrorBoundary message={res.message ? undefined : res.message}>
       <PreviewTree data={res.data ?? []} />
     </ErrorBoundary>
   );

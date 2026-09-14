@@ -40,7 +40,7 @@ export type ServerCacheOptions = {
    * tag from `cacheTags` so entries are namespaced per resource; follow it with
    * ids, filters, pagination, etc.
    */
-  key: KeyPart | KeyPart[];
+  key?: KeyPart | KeyPart[];
   /** Cache tags used with `revalidateTag` / `updateTag` to bust this entry. */
   tags?: string | string[];
   /** A named preset or a raw seconds value / `false`. Defaults to `"short"`. */

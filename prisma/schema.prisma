@@ -400,23 +400,26 @@ model user_product {
   created_at  DateTime? @default(now()) @db.Timestamp(0)
   updated_at  DateTime? @default(now()) @db.Timestamp(0)
   product     product   @relation(fields: [product_id], references: [id], onDelete: Cascade, map: "user_product_relation_1")
+  users       users     @relation(fields: [employee_id], references: [employee_id], onDelete: Cascade, map: "user_product_relation_2")
 
   @@unique([employee_id, product_id], map: "user_product_index_2")
   @@index([product_id], map: "user_product_relation_1")
 }
 
 model users {
-  employee_id   String       @id @db.VarChar(10)
-  full_name     String       @db.VarChar(50)
-  password      String       @db.VarChar(100)
-  email         String       @db.VarChar(100)
-  designation   String       @db.VarChar(30)
-  mobile        String?      @db.VarChar(14)
-  created_at    DateTime?    @default(now()) @db.Timestamp(0)
-  updated_at    DateTime?    @default(now()) @db.Timestamp(0)
-  sap_area_code String?      @db.VarChar(6)
-  group         String?      @db.VarChar(50)
-  area          area?        @relation(fields: [sap_area_code], references: [sap_area_code], onUpdate: SetNull, map: "users_relation_1")
+  employee_id   String         @id @db.VarChar(10)
+  full_name     String         @db.VarChar(50)
+  password      String         @db.VarChar(100)
+  email         String         @db.VarChar(100)
+  designation   String         @db.VarChar(30)
+  mobile        String?        @db.VarChar(14)
+  created_at    DateTime?      @default(now()) @db.Timestamp(0)
+  updated_at    DateTime?      @default(now()) @db.Timestamp(0)
+  sap_area_code String?        @db.VarChar(6)
+  group         String?        @db.VarChar(50)
+  status        users_status?  @default(active)
+  user_product  user_product[]
+  area          area?          @relation(fields: [sap_area_code], references: [sap_area_code], onUpdate: SetNull, map: "users_relation_1")
   users_role    users_role[]
 
   @@index([sap_area_code], map: "users_relation_1")
@@ -517,4 +520,9 @@ enum area_type {
   zm
   sm
   wing
+}
+
+enum users_status {
+  active
+  inactive
 }
