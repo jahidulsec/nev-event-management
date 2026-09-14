@@ -35,7 +35,7 @@ const NavData: any[] = [
     label: "User Management",
     icon: UserPen,
     items: [
-      { label: "Users", icon: Users2, href: "#" },
+      { label: "Users", icon: Users2, href: "/dashboard/users" },
       { label: "Role", icon: Flag, href: "#" },
       { label: "User-Relation", icon: Waypoints, href: "#" },
     ],
@@ -47,7 +47,7 @@ const NavData: any[] = [
     items: [
       { label: "Doctors", icon: Stethoscope, href: "/dashboard/doctors" },
       { label: "Product", icon: Pill, href: "/dashboard/products" },
-      { label: "Area", icon: LandPlot, href: "#" },
+      { label: "Area", icon: LandPlot, href: "/dashboard/area" },
     ],
   },
 ];

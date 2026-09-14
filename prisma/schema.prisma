@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider     = "mysql"
+  provider = "mysql"
 }
 
 model approver {
@@ -61,7 +61,7 @@ model event {
   venue_appropriateness event_venue_appropriateness
   track_no              String?                     @default("NULL") @db.VarChar(50)
   event_type_id         String?                     @db.VarChar(21)
-  is_archived           event_is_archived?
+  is_archived           event_is_archived?          @default(no)
   event_type            event_type?                 @relation(fields: [event_type_id], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "event_ibfk_3")
   user                  user                        @relation(fields: [user_id], references: [work_area_code], onUpdate: Restrict, map: "event_ibfk_1")
   product               product                     @relation(fields: [product_id], references: [id], map: "event_ibfk_2")
@@ -147,6 +147,7 @@ model product {
   updated_at   DateTime?      @default(now()) @db.Timestamp(0)
   event        event[]
   product_user product_user[]
+  user_product user_product[]
 }
 
 model user {
@@ -305,10 +306,11 @@ model franchise_head {
 }
 
 model role {
-  role       String      @id @db.VarChar(25)
-  created_at DateTime?   @default(now()) @db.Timestamp(0)
-  updated_at DateTime?   @default(now()) @db.Timestamp(0)
-  user_roles user_role[] @relation("user_roles")
+  role                             String       @id @db.VarChar(25)
+  created_at                       DateTime?    @default(now()) @db.Timestamp(0)
+  updated_at                       DateTime?    @default(now()) @db.Timestamp(0)
+  user_roles                       user_role[]  @relation("user_roles")
+  users_role_users_role_roleTorole users_role[] @relation("users_role_roleTorole")
 }
 
 model user_role {
@@ -375,6 +377,60 @@ model notification {
 
   @@index([event_id], map: "event_id")
   @@index([work_area_code], map: "work_area_code")
+}
+
+model area {
+  sap_area_code    String    @id @db.VarChar(6)
+  area_name        String    @db.VarChar(30)
+  created_at       DateTime? @default(now()) @db.Timestamp(0)
+  updated_at       DateTime? @default(now()) @db.Timestamp(0)
+  type             area_type
+  parent_area_code String?   @db.VarChar(6)
+  area             area?     @relation("areaToarea", fields: [parent_area_code], references: [sap_area_code], onUpdate: SetNull, map: "area_relation_1")
+  other_area       area[]    @relation("areaToarea")
+  users            users[]
+
+  @@index([parent_area_code], map: "area_relation_1")
+}
+
+model user_product {
+  id          String    @id @db.VarChar(10)
+  employee_id String    @db.VarChar(10)
+  product_id  String    @db.VarChar(21)
+  created_at  DateTime? @default(now()) @db.Timestamp(0)
+  updated_at  DateTime? @default(now()) @db.Timestamp(0)
+  product     product   @relation(fields: [product_id], references: [id], onDelete: Cascade, map: "user_product_relation_1")
+
+  @@unique([employee_id, product_id], map: "user_product_index_2")
+  @@index([product_id], map: "user_product_relation_1")
+}
+
+model users {
+  employee_id   String       @id @db.VarChar(10)
+  full_name     String       @db.VarChar(50)
+  password      String       @db.VarChar(100)
+  email         String       @db.VarChar(100)
+  designation   String       @db.VarChar(30)
+  mobile        String?      @db.VarChar(14)
+  created_at    DateTime?    @default(now()) @db.Timestamp(0)
+  updated_at    DateTime?    @default(now()) @db.Timestamp(0)
+  sap_area_code String?      @db.VarChar(6)
+  group         String?      @db.VarChar(50)
+  area          area?        @relation(fields: [sap_area_code], references: [sap_area_code], onUpdate: SetNull, map: "users_relation_1")
+  users_role    users_role[]
+
+  @@index([sap_area_code], map: "users_relation_1")
+}
+
+model users_role {
+  id                         String @id @db.VarChar(10)
+  employee_id                String @db.VarChar(10)
+  role                       String @db.VarChar(25)
+  users                      users  @relation(fields: [employee_id], references: [employee_id], onDelete: Cascade, map: "users_role_relation_1")
+  role_users_role_roleTorole role   @relation("users_role_roleTorole", fields: [role], references: [role], onDelete: Cascade, map: "users_role_relation_2")
+
+  @@unique([employee_id, role], map: "users_role_index_2")
+  @@index([role], map: "users_role_relation_2")
 }
 
 enum event_approved_material {
@@ -453,4 +509,12 @@ enum approver_type {
 enum event_is_archived {
   yes
   no
+}
+
+enum area_type {
+  mio
+  rm
+  zm
+  sm
+  wing
 }
