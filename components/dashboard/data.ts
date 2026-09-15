@@ -4,7 +4,6 @@ import {
   Users2,
   Home,
   Ticket,
-  ListTree,
   UserLock,
   UserPen,
   Waypoints,
@@ -15,12 +14,6 @@ import {
 } from "lucide-react";
 
 const NavData: any[] = [
-  {
-    type: "",
-    label: "Home",
-    icon: Home,
-    href: '/dashboard'
-  },
   {
     type: "dropdown",
     label: "Event Management",
