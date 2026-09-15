@@ -12,7 +12,7 @@ export default function CreateUserButton() {
   return (
     <>
       <Button onClick={() => setOpen(true)}>
-        <PlusCircle /> user
+        <PlusCircle /> User
       </Button>
 
       <FormSheet formTitle="Create User" open={open} onOpenChange={setOpen}>

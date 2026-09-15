@@ -9,6 +9,10 @@ export const cacheTags = {
   permissions: "permissions",
   roles: "roles",
   rolesCount: "roles-count",
+  userProducts: "user-products",
+  userProductsCount: "user-products-count",
+  userAreas: "user-areas",
+  userAreasCount: "user-areas-count",
 } as const;
 
 export type CacheTag = (typeof cacheTags)[keyof typeof cacheTags];

@@ -4,26 +4,14 @@ import { apiResponse } from "@/lib/response";
 import {
   CreateUserDTOType,
   UpdateUserDTOType,
-} from "@/features/user/schema/schema";
+} from "@/features/users/schema/schema";
 import { userService } from "@/services/user";
-import { roleService } from "@/services/role";
 import { hashPassword } from "@/utils/password";
 import { randomBytes } from "crypto";
 
 const generateId = () => randomBytes(5).toString("hex");
 
-export const getRoles = async () => {
-  try {
-    const res = await roleService.getRoles();
 
-    return apiResponse.multi({
-      data: res ?? [],
-      count: res?.length ?? 0,
-    });
-  } catch (error) {
-    return apiResponse.error({ error });
-  }
-};
 
 export const createUser = async (data: CreateUserDTOType) => {
   try {

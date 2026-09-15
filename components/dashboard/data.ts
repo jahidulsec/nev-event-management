@@ -29,8 +29,8 @@ const NavData: any[] = [
     icon: UserPen,
     items: [
       { label: "Users", icon: Users2, href: "/dashboard/users" },
-      { label: "Role", icon: Flag, href: "#" },
-      { label: "User-Relation", icon: Waypoints, href: "#" },
+      { label: "Role", icon: Flag, href: "/dashboard/role" },
+      { label: "User-Relation", icon: Waypoints, href: "/dashboard/users/relation" },
     ],
   },
   {

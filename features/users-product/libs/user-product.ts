@@ -1,20 +1,23 @@
 "use server";
 
 import { apiResponse } from "@/lib/response";
-import { userQuerySchema, UserQueryType } from "@/features/users/schema/schema";
-import { userService } from "@/services/user";
+import {
+  userProductQuerySchema,
+  UserProductQueryType,
+} from "@/features/users-product/schema/schema";
+import { userProductService } from "@/services/user-product";
 import { Prisma } from "@/lib/generated/prisma/client";
 import { ServerCacheOptions } from "@/lib/server-cache";
 
-export type UserMultiProps = Prisma.usersGetPayload<{
-  include: { users_role: true };
+export type UserProductMultiProps = Prisma.user_productGetPayload<{
+  include: { product: true; users: true };
 }>;
 
-export const getUsers = async (query: UserQueryType) => {
+export const getUserProducts = async (query: UserProductQueryType) => {
   try {
-    const { page, size, search } = userQuerySchema.parse(query);
+    const { page, size, search } = userProductQuerySchema.parse(query);
 
-    const filter: Prisma.usersWhereInput = {
+    const filter: Prisma.user_productWhereInput = {
       ...(search && {
         OR: [
           {
@@ -23,12 +26,7 @@ export const getUsers = async (query: UserQueryType) => {
             },
           },
           {
-            full_name: {
-              startsWith: search,
-            },
-          },
-          {
-            email: {
+            product_id: {
               startsWith: search,
             },
           },
@@ -37,16 +35,16 @@ export const getUsers = async (query: UserQueryType) => {
     };
 
     const [res, count] = await Promise.all([
-      userService.getusers({
+      userProductService.getUserProducts({
         filter,
         take: size,
         skip: (page - 1) * size,
         sort: {
-          employee_id: "asc",
+          created_at: "desc",
         },
-        options: { include: { users_role: true } },
+        options: { include: { product: true, users: true } },
       }),
-      userService.getuserCount({ filter }),
+      userProductService.getUserProductCount({ filter }),
     ]);
 
     return apiResponse.multi({ data: res ?? [], count });
@@ -55,15 +53,15 @@ export const getUsers = async (query: UserQueryType) => {
   }
 };
 
-export const getUser = async (
+export const getUserProduct = async (
   id: string,
   revalidate?: ServerCacheOptions["revalidate"],
 ) => {
   try {
     const [res] = await Promise.all([
-      userService.getUserUniq({
+      userProductService.getUserProductUniq({
         filter: {
-          employee_id: id,
+          id,
         },
         cacheOption: {
           revalidate: revalidate,
@@ -71,7 +69,10 @@ export const getUser = async (
       }),
     ]);
 
-    return apiResponse.single({ data: res, message: "GET user successful" });
+    return apiResponse.single({
+      data: res,
+      message: "GET user product successful",
+    });
   } catch (error) {
     return apiResponse.error({ error });
   }

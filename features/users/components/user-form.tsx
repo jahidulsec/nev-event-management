@@ -16,11 +16,12 @@ import {
   createUserDTOSchema,
   CreateUserDTOType,
   updateUserDTOSchema,
-} from "@/features/user/schema/schema";
-import { createUser, getRoles, updateUser } from "../actions/users";
+} from "@/features/users/schema/schema";
+import { createUser, updateUser } from "../actions/users";
 import { Select } from "@/components/shared/select/select";
 import { ComboboxMultipleSelect } from "@/components/ui/multi-combobox";
 import { role } from "@/lib/generated/prisma/client";
+import { getRoles } from "@/features/role/libs/role";
 
 export default function UserForm({
   prevData,
@@ -42,7 +43,7 @@ export default function UserForm({
 
   React.useEffect(() => {
     (async () => {
-      const res = await getRoles();
+      const res = await getRoles({ page: 1, size: 30 });
       setRoles(res.data ?? []);
     })();
   }, []);

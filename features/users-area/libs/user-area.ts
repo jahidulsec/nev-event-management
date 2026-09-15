@@ -1,20 +1,23 @@
 "use server";
 
 import { apiResponse } from "@/lib/response";
-import { userQuerySchema, UserQueryType } from "@/features/users/schema/schema";
-import { userService } from "@/services/user";
+import {
+  userAreaQuerySchema,
+  UserAreaQueryType,
+} from "@/features/users-area/schema/schema";
+import { userAreaService } from "@/services/user-area";
 import { Prisma } from "@/lib/generated/prisma/client";
 import { ServerCacheOptions } from "@/lib/server-cache";
 
-export type UserMultiProps = Prisma.usersGetPayload<{
-  include: { users_role: true };
+export type UserAreaMultiProps = Prisma.users_areaGetPayload<{
+  include: { area: true; users: true };
 }>;
 
-export const getUsers = async (query: UserQueryType) => {
+export const getUserAreas = async (query: UserAreaQueryType) => {
   try {
-    const { page, size, search } = userQuerySchema.parse(query);
+    const { page, size, search } = userAreaQuerySchema.parse(query);
 
-    const filter: Prisma.usersWhereInput = {
+    const filter: Prisma.users_areaWhereInput = {
       ...(search && {
         OR: [
           {
@@ -23,12 +26,7 @@ export const getUsers = async (query: UserQueryType) => {
             },
           },
           {
-            full_name: {
-              startsWith: search,
-            },
-          },
-          {
-            email: {
+            sap_area_code: {
               startsWith: search,
             },
           },
@@ -37,16 +35,16 @@ export const getUsers = async (query: UserQueryType) => {
     };
 
     const [res, count] = await Promise.all([
-      userService.getusers({
+      userAreaService.getUserAreas({
         filter,
         take: size,
         skip: (page - 1) * size,
         sort: {
-          employee_id: "asc",
+          id: "desc",
         },
-        options: { include: { users_role: true } },
+        options: { include: { area: true, users: true } },
       }),
-      userService.getuserCount({ filter }),
+      userAreaService.getUserAreaCount({ filter }),
     ]);
 
     return apiResponse.multi({ data: res ?? [], count });
@@ -55,15 +53,15 @@ export const getUsers = async (query: UserQueryType) => {
   }
 };
 
-export const getUser = async (
+export const getUserArea = async (
   id: string,
   revalidate?: ServerCacheOptions["revalidate"],
 ) => {
   try {
     const [res] = await Promise.all([
-      userService.getUserUniq({
+      userAreaService.getUserAreaUniq({
         filter: {
-          employee_id: id,
+          id,
         },
         cacheOption: {
           revalidate: revalidate,
@@ -71,7 +69,10 @@ export const getUser = async (
       }),
     ]);
 
-    return apiResponse.single({ data: res, message: "GET user successful" });
+    return apiResponse.single({
+      data: res,
+      message: "GET user area successful",
+    });
   } catch (error) {
     return apiResponse.error({ error });
   }
