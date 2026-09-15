@@ -7,6 +7,7 @@ export const cacheTags = {
   areas: "areas",
   areasCount: "areas-count",
   permissions: "permissions",
+  permissionsCount: "permissions-count",
   roles: "roles",
   rolesCount: "roles-count",
   userProducts: "user-products",

@@ -316,6 +316,22 @@ model role {
   users_role_users_role_roleTorole users_role[] @relation("users_role_roleTorole")
 }
 
+model policy {
+  id          String        @id @default(nanoid(10)) @db.VarChar(10)
+  name        String        @db.VarChar(100)
+  description String?       @db.VarChar(255)
+  resource    String        @db.VarChar(30)
+  action      String        @db.VarChar(30)
+  effect      policy_effect @default(allow)
+  conditions  Json?
+  priority    Int           @default(0)
+  enabled     Boolean       @default(true)
+  created_at  DateTime?     @default(now()) @db.Timestamp(0)
+  updated_at  DateTime?     @default(now()) @updatedAt @db.Timestamp(0)
+
+  @@index([resource, action], map: "policy_relation_1")
+}
+
 model user_role {
   work_area_code String    @db.VarChar(6)
   role           String    @db.VarChar(20)
@@ -670,6 +686,11 @@ enum area_type {
 enum users_status {
   active
   inactive
+}
+
+enum policy_effect {
+  allow
+  deny
 }
 
 enum event_status_histories_status {
