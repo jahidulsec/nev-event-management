@@ -26,6 +26,11 @@ export const getUserAreas = async (query: UserAreaQueryType) => {
             },
           },
           {
+            users: {
+              full_name: { contains: search },
+            },
+          },
+          {
             sap_area_code: {
               startsWith: search,
             },
