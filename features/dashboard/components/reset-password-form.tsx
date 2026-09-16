@@ -10,11 +10,14 @@ import {
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { ResetPasswordSchema, ResetPasswordType } from "../actions/schema";
-import { updateUserPassword } from "../actions/user";
 import { Form } from "@/components/shared/form/form";
 import { PasswordInput } from "@/components/shared/inputs/password";
 import { ActionButton } from "@/components/shared/button/button";
+import {
+  updateUserDTOSchema,
+  UpdateUserDTOType,
+} from "@/features/users/schema/schema";
+import { updateUser } from "@/features/users/actions/users";
 
 export default function ResetPasswordForm({
   id,
@@ -23,12 +26,15 @@ export default function ResetPasswordForm({
   id: string;
   onClose: () => void;
 }) {
-  const form = useForm<ResetPasswordType>({
-    resolver: zodResolver(ResetPasswordSchema),
+  const form = useForm<UpdateUserDTOType>({
+    resolver: zodResolver(updateUserDTOSchema),
+    defaultValues: {
+      password: "",
+    },
   });
 
-  async function onSubmit(data: ResetPasswordType) {
-    const res = await updateUserPassword(id, data);
+  async function onSubmit(data: UpdateUserDTOType) {
+    const res = await updateUser(id, data);
     toast[res.success ? "success" : "error"](res.message);
 
     if (res.success) {

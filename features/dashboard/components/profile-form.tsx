@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { toast } from "sonner";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,29 +11,45 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { AuthUser } from "@/types/auth-user";
-import { ProfileSchema, ProfileType } from "../actions/schema";
 import { FormButton } from "@/components/shared/button/button";
-import { updateUserProfile } from "../actions/user";
 import { Form } from "@/components/shared/form/form";
+import {
+  updateUserDTOSchema,
+  UpdateUserDTOType,
+} from "@/features/users/schema/schema";
+import { updateUser } from "@/features/users/actions/users";
+import { useUser } from "@/features/users/hooks/use-user";
 
 export default function UserProfileForm({
   onClose,
-  prevData,
+  employeeId,
 }: {
   onClose: () => void;
-  prevData: AuthUser;
+  employeeId: string;
 }) {
-  const form = useForm<ProfileType>({
-    resolver: zodResolver(ProfileSchema),
+  const { data: user, isLoading } = useUser(employeeId);
+
+  const form = useForm<UpdateUserDTOType>({
+    resolver: zodResolver(updateUserDTOSchema),
     defaultValues: {
-      full_name: prevData?.name,
-      mobile: prevData?.email,
+      full_name: "",
+      email: "",
+      mobile: undefined,
     },
   });
 
-  async function onSubmit(data: ProfileType) {
-    const res = await updateUserProfile(prevData.employeeId, data);
+  useEffect(() => {
+    if (!user) return;
+
+    form.reset({
+      full_name: user.full_name,
+      email: user.email,
+      mobile: user.mobile ?? undefined,
+    });
+  }, [user, form]);
+
+  async function onSubmit(data: UpdateUserDTOType) {
+    const res = await updateUser(employeeId, data);
     toast[res.success ? "success" : "error"](res.message);
 
     if (res.success) {
@@ -55,6 +72,28 @@ export default function UserProfileForm({
                 aria-invalid={fieldState.invalid}
                 placeholder="Full name"
                 autoComplete="off"
+                disabled={isLoading}
+              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+      </FieldGroup>
+
+      <FieldGroup>
+        <Controller
+          control={form.control}
+          name="email"
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={field.name}>Email</FieldLabel>
+              <Input
+                {...field}
+                id={field.name}
+                aria-invalid={fieldState.invalid}
+                placeholder="eg. m@nevian.com.bd"
+                autoComplete="off"
+                disabled={isLoading}
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
@@ -75,6 +114,7 @@ export default function UserProfileForm({
                 aria-invalid={fieldState.invalid}
                 placeholder="01X XXX XXX XXX"
                 autoComplete="off"
+                disabled={isLoading}
               />
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
             </Field>
@@ -82,7 +122,11 @@ export default function UserProfileForm({
         />
       </FieldGroup>
 
-      <FormButton isPending={form.formState.isSubmitting} size={"lg"}>
+      <FormButton
+        isPending={form.formState.isSubmitting}
+        disabled={isLoading}
+        size={"lg"}
+      >
         Save
       </FormButton>
     </Form>

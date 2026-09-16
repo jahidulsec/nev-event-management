@@ -17,8 +17,8 @@ import { toast } from "sonner";
 import { userLogout } from "@/features/auth/actions/login";
 import React from "react";
 import { FormSheet } from "@/components/shared/sheet/sheet";
-import ResetPasswordForm from "@/features/user/components/reset-password-form";
-import UserProfileForm from "@/features/user/components/profile-form";
+import ResetPasswordForm from "@/features/dashboard/components/reset-password-form";
+import UserProfileForm from "@/features/dashboard/components/profile-form";
 import { UserRoleBadge } from "@/components/shared/badge/badge";
 import { Button } from "@/components/ui/button";
 import RoleSelect from "@/components/shared/navbar/role-select";
@@ -159,7 +159,7 @@ const ProfileDropdown = ({
         formTitle="Profile"
       >
         <UserProfileForm
-          prevData={user as AuthUser}
+          employeeId={user?.employeeId ?? ""}
           onClose={() => setOpenProfile(false)}
         />
       </FormSheet>

@@ -16,8 +16,8 @@ import { toast } from "sonner";
 import { FormSheet } from "../sheet/sheet";
 import { AuthUser } from "@/types/auth-user";
 import { userLogout } from "@/features/auth/actions/login";
-import ResetPasswordForm from "@/features/user/components/reset-password-form";
-import UserProfileForm from "@/features/user/components/profile-form";
+import ResetPasswordForm from "@/features/dashboard/components/reset-password-form";
+import UserProfileForm from "@/features/dashboard/components/profile-form";
 
 const ProfileButton = ({ user }: { user: AuthUser }) => {
   const [openProfile, setOpenProfile] = React.useState(false);
@@ -67,7 +67,7 @@ const ProfileButton = ({ user }: { user: AuthUser }) => {
         formTitle="Profile"
       >
         <UserProfileForm
-          prevData={user}
+          employeeId={user.employeeId}
           onClose={() => setOpenProfile(false)}
         />
       </FormSheet>
