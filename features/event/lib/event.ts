@@ -1,7 +1,6 @@
 "use server";
 
 import { db } from "@/config/db";
-import { Prisma } from "@/lib/generated/prisma";
 import { apiResponse } from "@/lib/response";
 import { getCleanData } from "@/utils/formatter";
 import {
@@ -12,6 +11,7 @@ import {
 } from "../actions/schema";
 import { getSerializeData } from "@/utils/helper";
 import { endOfDay, startOfDay } from "date-fns";
+import { Prisma } from "@/lib/generated/prisma/client";
 
 // export type EventMultiProps = Prisma.eventGetPayload<{
 //   include: {

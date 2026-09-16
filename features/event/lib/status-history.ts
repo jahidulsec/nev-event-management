@@ -5,7 +5,7 @@ import {
   EventStatusHistoryQueryType,
 } from "../actions/schema";
 import { db } from "@/config/db";
-import { Prisma } from "@/lib/generated/prisma";
+import { Prisma } from "@/lib/generated/prisma/client";
 
 export type EventStatusHistoryMultiProps =
   Prisma.event_status_historyGetPayload<{

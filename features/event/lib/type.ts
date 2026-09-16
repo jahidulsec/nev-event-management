@@ -1,11 +1,11 @@
 "use server";
 
 import { db } from "@/config/db";
-import { event_type, Prisma } from "@/lib/generated/prisma";
 import { apiResponse } from "@/lib/response";
 import { getCleanData } from "@/utils/formatter";
 import { EventTypeQuerySchema, EventTypeQueryType } from "../actions/schema";
 import { getSerializeData } from "@/utils/helper";
+import { event_type, Prisma } from "@/lib/generated/prisma/client";
 
 export type EventTypeMultiProps = Prisma.event_typeGetPayload<{
   include: { approver: true };
