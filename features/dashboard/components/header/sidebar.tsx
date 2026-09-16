@@ -10,11 +10,19 @@ import NavData from "@/features/dashboard/components/data";
 import { NavGroup } from "@/features/dashboard/components/types";
 import Link from "next/link";
 
-export default function Sidebar({ onLinkClick }: { onLinkClick?: () => void }) {
+export default function Sidebar({
+  onLinkClick,
+  role,
+}: {
+  onLinkClick?: () => void;
+  role?: string;
+}) {
   return (
     <nav className="space-y-1 px-4">
       <Accordion type="single" collapsible className="w-full">
-        {(NavData as NavGroup[]).map((group) => {
+        {(
+          NavData[role === "superadmin" ? "superadmin" : "other"] as NavGroup[]
+        ).map((group) => {
           const GroupIcon = group.icon;
           return (
             <AccordionItem
@@ -34,20 +42,22 @@ export default function Sidebar({ onLinkClick }: { onLinkClick?: () => void }) {
 
               <AccordionContent className="pl-4">
                 <div className="space-y-1">
-                  {group?.items?.length > 0 ? group?.items?.map((item) => {
-                    const ItemIcon = item.icon;
-                    return (
-                      <Link
-                        key={item.label}
-                        href={item.href}
-                        onClick={onLinkClick}
-                        className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground hover:bg-accent hover:text-foreground no-underline!"
-                      >
-                        <ItemIcon size={14} />
-                        <span>{item.label}</span>
-                      </Link>
-                    );
-                  }) : null}
+                  {group?.items?.length > 0
+                    ? group?.items?.map((item) => {
+                        const ItemIcon = item.icon;
+                        return (
+                          <Link
+                            key={item.label}
+                            href={item.href}
+                            onClick={onLinkClick}
+                            className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-foreground hover:bg-accent hover:text-foreground no-underline!"
+                          >
+                            <ItemIcon size={14} />
+                            <span>{item.label}</span>
+                          </Link>
+                        );
+                      })
+                    : null}
                 </div>
               </AccordionContent>
             </AccordionItem>

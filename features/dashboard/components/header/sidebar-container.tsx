@@ -13,7 +13,7 @@ import Link from "next/link";
 import { Menu } from "lucide-react";
 import Sidebar from "./sidebar";
 
-export default function SidebarContainer() {
+export default function SidebarContainer({ role }: { role?: string }) {
   const [sheetOpen, setSheetOpen] = React.useState(false);
 
   return (
@@ -29,7 +29,7 @@ export default function SidebarContainer() {
         <Link href="#" className="p-4 sticky top-0 bg-background z-10">
           <AppLogo width={120} />
         </Link>
-        <Sidebar onLinkClick={() => setSheetOpen(false)} />
+        <Sidebar role={role} onLinkClick={() => setSheetOpen(false)} />
       </SheetContent>
     </Sheet>
   );

@@ -37,7 +37,7 @@ const NotificationSection = async ({ user }: { user: AuthUser }) => {
     const res = await getNotifications({
         page: 1,
         size: 20,
-        work_area_code: user.workAreaCode,
+        work_area_code: user.employeeId,
     });
 
     return (

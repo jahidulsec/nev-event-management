@@ -30,7 +30,7 @@ export default async function Header() {
     <header className="sticky top-0 z-50 border-b bg-background">
       <div className="flex items-center justify-between container mx-auto p-4">
         <div className="flex items-center gap-3">
-          <SidebarContainer />
+          <SidebarContainer role={dashboardRole ?? ""} />
           <div className="flex items-center gap-3">
             <Link href={"/dashboard"}>
               <AppLogo width={100} />

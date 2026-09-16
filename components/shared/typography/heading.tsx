@@ -61,7 +61,7 @@ const SectionHeading2 = ({
   ...props
 }: React.ComponentProps<"h2">) => {
   return (
-    <h2 className={cn("w-full text-2xl font-medium text-secondary  font-heading", className)} {...props} />
+    <h2 className={cn("w-full text-xl font-medium text-secondary  font-heading", className)} {...props} />
   );
 };
 

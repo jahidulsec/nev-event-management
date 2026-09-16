@@ -13,6 +13,14 @@ export const cacheTags = {
   userProductsCount: "user-products-count",
   userAreas: "user-areas",
   userAreasCount: "user-areas-count",
+  events: "events",
+  eventsCount: "events-count",
+  eventApprovers: "event-approvers",
+  eventApproversCount: "event-approvers-count",
+  eventConsultantApprovals: "event-consultant-approvals",
+  eventConsultantApprovalsCount: "event-consultant-approvals-count",
+  eventStatusHistories: "event-status-histories",
+  eventStatusHistoriesCount: "event-status-histories-count",
 } as const;
 
 export type CacheTag = (typeof cacheTags)[keyof typeof cacheTags];
