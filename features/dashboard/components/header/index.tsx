@@ -14,7 +14,6 @@ import Link from "next/link";
 import NotificationDropdown from "./notification-dropdown";
 import ProfileDropdown from "./dropdown-profile";
 import { NavButton, NavDropdown } from "./desktop-nav";
-import RoleSelect from "@/components/shared/navbar/role-select";
 import { getAuthUser, getDashboardRole } from "@/lib/dal";
 import { AuthUser } from "@/types/auth-user";
 import SidebarContainer from "./sidebar-container";
@@ -71,7 +70,11 @@ export default async function Header() {
       <div className="hidden lg:flex items-center justify-start gap-1 px-4 py-2 container mx-auto">
         <NavigationMenu viewport={false}>
           <NavigationMenuList className="flex gap-1">
-            {(NavData as NavGroup[]).map((item) => {
+            {(
+              NavData[
+                role === "superadmin" ? "superadmin" : "other"
+              ] as NavGroup[]
+            ).map((item) => {
               if (item.type === "dropdown") {
                 return (
                   <NavDropdown
