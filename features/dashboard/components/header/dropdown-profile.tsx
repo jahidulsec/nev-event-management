@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactElement } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,15 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Bookmark,
-  LogOut,
-  LucideIcon,
-  ReceiptText,
-  Settings,
-  User,
-  UserLock,
-} from "lucide-react";
+import { LogOut, LucideIcon, Settings, UserLock } from "lucide-react";
 import { AuthUser } from "@/types/auth-user";
 import { toast } from "sonner";
 import { userLogout } from "@/features/auth/actions/login";
@@ -27,12 +19,24 @@ import React from "react";
 import { FormSheet } from "@/components/shared/sheet/sheet";
 import ResetPasswordForm from "@/features/user/components/reset-password-form";
 import UserProfileForm from "@/features/user/components/profile-form";
+import { UserRoleBadge } from "@/components/shared/badge/badge";
+import { Button } from "@/components/ui/button";
+import RoleSelect from "@/components/shared/navbar/role-select";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 type Props = {
   trigger: ReactElement;
   defaultOpen?: boolean;
   align?: "start" | "center" | "end";
   user?: AuthUser;
+  role?: string;
 };
 
 type MenuItem = {
@@ -54,9 +58,11 @@ const ProfileDropdown = ({
   defaultOpen,
   align = "end",
   user,
+  role,
 }: Props) => {
   const [openResetPassword, setResetPassword] = React.useState(false);
   const [openProfile, setOpenProfile] = React.useState(false);
+  const [openRole, setOpenRole] = React.useState(false);
 
   return (
     <>
@@ -78,12 +84,19 @@ const ProfileDropdown = ({
                 <span className="text-foreground text-lg font-semibold">
                   {user?.name}
                 </span>
-                <span className="text-muted-foreground text-sm">
-                  {user?.role}
-                </span>
+                <div className="flex justify-center items-center">
+                  <UserRoleBadge type={role as ""}>{role}</UserRoleBadge>
+                  <Button
+                    size={"xs"}
+                    variant={"outline"}
+                    className="border-dashed"
+                    onClick={() => setOpenRole(true)}
+                  >
+                    Switch Role
+                  </Button>
+                </div>
               </div>
             </DropdownMenuLabel>
-
 
             <DropdownMenuSeparator />
 
@@ -135,7 +148,7 @@ const ProfileDropdown = ({
       >
         <ResetPasswordForm
           onClose={() => setResetPassword(false)}
-          id={user?.workAreaCode ?? ""}
+          id={user?.employeeId ?? ""}
         />
       </FormSheet>
 
@@ -150,6 +163,20 @@ const ProfileDropdown = ({
           onClose={() => setOpenProfile(false)}
         />
       </FormSheet>
+
+      <Dialog open={openRole} onOpenChange={setOpenRole}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Switch your role</DialogTitle>
+          </DialogHeader>
+          <RoleSelect user={user as AuthUser} role={role as string} />
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant={"outline"}>Close</Button>
+            </DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

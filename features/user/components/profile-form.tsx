@@ -27,12 +27,12 @@ export default function UserProfileForm({
     resolver: zodResolver(ProfileSchema),
     defaultValues: {
       full_name: prevData?.name,
-      mobile: prevData?.mobile,
+      mobile: prevData?.email,
     },
   });
 
   async function onSubmit(data: ProfileType) {
-    const res = await updateUserProfile(prevData.workAreaCode, data);
+    const res = await updateUserProfile(prevData.employeeId, data);
     toast[res.success ? "success" : "error"](res.message);
 
     if (res.success) {

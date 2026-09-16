@@ -27,7 +27,7 @@ export default function RoleSelect({
 
   return (
     <Select defaultValue={role ?? user.role[0]} onValueChange={handleRole}>
-      <SelectTrigger className="w-full sm:w-45">
+      <SelectTrigger className="w-full">
         <SelectValue placeholder="Role" />
       </SelectTrigger>
       <SelectContent>

@@ -49,6 +49,7 @@ export default async function Header() {
             }
           />
           <ProfileDropdown
+            role={role}
             user={authUser as AuthUser}
             trigger={
               <div
