@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { cn } from "cn"
+import { cn } from "cn";
 
 import {
   Card,
@@ -8,30 +8,29 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   Field,
   FieldGroup,
   FieldLabel,
-  FieldError
-} from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { Controller, useForm } from "react-hook-form"
-import { LoginSchema, LoginType } from "@/features/auth/actions/schema"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Asterisk } from "lucide-react"
-import { PasswordInput } from "../../../components/shared/inputs/password"
-import { FormButton } from "../../../components/shared/button/button"
-import { AppLogo } from "@/components/shared/logo/app"
-import { useRouter } from "@bprogress/next"
-import { userLogin } from "../actions/login"
-import { toast } from "sonner"
+  FieldError,
+} from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Controller, useForm } from "react-hook-form";
+import { LoginSchema, LoginType } from "@/features/auth/actions/schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Asterisk } from "lucide-react";
+import { PasswordInput } from "../../../components/shared/inputs/password";
+import { FormButton } from "../../../components/shared/button/button";
+import { AppLogo } from "@/components/shared/logo/app";
+import { useRouter } from "@bprogress/next";
+import { userLogin } from "../actions/login";
+import { toast } from "sonner";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-
   const form = useForm<LoginType>({
     resolver: zodResolver(LoginSchema),
     defaultValues: {
@@ -52,7 +51,10 @@ export function LoginForm({
   }
 
   return (
-    <div className={cn("flex flex-col gap-6 w-full max-w-md", className)} {...props}>
+    <div
+      className={cn("flex flex-col gap-6 w-full max-w-md", className)}
+      {...props}
+    >
       <div className="mx-auto">
         <AppLogo width={120} />
       </div>
@@ -68,11 +70,12 @@ export function LoginForm({
             <FieldGroup>
               <Controller
                 control={form.control}
-                name='username'
+                name="username"
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor={field.name}>
-                      Username <Asterisk size={10} className="text-destructive" />
+                      Username{" "}
+                      <Asterisk size={10} className="text-destructive" />
                     </FieldLabel>
                     <Input
                       {...field}
@@ -81,7 +84,9 @@ export function LoginForm({
                       placeholder="Employee ID/Username"
                       autoComplete="off"
                     />
-                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
                   </Field>
                 )}
               />
@@ -91,7 +96,8 @@ export function LoginForm({
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor={field.name}>
-                      Password <Asterisk size={10} className="text-destructive" />
+                      Password{" "}
+                      <Asterisk size={10} className="text-destructive" />
                     </FieldLabel>
                     <PasswordInput
                       {...field}
@@ -100,13 +106,18 @@ export function LoginForm({
                       placeholder="PASSWORD"
                       autoComplete="off"
                     />
-                    {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
                   </Field>
                 )}
               />
               <Field>
-                <FormButton variant={'secondary'} isPending={form.formState.isSubmitting} size={"lg"}>
-                  Login
+                <FormButton
+                  isPending={form.formState.isSubmitting}
+                  className="bg-foreground text-base"
+                >
+                  Sign in
                 </FormButton>
               </Field>
             </FieldGroup>
@@ -114,5 +125,5 @@ export function LoginForm({
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

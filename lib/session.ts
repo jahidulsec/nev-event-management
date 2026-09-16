@@ -57,6 +57,21 @@ export async function saveRole(role: string) {
   });
 }
 
+export async function saveArea(sapAreaCode: string) {
+  const expiresAt = new Date(Date.now() + 1 * 24 * 60 * 60 * 1000);
+  const session = await encrypt({ sapAreaCode, expiresAt });
+
+  const cookie = await cookies()
+
+  cookie.set('area', session, {
+    httpOnly: true,
+    secure: process.env.COOKIE_SECURE === '1',
+    expires: expiresAt,
+    sameSite: 'lax',
+    path: '/',
+  });
+}
+
 export async function deleteSession() {
   const cookie = await cookies()
 

@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { AuthUser } from "@/types/auth-user";
 import Link from "next/link";
 import { ProfileButton } from "../button/profile-button";
-import RoleSelect from "./role-select";
+import RoleSelect from "../../../features/dashboard/components/role-select";
 import { getNotificationStats } from "@/features/notifications/lib/notification";
 import { Badge } from "@/components/ui/badge";
 

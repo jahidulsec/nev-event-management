@@ -1,7 +1,12 @@
 "use server";
 
 import { response } from "@/lib/response";
-import { createSession, deleteSession, saveRole } from "@/lib/session";
+import {
+  createSession,
+  deleteSession,
+  saveArea,
+  saveRole,
+} from "@/lib/session";
 import { isValidPassword } from "@/utils/password";
 import { LoginType } from "./schema";
 import { userService } from "@/services/user";
@@ -20,6 +25,11 @@ export const userLogin = async (data: LoginType) => {
               role: true,
             },
           },
+          users_area: {
+            select: {
+              sap_area_code: true,
+            },
+          },
         },
       },
       cacheOption: {
@@ -30,6 +40,7 @@ export const userLogin = async (data: LoginType) => {
     if (!user) throw new Error("User does not exist");
 
     const userRoles = user.users_role.map((i) => i.role);
+    const userAreaCodes = user.users_area.map((i) => i.sap_area_code);
 
     // check password
     if (!(await isValidPassword(data.password, user.password)))
@@ -41,6 +52,7 @@ export const userLogin = async (data: LoginType) => {
       email: user.email,
       role: userRoles,
       name: user.full_name,
+      sapAreaCodes: userAreaCodes,
     });
 
     // set default role for dashboard
@@ -78,6 +90,21 @@ export const setDashboardRole = async (role: string) => {
     return response({
       success: true,
       message: "Dashboard role is switch to " + role,
+    });
+  } catch (error) {
+    return response({
+      success: false,
+      message: (error as Error).message ?? "Something went wrong",
+    });
+  }
+};
+
+export const setDashboardArea = async (sapAreaCode: string) => {
+  try {
+    await saveArea(sapAreaCode);
+    return response({
+      success: true,
+      message: "Dashboard area is switch to " + sapAreaCode,
     });
   } catch (error) {
     return response({

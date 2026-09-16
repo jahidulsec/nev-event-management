@@ -3,6 +3,7 @@ export type AuthUser = {
   name: string;
   email: string;
   role: AuthUserRole[];
+  sapAreaCodes?: string[];
 };
 
 export type AuthUserRole = string;

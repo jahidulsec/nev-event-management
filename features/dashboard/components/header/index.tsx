@@ -14,15 +14,17 @@ import Link from "next/link";
 import NotificationDropdown from "./notification-dropdown";
 import ProfileDropdown from "./dropdown-profile";
 import { NavButton, NavDropdown } from "./desktop-nav";
-import { getAuthUser, getDashboardRole } from "@/lib/dal";
+import { getAuthUser, getDashboardArea, getDashboardRole } from "@/lib/dal";
 import { AuthUser } from "@/types/auth-user";
 import SidebarContainer from "./sidebar-container";
 
 export default async function Header() {
   const authUser = await getAuthUser();
   const dashboardRole = await getDashboardRole();
+  const dashboardArea = await getDashboardArea();
 
   const role = dashboardRole as string;
+  const area = dashboardArea as string;
 
   return (
     <header className="sticky top-0 z-50 border-b bg-background">
@@ -33,8 +35,6 @@ export default async function Header() {
             <Link href={"/dashboard"}>
               <AppLogo width={100} />
             </Link>
-
-            {/* <RoleSelect role={role} user={authUser as AuthUser} /> */}
           </div>
         </div>
 
@@ -51,6 +51,7 @@ export default async function Header() {
           <ProfileDropdown
             role={role}
             user={authUser as AuthUser}
+            area={area}
             trigger={
               <div
                 id="profile-dropdown-trigger"

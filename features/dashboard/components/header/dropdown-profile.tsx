@@ -21,7 +21,7 @@ import ResetPasswordForm from "@/features/dashboard/components/reset-password-fo
 import UserProfileForm from "@/features/dashboard/components/profile-form";
 import { UserRoleBadge } from "@/components/shared/badge/badge";
 import { Button } from "@/components/ui/button";
-import RoleSelect from "@/components/shared/navbar/role-select";
+import RoleSelect from "@/features/dashboard/components/role-select";
 import {
   Dialog,
   DialogClose,
@@ -30,6 +30,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import AreaSelect from "../area-select";
+import { Field, FieldLabel } from "@/components/ui/field";
+import { Badge } from "@/components/ui/badge";
 
 type Props = {
   trigger: ReactElement;
@@ -37,6 +40,7 @@ type Props = {
   align?: "start" | "center" | "end";
   user?: AuthUser;
   role?: string;
+  area?: string;
 };
 
 type MenuItem = {
@@ -53,12 +57,17 @@ const LOGOUT_ITEM: MenuItem = {
 
 const itemClass = "px-4 py-2.5 text-base cursor-pointer gap-3";
 
+const areaScopeRole = ["flm", "slm", "franchise_head"];
+
+const allowArea = (role: string) => areaScopeRole.some((i) => i === role);
+
 const ProfileDropdown = ({
   trigger,
   defaultOpen,
   align = "end",
   user,
   role,
+  area,
 }: Props) => {
   const [openResetPassword, setResetPassword] = React.useState(false);
   const [openProfile, setOpenProfile] = React.useState(false);
@@ -86,13 +95,16 @@ const ProfileDropdown = ({
                 </span>
                 <div className="flex justify-center items-center">
                   <UserRoleBadge type={role as ""}>{role}</UserRoleBadge>
+                  {allowArea(role ?? "") && area && (
+                    <Badge variant={"outline"}>{area}</Badge>
+                  )}
                   <Button
                     size={"xs"}
                     variant={"outline"}
                     className="border-dashed"
                     onClick={() => setOpenRole(true)}
                   >
-                    Switch Role
+                    Switch
                   </Button>
                 </div>
               </div>
@@ -169,7 +181,19 @@ const ProfileDropdown = ({
           <DialogHeader>
             <DialogTitle>Switch your role</DialogTitle>
           </DialogHeader>
-          <RoleSelect user={user as AuthUser} role={role as string} />
+          <Field>
+            <FieldLabel>Role</FieldLabel>
+            <RoleSelect user={user as AuthUser} role={role as string} />
+          </Field>
+          {allowArea(role ?? "") && (
+            <Field>
+              <FieldLabel>Area</FieldLabel>
+              <AreaSelect
+                user={user as AuthUser}
+                sapAreaCode={area as string}
+              />
+            </Field>
+          )}
           <DialogFooter>
             <DialogClose asChild>
               <Button variant={"outline"}>Close</Button>
