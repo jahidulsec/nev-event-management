@@ -6,7 +6,7 @@ import {
   NavigationMenuLink,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import { NavItem } from "@/components/dashboard/types";
+import { NavItem } from "@/features/dashboard/components/types";
 import Link from "next/link";
 
 export function NavDropdown({

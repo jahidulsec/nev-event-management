@@ -1,14 +1,4 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { BellRing, Menu } from "lucide-react";
+import { BellRing } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   NavigationMenu,
@@ -17,45 +7,36 @@ import {
   NavigationMenuLink,
 } from "@/components/ui/navigation-menu";
 
-import NotificationDropdown from "@/components/dashboard/header/notification-dropdown";
-import ProfileDropdown from "@/components/dashboard/header/dropdown-profile";
-import Sidebar from "@/components/dashboard/header/sidebar";
-import { NavDropdown, NavButton } from "@/components/dashboard/header/desktop-nav";
-import NavData from "@/components/dashboard/data";
-import { NavGroup } from "@/components/dashboard/types";
+import NavData from "@/features/dashboard/components/data";
+import { NavGroup } from "@/features/dashboard/components/types";
 import { AppLogo } from "@/components/shared/logo/app";
 import Link from "next/link";
+import NotificationDropdown from "./notification-dropdown";
+import ProfileDropdown from "./dropdown-profile";
+import { NavButton, NavDropdown } from "./desktop-nav";
+import RoleSelect from "@/components/shared/navbar/role-select";
+import { getAuthUser, getDashboardRole } from "@/lib/dal";
+import { AuthUser } from "@/types/auth-user";
+import SidebarContainer from "./sidebar-container";
 
-export default function Header() {
-  const [sheetOpen, setSheetOpen] = useState(false);
-  const BREAKPOINT = 1024;
+export default async function Header() {
+  const authUser = await getAuthUser();
+  const dashboardRole = await getDashboardRole();
 
+  const role = dashboardRole as string;
 
   return (
     <header className="sticky top-0 z-50 border-b bg-background">
       <div className="flex items-center justify-between container mx-auto p-4">
         <div className="flex items-center gap-3">
-          <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-            <SheetTrigger
-              id="mobile-sidebar-trigger"
-              className="lg:hidden"
-              asChild
-            >
-              <Button variant="ghost" size="icon" className="cursor-pointer">
-                <Menu size={20} />
-              </Button>
-            </SheetTrigger>
+          <SidebarContainer />
+          <div className="flex items-center gap-3">
+            <Link href={"/dashboard"}>
+              <AppLogo width={100} />
+            </Link>
 
-            <SheetContent side="left" className="overflow-auto w-75!">
-              <SheetTitle className="sr-only">customizer</SheetTitle>
-              <Link href="#" className="p-4 sticky top-0 bg-background z-10">
-                <AppLogo width={120} />
-              </Link>
-              <Sidebar onLinkClick={() => setSheetOpen(false)} />
-            </SheetContent>
-          </Sheet>
-
-          <AppLogo width={100} />
+            {/* <RoleSelect role={role} user={authUser as AuthUser} /> */}
+          </div>
         </div>
 
         <div className="flex items-center gap-2">
@@ -69,14 +50,14 @@ export default function Header() {
             }
           />
           <ProfileDropdown
+            user={authUser as AuthUser}
             trigger={
               <div
                 id="profile-dropdown-trigger"
                 className="rounded-full cursor-pointer"
               >
                 <Avatar className="size-7 rounded-full">
-                  <AvatarImage src="https://images.shadcnspace.com/assets/profiles/user-11.jpg" />
-                  <AvatarFallback>NJ</AvatarFallback>
+                  <AvatarFallback>{authUser?.name.charAt(0)}</AvatarFallback>
                 </Avatar>
               </div>
             }
@@ -88,7 +69,7 @@ export default function Header() {
 
       {/* NAVIGATION BAR */}
       <div className="hidden lg:flex items-center justify-start gap-1 px-4 py-2 container mx-auto">
-        <NavigationMenu viewport={false} >
+        <NavigationMenu viewport={false}>
           <NavigationMenuList className="flex gap-1">
             {(NavData as NavGroup[]).map((item) => {
               if (item.type === "dropdown") {
@@ -105,7 +86,11 @@ export default function Header() {
               return (
                 <NavigationMenuItem key={item.label}>
                   <NavigationMenuLink asChild>
-                    <NavButton label={item.label} icon={item.icon} href={item.href} />
+                    <NavButton
+                      label={item.label}
+                      icon={item.icon}
+                      href={item.href}
+                    />
                   </NavigationMenuLink>
                 </NavigationMenuItem>
               );

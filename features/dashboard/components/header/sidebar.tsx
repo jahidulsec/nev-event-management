@@ -6,8 +6,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import NavData from "@/components/dashboard/data";
-import { NavGroup } from "@/components/dashboard/types";
+import NavData from "@/features/dashboard/components/data";
+import { NavGroup } from "@/features/dashboard/components/types";
 import Link from "next/link";
 
 export default function Sidebar({ onLinkClick }: { onLinkClick?: () => void }) {

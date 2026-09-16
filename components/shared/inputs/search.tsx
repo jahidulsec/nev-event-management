@@ -57,7 +57,7 @@ function Search({
       />
       <Label
         htmlFor="search"
-        className="absolute top-[50%] -translate-y-[50%] left-3 text-muted-foreground/50"
+        className="absolute top-[50%] -translate-y-1/2 left-3 text-muted-foreground/50"
       >
         <SearchIcon size={16} />
       </Label>

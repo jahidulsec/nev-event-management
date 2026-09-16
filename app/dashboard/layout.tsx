@@ -1,5 +1,5 @@
-import Header from "@/components/dashboard/header";
 import { Footer } from "@/components/shared/footer/footer";
+import Header from "@/features/dashboard/components/header";
 import { getAuthUser } from "@/lib/dal";
 import { redirect } from "next/navigation";
 import React from "react";
@@ -9,8 +9,8 @@ export default async function AdminLayout({
 }: React.PropsWithChildren) {
   const user = await getAuthUser();
 
-  if (!!user && !user?.role.includes("superadmin")) redirect("/login");
-  
+  if (!user) redirect("/login");
+
   return (
     <div className="min-h-screen bg-background relative">
       <Header />
