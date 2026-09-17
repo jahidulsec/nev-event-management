@@ -30,7 +30,7 @@ export default function UserPage({
 
         <SectionActions>
           <ExcelUploadButton action={upsertUsers as any} />
-          <DownloadButton filePath="" />
+          <DownloadButton filePath="/public/templates/user_template.xlsx" />
           <CreateUserButton />
         </SectionActions>
       </SectionHeader>
