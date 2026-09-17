@@ -1,7 +1,7 @@
 "use server"
 
 import { db } from "@/config/db";
-import { Prisma } from "@/lib/generated/prisma";
+import { Prisma } from "@/lib/generated/prisma/client";
 import { apiResponse } from "@/lib/response"
 import { QuerySchema, QuerySchemaType } from "@/schemas/query"
 

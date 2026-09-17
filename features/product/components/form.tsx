@@ -1,6 +1,6 @@
 "use client";
 
-import { product } from "@/lib/generated/prisma";
+import { product } from "@/lib/generated/prisma/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { createProduct, updateProduct } from "../actions/product";

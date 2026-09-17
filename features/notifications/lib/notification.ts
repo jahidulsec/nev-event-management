@@ -1,7 +1,7 @@
 "use server";
 
 import { apiResponse } from "@/lib/response";
-import { Prisma } from "@/lib/generated/prisma";
+import { Prisma } from "@/lib/generated/prisma/client";
 import { db } from "@/config/db";
 import {
   NotificaitonQuerySchema,

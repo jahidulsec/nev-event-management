@@ -2,7 +2,7 @@
 
 import AlertModal from "@/components/shared/alert-dialog/alert-dialog";
 import { DataTable } from "@/components/shared/table/data-table";
-import { product } from "@/lib/generated/prisma";
+import { product } from "@/lib/generated/prisma/client";
 import { deleteToastTemplate } from "@/lib/template";
 import { formatDate } from "@/utils/formatter";
 import { ColumnDef } from "@tanstack/react-table";

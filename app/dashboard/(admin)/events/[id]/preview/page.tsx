@@ -21,7 +21,7 @@ import { getEvent } from "@/features/event/lib/event";
 import { getEventStatusHistories } from "@/features/event/lib/status-history";
 import { getAuthUser, getDashboardRole } from "@/lib/dal";
 import { getApproverEventStatus } from "@/lib/event";
-import { event_current_status } from "@/lib/generated/prisma";
+import { event_current_status } from "@/lib/generated/prisma/client";
 import { AuthUser } from "@/types/auth-user";
 import { Params } from "@/types/search-params";
 import { QuoteIcon } from "lucide-react";

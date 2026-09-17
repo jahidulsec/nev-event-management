@@ -2,7 +2,7 @@ import { SectionContent } from "@/components/shared/section/section";
 import { SectionHeading2 } from "@/components/shared/typography/heading";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { event_current_status } from "@/lib/generated/prisma";
+import { event_current_status } from "@/lib/generated/prisma/client";
 import Link from "next/link";
 
 export function EventStatusSection({

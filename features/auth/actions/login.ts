@@ -13,7 +13,8 @@ import { userService } from "@/services/user";
 
 export const userLogin = async (data: LoginType) => {
   try {
-    // check user
+    // check user; never cached so credential and role/area changes take
+    // effect immediately on the next login attempt
     const user = await userService.getUserUniq({
       filter: {
         employee_id: data.username,
@@ -33,7 +34,7 @@ export const userLogin = async (data: LoginType) => {
         },
       },
       cacheOption: {
-        revalidate: "off",
+        cache: false,
       },
     });
 

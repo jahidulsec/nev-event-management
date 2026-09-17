@@ -1,6 +1,6 @@
 "use client";
 
-import { event_type } from "@/lib/generated/prisma";
+import { event_type } from "@/lib/generated/prisma/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";

@@ -1,5 +1,5 @@
 import { Badge, BadgeProps } from "@/components/ui/badge";
-import { approver_type } from "@/lib/generated/prisma";
+import { approver_type } from "@/lib/generated/prisma/client";
 import { cn } from "@/lib/utils";
 import { cva, VariantProps } from "class-variance-authority";
 import React from "react";

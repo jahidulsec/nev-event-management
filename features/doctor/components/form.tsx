@@ -1,6 +1,6 @@
 "use client";
 
-import { doctor } from "@/lib/generated/prisma";
+import { doctor } from "@/lib/generated/prisma/client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { DoctorSchema, DoctorType } from "../actions/schema";

@@ -1,7 +1,7 @@
 "use server"
 
 import { db } from "@/config/db"
-import { approver } from "@/lib/generated/prisma"
+import { approver } from "@/lib/generated/prisma/client"
 import { apiResponse } from "@/lib/response"
 
 export const getApproverList = async (eventTypeId: string) => {

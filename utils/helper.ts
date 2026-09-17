@@ -3,7 +3,7 @@ import {
   event_budget,
   event_consultant,
   honorarium_calculation,
-} from "@/lib/generated/prisma";
+} from "@/lib/generated/prisma/client";
 import { AuthUserRole } from "@/types/auth-user";
 import { formatNumber } from "./formatter";
 import { EventTypeMultiProps } from "@/features/event/lib/type";

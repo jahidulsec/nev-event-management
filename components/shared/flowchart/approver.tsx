@@ -1,6 +1,6 @@
 "use client"
 
-import { approver, approver_type } from "@/lib/generated/prisma";
+import { approver, approver_type } from "@/lib/generated/prisma/client";
 import { ApproverTypeBadge } from "../badge/badge";
 import { NoData } from "../state/state";
 import React from "react";

@@ -1,6 +1,6 @@
 "use client";
 
-import { event_current_status } from "@/lib/generated/prisma";
+import { event_current_status } from "@/lib/generated/prisma/client";
 import { cn } from "@/lib/utils";
 import { formatDate, formatDateTime, getTitleCase } from "@/utils/formatter";
 import { SquareCheck, SquareX } from "lucide-react";

@@ -69,6 +69,8 @@ export type ServerCacheOptions = {
   tags?: string | string[];
   /** A named preset or a raw seconds value / `false`. Defaults to `"short"`. */
   revalidate?: CachePreset | number | false;
+  /** Skip caching entirely and call the underlying read fresh. Defaults to `true`. */
+  cache?: boolean;
 };
 
 export function serverCache<Args extends unknown[], Result>(
@@ -115,6 +117,9 @@ export const buildCacheOptions = (
 /**
  * Wrap a read in `serverCache` with the standard key/tag shape and run it.
  *
+ * Pass `cacheOption: { cache: false }` to skip caching entirely and read fresh
+ * (e.g. for auth checks where a stale/cached row would be a correctness issue).
+ *
  * @example
  * const user = await cachedRead(
  *   () => mariadb.spd_user.findUnique({ where: filter }) as Promise<User | null>,
@@ -129,7 +134,9 @@ export const cachedRead = <Result>(
   keyParts: KeyPart[],
   cacheOption?: ServerCacheOptions,
 ): Promise<Result> =>
-  serverCache(fn, buildCacheOptions(baseTag, keyParts, cacheOption))();
+  cacheOption?.cache === false
+    ? fn()
+    : serverCache(fn, buildCacheOptions(baseTag, keyParts, cacheOption))();
 
 /**
  * Run a write, then bust every provided tag (falsy entries are skipped so
