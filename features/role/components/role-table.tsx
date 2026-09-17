@@ -15,6 +15,7 @@ import React from "react";
 import { deleteRole } from "../actions/role";
 import { TableActionButton } from "@/components/shared/button/button";
 import RoleForm from "./role-form";
+import { UserRoleBadge } from "@/components/shared/badge/badge";
 
 export default function RoleTable({ data }: { data: role[] }) {
   const [edit, setEdit] = React.useState<role | boolean>(false);
@@ -25,7 +26,15 @@ export default function RoleTable({ data }: { data: role[] }) {
 
   const columns: ColumnDef<role>[] = [
     serialColumn,
-    { accessorKey: "role", header: "Role" },
+    {
+      accessorKey: "role",
+      header: "Role",
+      cell: ({ row }) => (
+        <UserRoleBadge type={row.original.role}>
+          {row.original.role}
+        </UserRoleBadge>
+      ),
+    },
     {
       accessorKey: "created_at",
       header: "Created At",

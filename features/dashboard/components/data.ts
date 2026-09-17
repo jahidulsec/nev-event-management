@@ -11,6 +11,8 @@ import {
   Pill,
   LandPlot,
   Grid2X2Plus,
+  ShieldCheck,
+  Key,
 } from "lucide-react";
 
 const NavData = {
@@ -34,7 +36,6 @@ const NavData = {
       icon: UserPen,
       items: [
         { label: "Users", icon: Users2, href: "/dashboard/users" },
-        { label: "Role", icon: Flag, href: "/dashboard/role" },
         {
           label: "User-Relation",
           icon: Waypoints,
@@ -50,6 +51,15 @@ const NavData = {
         { label: "Doctors", icon: Stethoscope, href: "/dashboard/doctors" },
         { label: "Product", icon: Pill, href: "/dashboard/products" },
         { label: "Area", icon: LandPlot, href: "/dashboard/area" },
+      ],
+    },
+    {
+      type: "dropdown",
+      label: "Administration",
+      icon: ShieldCheck,
+      items: [
+        { label: "Roles", icon: Flag, href: "/dashboard/role" },
+        { label: "Permissions", icon: Key, href: "/dashboard/permissions" },
       ],
     },
   ],

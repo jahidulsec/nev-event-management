@@ -109,7 +109,7 @@ const ViewButtonGroup = () => {
   );
 };
 
-const tableButtonVariants = cva("rounded-full", {
+const tableButtonVariants = cva("rounded-full border-0 shadow-none bg-muted/75", {
   variants: {
     variant: {
       default: "",
