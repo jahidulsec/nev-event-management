@@ -123,6 +123,36 @@ const updateEventConsultant = async <
     ],
   );
 
+const upsertEventConsultant = async <
+  T extends Prisma.event_consultantsDefaultArgs,
+>({
+  data,
+  options,
+  filter,
+  revalidateTags,
+}: {
+  filter: Prisma.event_consultantsWhereUniqueInput;
+  data:
+    | Prisma.event_consultantsCreateInput
+    | Prisma.event_consultantsUncheckedCreateInput;
+  options?: Prisma.SelectSubset<T, Prisma.event_consultantsDefaultArgs>;
+  revalidateTags?: string[];
+}): Promise<Prisma.event_consultantsGetPayload<T> | null> =>
+  mutate(
+    async () =>
+      (await db.event_consultants.upsert({
+        where: filter,
+        create: data,
+        update: data,
+        ...(options as Prisma.event_consultantsDefaultArgs),
+      })) as Prisma.event_consultantsGetPayload<T> | null,
+    [
+      cacheTags.eventConsultants,
+      cacheTags.eventConsultantsCount,
+      ...(revalidateTags ?? []),
+    ],
+  );
+
 const deleteEventConsultant = async <
   T extends Prisma.event_consultantsDefaultArgs,
 >({
@@ -147,11 +177,29 @@ const deleteEventConsultant = async <
     ],
   );
 
+const deleteEventConsultants = async ({
+  filter,
+  revalidateTags,
+}: {
+  filter: Prisma.event_consultantsWhereInput;
+  revalidateTags?: string[];
+}): Promise<Prisma.BatchPayload> =>
+  mutate(
+    async () => await db.event_consultants.deleteMany({ where: filter }),
+    [
+      cacheTags.eventConsultants,
+      cacheTags.eventConsultantsCount,
+      ...(revalidateTags ?? []),
+    ],
+  );
+
 export const eventConsultantService = {
   getEventConsultantUniq,
   getEventConsultantCount,
   getEventConsultants,
   createEventConsultant,
   updateEventConsultant,
+  upsertEventConsultant,
   deleteEventConsultant,
+  deleteEventConsultants,
 };

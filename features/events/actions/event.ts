@@ -1,7 +1,5 @@
 "use server";
 
-import { db } from "@/config/db";
-import { Prisma } from "@/lib/generated/prisma/client";
 import { saveFilesToStorage } from "@/lib/file";
 import { apiResponse } from "@/lib/response";
 import { cacheTags } from "@/lib/server-cache";
@@ -14,6 +12,9 @@ import {
   UpdateEventPayloadType,
 } from "@/features/events/schemas/events";
 import { eventService } from "@/services/events";
+import { eventBudgetService } from "@/services/event-budgets";
+import { eventConsultantService } from "@/services/event-consultants";
+import { eventAttachmentService } from "@/services/event-attachments";
 import { updateTag } from "next/cache";
 
 export const createEvent = async (data: CreateEventPayloadType) => {
@@ -158,10 +159,9 @@ export const updateEvent = async (id: string, data: UpdateEventPayloadType) => {
       event_id: _budgetEventId,
       ...budgetData
     } of eventBudget) {
-      await db.event_budgets.upsert({
-        where: { id: budgetId ?? "" },
-        create: { ...budgetData, event_id: id },
-        update: budgetData,
+      await eventBudgetService.upsertEventBudget({
+        filter: { id: budgetId ?? "" },
+        data: { ...budgetData, event_id: id },
       });
     }
 
@@ -172,8 +172,8 @@ export const updateEvent = async (id: string, data: UpdateEventPayloadType) => {
       .filter((budgetId) => !incomingBudgetIds.includes(budgetId));
 
     if (budgetIdsToDelete.length) {
-      await db.event_budgets.deleteMany({
-        where: { id: { in: budgetIdsToDelete } },
+      await eventBudgetService.deleteEventBudgets({
+        filter: { id: { in: budgetIdsToDelete } },
       });
     }
 
@@ -183,13 +183,9 @@ export const updateEvent = async (id: string, data: UpdateEventPayloadType) => {
       event_id: _consultantEventId,
       ...consultantData
     } of eventConsultant) {
-      await db.event_consultants.upsert({
-        where: { id: consultantId ?? "" },
-        create: {
-          ...consultantData,
-          event_id: id,
-        } as Prisma.event_consultantsUncheckedCreateInput,
-        update: consultantData,
+      await eventConsultantService.upsertEventConsultant({
+        filter: { id: consultantId ?? "" },
+        data: { ...consultantData, event_id: id },
       });
     }
 
@@ -200,8 +196,8 @@ export const updateEvent = async (id: string, data: UpdateEventPayloadType) => {
       .filter((consultantId) => !incomingConsultantIds.includes(consultantId));
 
     if (consultantIdsToDelete.length) {
-      await db.event_consultants.deleteMany({
-        where: { id: { in: consultantIdsToDelete } },
+      await eventConsultantService.deleteEventConsultants({
+        filter: { id: { in: consultantIdsToDelete } },
       });
     }
 
@@ -230,10 +226,9 @@ export const updateEvent = async (id: string, data: UpdateEventPayloadType) => {
         ? savedAttachmentFiles[attachmentFileIndex++].filePath
         : (file_path as string);
 
-      await db.event_attachments.upsert({
-        where: { id: attachmentId ?? "" },
-        create: { ...attachmentData, event_id: id, file_path: newFilePath },
-        update: { ...attachmentData, file_path: newFilePath },
+      await eventAttachmentService.upsertEventAttachment({
+        filter: { id: attachmentId ?? "" },
+        data: { ...attachmentData, event_id: id, file_path: newFilePath },
       });
 
       // delete previous file when it is replaced by a new upload
@@ -249,8 +244,8 @@ export const updateEvent = async (id: string, data: UpdateEventPayloadType) => {
     );
 
     if (attachmentsToDelete.length) {
-      await db.event_attachments.deleteMany({
-        where: { id: { in: attachmentsToDelete.map((item) => item.id) } },
+      await eventAttachmentService.deleteEventAttachments({
+        filter: { id: { in: attachmentsToDelete.map((item) => item.id) } },
       });
 
       for (const attachment of attachmentsToDelete) {
