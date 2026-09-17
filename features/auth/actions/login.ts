@@ -39,6 +39,7 @@ export const userLogin = async (data: LoginType) => {
     });
 
     if (!user) throw new Error("User does not exist");
+    if (user.status === "inactive") throw new Error("You do not have permission");
 
     const userRoles = user.users_role.map((i) => i.role);
     const userAreaCodes = user.users_area.map((i) => i.sap_area_code);
