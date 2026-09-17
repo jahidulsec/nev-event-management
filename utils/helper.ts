@@ -9,7 +9,7 @@ import { formatNumber } from "./formatter";
 import { EventTypeMultiProps } from "@/features/event/lib/type";
 
 export function getPageData(title: string, role: AuthUserRole) {
-  return navlist[role as "superadmin"].find(
+  return navlist?.[role as "superadmin"]?.find(
     (i) => i.title.toLowerCase() === title.toLowerCase(),
   );
 }
