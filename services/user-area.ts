@@ -77,9 +77,11 @@ const getUserAreaCount = async ({
 const createUserArea = async <T extends Prisma.users_areaDefaultArgs>({
   data,
   options,
+  revalidateTags,
 }: {
   data: Prisma.users_areaCreateInput | Prisma.users_areaUncheckedCreateInput;
   options?: Prisma.SelectSubset<T, Prisma.users_areaDefaultArgs>;
+  revalidateTags?: string[];
 }): Promise<Prisma.users_areaGetPayload<T> | null> =>
   mutate(
     async () =>
@@ -87,7 +89,7 @@ const createUserArea = async <T extends Prisma.users_areaDefaultArgs>({
         data,
         ...(options as Prisma.users_areaDefaultArgs),
       })) as Prisma.users_areaGetPayload<T> | null,
-    [cacheTags.userAreas, cacheTags.userAreasCount],
+    [cacheTags.userAreas, cacheTags.userAreasCount, ...(revalidateTags ?? [])],
   );
 
 const updateUserArea = async <T extends Prisma.users_areaDefaultArgs>({
@@ -106,6 +108,28 @@ const updateUserArea = async <T extends Prisma.users_areaDefaultArgs>({
       (await db.users_area.update({
         where: filter,
         data,
+        ...(options as Prisma.users_areaDefaultArgs),
+      })) as Prisma.users_areaGetPayload<T> | null,
+    [cacheTags.userAreas, cacheTags.userAreasCount, ...(revalidateTags ?? [])],
+  );
+
+const upsetUserArea = async <T extends Prisma.users_areaDefaultArgs>({
+  data,
+  options,
+  filter,
+  revalidateTags,
+}: {
+  filter: Prisma.users_areaWhereUniqueInput;
+  data: Prisma.users_areaCreateInput | Prisma.users_areaUncheckedCreateInput;
+  options?: Prisma.SelectSubset<T, Prisma.users_areaDefaultArgs>;
+  revalidateTags?: string[];
+}): Promise<Prisma.users_areaGetPayload<T> | null> =>
+  mutate(
+    async () =>
+      (await db.users_area.upsert({
+        where: filter,
+        create: data,
+        update: data,
         ...(options as Prisma.users_areaDefaultArgs),
       })) as Prisma.users_areaGetPayload<T> | null,
     [cacheTags.userAreas, cacheTags.userAreasCount, ...(revalidateTags ?? [])],
@@ -136,4 +160,5 @@ export const userAreaService = {
   createUserArea,
   updateUserArea,
   deleteUserArea,
+  upsetUserArea,
 };

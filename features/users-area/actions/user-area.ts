@@ -3,6 +3,8 @@
 import { apiResponse } from "@/lib/response";
 import {
   CreateUserAreaDTOType,
+  createUserAreasDTOSchema,
+  CreateUserAreasDTOType,
   UpdateUserAreaDTOType,
 } from "@/features/users-area/schema/schema";
 import { userAreaService } from "@/services/user-area";
@@ -50,6 +52,41 @@ export const deleteUserArea = async (id: string) => {
       message: "User area deleted successfully",
     });
   } catch (error) {
+    return apiResponse.error({ error });
+  }
+};
+
+export const upsertUserAreas = async (data: CreateUserAreasDTOType) => {
+  try {
+    const validatedData = createUserAreasDTOSchema.parse(data);
+
+    if (validatedData.length === 0)
+      throw new Error("No user area data included");
+
+    for (const i of validatedData) {
+      const { employee_id, sap_area_code } = i;
+
+      await userAreaService.upsetUserArea({
+        filter: {
+          sap_area_code_employee_id: {
+            employee_id,
+            sap_area_code,
+          },
+        },
+
+        data: {
+          employee_id,
+          sap_area_code,
+        },
+      });
+    }
+
+    return apiResponse.single({
+      data: null,
+      message: "User areas created successfully",
+    });
+  } catch (error) {
+    console.log(error);
     return apiResponse.error({ error });
   }
 };

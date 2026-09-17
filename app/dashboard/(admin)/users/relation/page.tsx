@@ -1,4 +1,6 @@
 import { ErrorBoundary } from "@/components/shared/boundary/error-boundary";
+import { DownloadButton } from "@/components/shared/button/download";
+import { ExcelUploadButton } from "@/components/shared/button/excel-upload";
 import { SearchForm } from "@/components/shared/inputs/search";
 import PagePagination from "@/components/shared/pagination/pagination";
 import {
@@ -10,6 +12,7 @@ import {
 import { TableSkeleton } from "@/components/shared/skeleton/table";
 import { SectionHeading } from "@/components/shared/typography/heading";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { upsertUserAreas } from "@/features/users-area/actions/user-area";
 import CreateUserAreaButton from "@/features/users-area/components/create-button";
 import UserAreaTable from "@/features/users-area/components/table";
 import { getUserAreas } from "@/features/users-area/libs/user-area";
@@ -42,7 +45,12 @@ export default async function UserRelationPage({
             <SectionContent className="mt-4">
               <SectionHeader>
                 <SearchForm />
-                <CreateUserAreaButton />
+
+                <SectionActions>
+                  <ExcelUploadButton action={upsertUserAreas as any} />
+                  <DownloadButton filePath="/public/templates/user_area_template.xlsx" />
+                  <CreateUserAreaButton />
+                </SectionActions>
               </SectionHeader>
 
               <React.Suspense fallback={<TableSkeleton />}>
