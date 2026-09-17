@@ -50,7 +50,7 @@ export const upsertUsers = async (data: CreateUsersDTOType) => {
         data: {
           ...rest,
           password: await hashPassword(
-            rest.password ?? process.env.DATABASE_PASSWORD!,
+            rest.password ?? process.env.DEFAULT_PASSWORD!,
           ),
           users_role: {
             createMany: {
