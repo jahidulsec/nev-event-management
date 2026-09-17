@@ -1,7 +1,10 @@
 import { yesNoEnum } from "@/schemas/common";
 import { QuerySchema } from "@/schemas/query";
 import z from "zod";
-import { createEventAttachmentDTOSchema } from "./event-attachments";
+import {
+  createEventAttachmentDTOSchema,
+  eventAttachmentBaseSchema,
+} from "./event-attachments";
 import { createEventBudgetDTOSchema } from "./event-budgets";
 import { createEventConsultantDTOSchema } from "./event-consultants";
 
@@ -111,6 +114,33 @@ export const createEventPayloadSchema = createEventDTOSchema.extend({
   eventAttachment: z.array(createEventAttachmentDTOSchema).optional().default([]),
 });
 
+export const updateEventPayloadSchema = updateEventDTOSchema.extend({
+  eventBudget: z
+    .array(createEventBudgetDTOSchema.extend({ id: z.string().optional() }))
+    .optional()
+    .default([]),
+  eventConsultant: z
+    .array(createEventConsultantDTOSchema.extend({ id: z.string().optional() }))
+    .optional()
+    .default([]),
+  eventAttachment: z
+    .array(
+      eventAttachmentBaseSchema
+        .extend({ id: z.string().optional() })
+        .superRefine((data, ctx) => {
+          if (!data.file_path && !data.file) {
+            ctx.addIssue({
+              path: ["file"],
+              message: "File is required",
+              code: z.ZodIssueCode.custom,
+            });
+          }
+        }),
+    )
+    .optional()
+    .default([]),
+});
+
 export const eventQuerySchema = QuerySchema.extend({
   employee_id: z.string().optional(),
   sap_area_code: z.string().optional(),
@@ -137,5 +167,6 @@ export const eventExportQuerySchema = eventQuerySchema.omit({
 export type CreateEventDTOType = z.infer<typeof createEventDTOSchema>;
 export type UpdateEventDTOType = z.infer<typeof updateEventDTOSchema>;
 export type CreateEventPayloadType = z.infer<typeof createEventPayloadSchema>;
+export type UpdateEventPayloadType = z.infer<typeof updateEventPayloadSchema>;
 export type EventQueryType = z.infer<typeof eventQuerySchema>;
 export type EventExportQueryType = z.infer<typeof eventExportQuerySchema>;

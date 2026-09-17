@@ -1,7 +1,7 @@
 import { QuerySchema } from "@/schemas/query";
 import z from "zod";
 
-const eventAttachmentBaseSchema = z.object({
+export const eventAttachmentBaseSchema = z.object({
   event_id: z.string("Select an event").optional(),
 
   document_title: z

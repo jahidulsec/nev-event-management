@@ -1,15 +1,20 @@
 "use server";
 
 import { db } from "@/config/db";
+import { Prisma } from "@/lib/generated/prisma/client";
 import { saveFilesToStorage } from "@/lib/file";
 import { apiResponse } from "@/lib/response";
 import { cacheTags } from "@/lib/server-cache";
+import { deleteFile } from "@/utils/file";
 import { generateTrackingID } from "@/utils/tracking-id";
 import {
   createEventPayloadSchema,
   CreateEventPayloadType,
+  updateEventPayloadSchema,
+  UpdateEventPayloadType,
 } from "@/features/events/schemas/events";
 import { eventService } from "@/services/events";
+import { updateTag } from "next/cache";
 
 export const createEvent = async (data: CreateEventPayloadType) => {
   try {
@@ -105,6 +110,187 @@ export const createEvent = async (data: CreateEventPayloadType) => {
     return apiResponse.single({
       data: updateEvent,
       message: "New event is created successfully",
+    });
+  } catch (error) {
+    return apiResponse.error({ error });
+  }
+};
+
+export const updateEvent = async (id: string, data: UpdateEventPayloadType) => {
+  try {
+    const { eventBudget, eventConsultant, eventAttachment, ...rest } =
+      updateEventPayloadSchema.parse(data);
+
+    const {
+      product_id,
+      sap_area_code,
+      employee_id,
+      event_type_id,
+      ...eventFields
+    } = rest;
+
+    // update event fields
+    const event = await eventService.updateEvent({
+      filter: { id },
+      data: {
+        ...eventFields,
+        ...(product_id && { product: { connect: { id: product_id } } }),
+        ...(sap_area_code && { area: { connect: { sap_area_code } } }),
+        ...(employee_id && { users: { connect: { employee_id } } }),
+        ...(event_type_id && {
+          event_type: { connect: { id: event_type_id } },
+        }),
+      },
+      options: {
+        include: {
+          event_budgets: true,
+          event_consultants: true,
+          event_attachments: true,
+        },
+      },
+    });
+
+    if (!event) throw new Error("Failed to update event");
+
+    // upsert budgets
+    for (const {
+      id: budgetId,
+      event_id: _budgetEventId,
+      ...budgetData
+    } of eventBudget) {
+      await db.event_budgets.upsert({
+        where: { id: budgetId ?? "" },
+        create: { ...budgetData, event_id: id },
+        update: budgetData,
+      });
+    }
+
+    // delete removed budgets
+    const incomingBudgetIds = eventBudget.map((item) => item.id);
+    const budgetIdsToDelete = event.event_budgets
+      .map((item) => item.id)
+      .filter((budgetId) => !incomingBudgetIds.includes(budgetId));
+
+    if (budgetIdsToDelete.length) {
+      await db.event_budgets.deleteMany({
+        where: { id: { in: budgetIdsToDelete } },
+      });
+    }
+
+    // upsert consultants
+    for (const {
+      id: consultantId,
+      event_id: _consultantEventId,
+      ...consultantData
+    } of eventConsultant) {
+      await db.event_consultants.upsert({
+        where: { id: consultantId ?? "" },
+        create: {
+          ...consultantData,
+          event_id: id,
+        } as Prisma.event_consultantsUncheckedCreateInput,
+        update: consultantData,
+      });
+    }
+
+    // delete removed consultants
+    const incomingConsultantIds = eventConsultant.map((item) => item.id);
+    const consultantIdsToDelete = event.event_consultants
+      .map((item) => item.id)
+      .filter((consultantId) => !incomingConsultantIds.includes(consultantId));
+
+    if (consultantIdsToDelete.length) {
+      await db.event_consultants.deleteMany({
+        where: { id: { in: consultantIdsToDelete } },
+      });
+    }
+
+    // save any newly uploaded attachment files
+    const newAttachmentFiles = eventAttachment
+      .filter((attachment) => attachment.file)
+      .map((attachment) => attachment.file as File);
+
+    const savedAttachmentFiles =
+      (await saveFilesToStorage("events", newAttachmentFiles)) ?? [];
+
+    // upsert attachments
+    let attachmentFileIndex = 0;
+    for (const {
+      id: attachmentId,
+      event_id: _attachmentEventId,
+      file,
+      file_path,
+      ...attachmentData
+    } of eventAttachment) {
+      const previous = event.event_attachments.find(
+        (item) => item.id === attachmentId,
+      );
+
+      const newFilePath = file
+        ? savedAttachmentFiles[attachmentFileIndex++].filePath
+        : (file_path as string);
+
+      await db.event_attachments.upsert({
+        where: { id: attachmentId ?? "" },
+        create: { ...attachmentData, event_id: id, file_path: newFilePath },
+        update: { ...attachmentData, file_path: newFilePath },
+      });
+
+      // delete previous file when it is replaced by a new upload
+      if (file && previous?.file_path) {
+        await deleteFile(previous.file_path);
+      }
+    }
+
+    // delete removed attachments and their files
+    const incomingAttachmentIds = eventAttachment.map((item) => item.id);
+    const attachmentsToDelete = event.event_attachments.filter(
+      (item) => !incomingAttachmentIds.includes(item.id),
+    );
+
+    if (attachmentsToDelete.length) {
+      await db.event_attachments.deleteMany({
+        where: { id: { in: attachmentsToDelete.map((item) => item.id) } },
+      });
+
+      for (const attachment of attachmentsToDelete) {
+        await deleteFile(attachment.file_path);
+      }
+    }
+
+    // revalidate nested resource tags
+    updateTag(cacheTags.eventBudgets);
+    updateTag(cacheTags.eventAttachments);
+    updateTag(cacheTags.eventConsultants);
+
+    return apiResponse.single({
+      data: event,
+      message: "Event is updated successfully",
+    });
+  } catch (error) {
+    return apiResponse.error({ error });
+  }
+};
+
+export const deleteEvent = async (id: string) => {
+  try {
+    const event = await eventService.deleteEvent({
+      filter: { id },
+      options: {
+        include: { event_attachments: true },
+      },
+    });
+
+    if (!event) throw new Error("Failed to delete event");
+
+    // clean up attachment files, nested rows are removed via cascade delete
+    for (const attachment of event.event_attachments) {
+      await deleteFile(attachment.file_path);
+    }
+
+    return apiResponse.single({
+      data: event,
+      message: "Event is deleted successfully",
     });
   } catch (error) {
     return apiResponse.error({ error });
