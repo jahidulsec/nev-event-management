@@ -77,9 +77,11 @@ const getuserCount = async ({
 const createUser = async <T extends Prisma.usersDefaultArgs>({
   data,
   options,
+  revalidateTags,
 }: {
   data: Prisma.usersCreateInput;
   options?: Prisma.SelectSubset<T, Prisma.usersDefaultArgs>;
+  revalidateTags?: string[];
 }): Promise<Prisma.usersGetPayload<T> | null> =>
   mutate(
     async () =>
@@ -87,7 +89,29 @@ const createUser = async <T extends Prisma.usersDefaultArgs>({
         data,
         ...(options as Prisma.usersDefaultArgs),
       })) as Prisma.usersGetPayload<T> | null,
-    [cacheTags.users, cacheTags.userCount],
+    [cacheTags.users, cacheTags.userCount, ...(revalidateTags ?? [])],
+  );
+
+const upsertUser = async <T extends Prisma.usersDefaultArgs>({
+  data,
+  options,
+  revalidateTags,
+  filter,
+}: {
+  data: Prisma.usersCreateInput;
+  options?: Prisma.SelectSubset<T, Prisma.usersDefaultArgs>;
+  revalidateTags?: string[];
+  filter: Prisma.usersWhereUniqueInput;
+}): Promise<Prisma.usersGetPayload<T> | null> =>
+  mutate(
+    async () =>
+      (await db.users.upsert({
+        where: filter,
+        create: data,
+        update: data,
+        ...(options as Prisma.usersDefaultArgs),
+      })) as Prisma.usersGetPayload<T> | null,
+    [cacheTags.users, cacheTags.userCount, ...(revalidateTags ?? [])],
   );
 
 const updateUser = async <T extends Prisma.usersDefaultArgs>({
@@ -136,4 +160,5 @@ export const userService = {
   createUser,
   updateUser,
   deleteUser,
+  upsertUser,
 };

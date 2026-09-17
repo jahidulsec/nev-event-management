@@ -3,15 +3,12 @@
 import { apiResponse } from "@/lib/response";
 import {
   CreateUserDTOType,
+  createUsersDTOSchema,
+  CreateUsersDTOType,
   UpdateUserDTOType,
 } from "@/features/users/schema/schema";
 import { userService } from "@/services/user";
 import { hashPassword } from "@/utils/password";
-import { randomBytes } from "crypto";
-
-const generateId = () => randomBytes(5).toString("hex");
-
-
 
 export const createUser = async (data: CreateUserDTOType) => {
   try {
@@ -36,6 +33,46 @@ export const createUser = async (data: CreateUserDTOType) => {
   }
 };
 
+export const upsertUsers = async (data: CreateUsersDTOType) => {
+  try {
+    const validatedData = createUsersDTOSchema.parse(data);
+
+    if (validatedData.length === 0) throw new Error("No user data included");
+
+    for (const i of validatedData) {
+      const { roles, ...rest } = i;
+
+      await userService.upsertUser({
+        filter: {
+          employee_id: i.employee_id,
+        },
+
+        data: {
+          ...rest,
+          password: await hashPassword(
+            rest.password ?? process.env.DATABASE_PASSWORD!,
+          ),
+          users_role: {
+            createMany: {
+              data: roles.map((role) => ({ role })),
+              skipDuplicates: true,
+            },
+          },
+          status: "active",
+        },
+      });
+    }
+
+    return apiResponse.single({
+      data: null,
+      message: "User created successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    return apiResponse.error({ error });
+  }
+};
+
 export const updateUser = async (id: string, data: UpdateUserDTOType) => {
   try {
     const { roles, ...rest } = data;
@@ -48,7 +85,7 @@ export const updateUser = async (id: string, data: UpdateUserDTOType) => {
         ...(roles && {
           users_role: {
             deleteMany: {},
-            create: roles.map((role) => ({ id: generateId(), role })),
+            create: roles.map((role) => ({ role })),
           },
         }),
       },
