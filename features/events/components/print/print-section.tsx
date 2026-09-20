@@ -19,6 +19,7 @@ import {
   getTitleCase,
 } from "@/utils/formatter";
 import { convertPdfToImage } from "@/lib/pdf";
+import { EventApproverMultiProps } from "@/features/event-approvers/libs/event-approvers";
 
 
 
@@ -34,10 +35,47 @@ Font.register({
 
 export default function PrintSection({
   eventData,
+  eventApprover,
 }: {
   eventData: EventSingleProps;
+  eventApprover: EventApproverMultiProps[];
 }) {
   const attachments = eventData.event_attachments;
+  const [attachmentImages, setAttachmentImages] = React.useState<
+    { id: string | number; src: string }[] | null
+  >(null);
+
+  React.useEffect(() => {
+    let cancelled = false;
+
+    Promise.all(
+      attachments.map(async (item) => {
+        const url = `/api/files/?file_path=${item.file_path}`;
+
+        if (item.file_path.split(".").pop()?.toLowerCase() !== "pdf") {
+          return { id: item.id, src: url };
+        }
+
+        try {
+          return { id: item.id, src: await convertPdfToImage(url, 1) };
+        } catch (error) {
+          console.error(error);
+          return null;
+        }
+      }),
+    ).then((results) => {
+      if (cancelled) return;
+      setAttachmentImages(results.filter((r) => r !== null));
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [attachments]);
+
+  if (!attachmentImages) {
+    return <div className="w-full min-h-svh grid place-items-center">Preparing document...</div>;
+  }
 
   return (
     <PDFViewer className="w-full min-h-svh">
@@ -50,34 +88,17 @@ export default function PrintSection({
             <Text style={styles.heading}>Event Proposal Form</Text>
           </View>
 
-          <EventBasicInformationSection data={eventData} />
+          <EventBasicInformationSection
+            eventApprover={eventApprover}
+            data={eventData}
+          />
         </Page>
 
-        {attachments.length > 0 &&
-          attachments.map(async (item) => {
-            let convertedImage: string = "";
-
-            if (item.file_path.split(".").pop() !== "pdf") {
-              convertedImage = `/api/files/?file_path=${item.file_path}`;
-            } else {
-              try {
-                convertedImage = await convertPdfToImage(
-                  `/api/files/?file_path=${item.file_path}`,
-                  1,
-                );
-              } catch (error) {
-                console.error(error);
-              }
-            }
-
-            if (!convertedImage) return;
-
-            return (
-              <Page size={"A4"} key={item.id}>
-                <Image src={convertedImage} />
-              </Page>
-            );
-          })}
+        {attachmentImages.map((item) => (
+          <Page size={"A4"} key={item.id}>
+            <Image src={item.src} />
+          </Page>
+        ))}
       </Document>
     </PDFViewer>
   );
@@ -91,9 +112,13 @@ const HeaderSection = () => {
   );
 };
 
-const EventBasicInformationSection = ({ data }: { data: EventSingleProps }) => {
-  const eventApprover = data.event_approvers;
-
+const EventBasicInformationSection = ({
+  data,
+  eventApprover,
+}: {
+  data: EventSingleProps;
+  eventApprover: EventApproverMultiProps[];
+}) => {
   const totalHonorarium = data.event_consultants.reduce(
     (acc, sum) => acc + Number(sum.honorarium),
     0,

@@ -1,4 +1,5 @@
 import { getEvent } from "@/features/events/libs/events";
+import { getEventApprovers } from "@/features/event-approvers/libs/event-approvers";
 import { getDashboardRole } from "@/lib/dal";
 import { Params } from "@/types/search-params";
 import { Metadata } from "next";
@@ -19,13 +20,16 @@ export default async function EventFormPrintPage({
 
   if (role === "ao") return notFound();
 
-  const res = await getEvent(id?.toString() ?? "");
+  const [res, approvers] = await Promise.all([
+    getEvent(id?.toString() ?? ""),
+    getEventApprovers(id?.toString() ?? ""),
+  ]);
 
   if (!res.data) return notFound();
 
   return (
     <div>
-      <PrintContainer eventData={res.data} />
+      <PrintContainer eventData={res.data} eventApprover={approvers.data ?? []} />
     </div>
   );
 }
