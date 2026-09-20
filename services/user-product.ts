@@ -111,6 +111,28 @@ const updateUserProduct = async <T extends Prisma.user_productDefaultArgs>({
     [cacheTags.userProducts, cacheTags.userProductsCount, ...(revalidateTags ?? [])],
   );
 
+const upsertUserProduct = async <T extends Prisma.user_productDefaultArgs>({
+  data,
+  options,
+  filter,
+  revalidateTags,
+}: {
+  filter: Prisma.user_productWhereUniqueInput;
+  data: Prisma.user_productCreateInput | Prisma.user_productUncheckedCreateInput;
+  options?: Prisma.SelectSubset<T, Prisma.user_productDefaultArgs>;
+  revalidateTags?: string[];
+}): Promise<Prisma.user_productGetPayload<T> | null> =>
+  mutate(
+    async () =>
+      (await db.user_product.upsert({
+        where: filter,
+        create: data,
+        update: data,
+        ...(options as Prisma.user_productDefaultArgs),
+      })) as Prisma.user_productGetPayload<T> | null,
+    [cacheTags.userProducts, cacheTags.userProductsCount, ...(revalidateTags ?? [])],
+  );
+
 const deleteUserProduct = async <T extends Prisma.user_productDefaultArgs>({
   options,
   filter,
@@ -135,5 +157,6 @@ export const userProductService = {
   getUserProductUniq,
   createUserProduct,
   updateUserProduct,
+  upsertUserProduct,
   deleteUserProduct,
 };

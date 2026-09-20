@@ -1,6 +1,7 @@
 import { ErrorBoundary } from "@/components/shared/boundary/error-boundary";
 import { DownloadButton } from "@/components/shared/button/download";
 import { ExcelUploadButton } from "@/components/shared/button/excel-upload";
+import { SearchForm } from "@/components/shared/inputs/search";
 import PagePagination from "@/components/shared/pagination/pagination";
 import {
   Section,
@@ -29,6 +30,7 @@ export default function UserPage({
         <SectionHeading>Users</SectionHeading>
 
         <SectionActions>
+          <SearchForm />
           <ExcelUploadButton action={upsertUsers as any} />
           <DownloadButton filePath="/public/templates/user_template.xlsx" />
           <CreateUserButton />

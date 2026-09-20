@@ -16,6 +16,7 @@ import { upsertUserAreas } from "@/features/users-area/actions/user-area";
 import CreateUserAreaButton from "@/features/users-area/components/create-button";
 import UserAreaTable from "@/features/users-area/components/table";
 import { getUserAreas } from "@/features/users-area/libs/user-area";
+import { upsertUserProducts } from "@/features/users-product/actions/user-product";
 import CreateUserProductButton from "@/features/users-product/components/create-button";
 import UserProductTable from "@/features/users-product/components/table";
 import { getUserProducts } from "@/features/users-product/libs/user-product";
@@ -63,7 +64,11 @@ export default async function UserRelationPage({
             <SectionContent className="mt-4">
               <SectionHeader>
                 <SearchForm />
-                <CreateUserProductButton />
+                <SectionActions>
+                  <ExcelUploadButton action={upsertUserProducts as any} />
+                  <DownloadButton filePath="/public/templates/user_area_template.xlsx" />
+                  <CreateUserProductButton />
+                </SectionActions>
               </SectionHeader>
 
               <React.Suspense fallback={<TableSkeleton />}>
