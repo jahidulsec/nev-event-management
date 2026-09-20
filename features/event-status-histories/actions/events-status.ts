@@ -73,6 +73,8 @@ export const createEventStatus = async (data: CreateEventStatusPayloadType) => {
     }
 
     updateTag(cacheTags.events);
+    updateTag(cacheTags.eventStatusHistories);
+    updateTag(cacheTags.eventStatusHistoriesCount);
 
     return apiResponse.single({
       data: statusHistory,

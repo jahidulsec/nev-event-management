@@ -66,7 +66,7 @@ export default async function UserRelationPage({
                 <SearchForm />
                 <SectionActions>
                   <ExcelUploadButton action={upsertUserProducts as any} />
-                  <DownloadButton filePath="/public/templates/user_area_template.xlsx" />
+                  <DownloadButton filePath="/public/templates/user_product_template.xlsx" />
                   <CreateUserProductButton />
                 </SectionActions>
               </SectionHeader>
