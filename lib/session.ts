@@ -77,4 +77,5 @@ export async function deleteSession() {
 
   cookie.delete('session')
   cookie.delete('role')
+  cookie.delete('area')
 }

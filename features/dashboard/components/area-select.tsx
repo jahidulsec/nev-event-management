@@ -31,7 +31,7 @@ export default function AreaSelect({
 
   return (
     <Select
-      defaultValue={sapAreaCode ?? user.role[0]}
+      defaultValue={sapAreaCode ?? user.sapAreaCodes[0]}
       onValueChange={handleRole}
     >
       <SelectTrigger className="w-full">

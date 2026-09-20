@@ -60,6 +60,9 @@ export const userLogin = async (data: LoginType) => {
     // set default role for dashboard
     await saveRole(userRoles[0]);
 
+    // set default area for dashboard
+    if (userAreaCodes[0]) await saveArea(userAreaCodes[0]);
+
     return response({
       success: true,
       message: "You are logged in successfully",

@@ -4,14 +4,15 @@ import {
   SectionHeader,
 } from "@/components/shared/section/section";
 import { SectionHeadingWithBackButton } from "@/components/shared/typography/heading";
-import EventForm from "@/features/event/components/form";
-import { getEventTypes } from "@/features/event/lib/type";
-import { getAuthUser } from "@/lib/dal";
+import { getEventTypes } from "@/features/event-type/libs/event-type";
+import EventForm from "@/features/events/components/form";
+import { getAuthUser, getDashboardArea } from "@/lib/dal";
 import { AuthUser } from "@/types/auth-user";
 import React from "react";
 
 export default async function EventCreatePage() {
   const authUser = await getAuthUser();
+  const dashboardUserAreaCode = await getDashboardArea();
   const res = await getEventTypes({ page: 1, size: 100 });
 
   return (
@@ -24,7 +25,14 @@ export default async function EventCreatePage() {
       </SectionHeader>
 
       <SectionContent className="border p-6 rounded-md">
-        <EventForm authUser={authUser as AuthUser} eventTypes={res.data ?? []} />
+        <EventForm
+          eventTypes={res.data ?? []}
+          prevData={{
+            employee_id: authUser?.employeeId,
+            sap_area_code:
+              dashboardUserAreaCode || authUser?.sapAreaCodes?.[0] || "",
+          }}
+        />
       </SectionContent>
     </Section>
   );

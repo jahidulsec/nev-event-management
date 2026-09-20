@@ -6,7 +6,9 @@ import { eventTypeService } from "@/services/event-type";
 import { Prisma } from "@/lib/generated/prisma/client";
 import { ServerCacheOptions } from "@/lib/server-cache";
 
-export type EventTypeMultiProps = Prisma.event_typeGetPayload<object>;
+export type EventTypeMultiProps = Prisma.event_typeGetPayload<{
+  include: { approver: true };
+}>;
 
 export const getEventTypes = async (query: QuerySchemaType) => {
   try {
@@ -31,6 +33,9 @@ export const getEventTypes = async (query: QuerySchemaType) => {
         skip: (page - 1) * size,
         sort: {
           title: "asc",
+        },
+        options: {
+          include: { approver: true },
         },
       }),
       eventTypeService.getEventTypeCount({ filter }),

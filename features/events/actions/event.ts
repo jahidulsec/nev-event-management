@@ -1,6 +1,6 @@
 "use server";
 
-import { saveFilesToStorage } from "@/lib/file";
+import { saveFileToStorage } from "@/lib/file";
 import { apiResponse } from "@/lib/response";
 import { cacheTags } from "@/lib/server-cache";
 import { deleteFile } from "@/utils/file";
@@ -17,7 +17,13 @@ import { eventConsultantService } from "@/services/event-consultants";
 import { eventAttachmentService } from "@/services/event-attachments";
 import { updateTag } from "next/cache";
 
+const deleteFiles = (filePaths: string[]) =>
+  Promise.allSettled(filePaths.map((filePath) => deleteFile(filePath)));
+
 export const createEvent = async (data: CreateEventPayloadType) => {
+  // files saved but not yet referenced by a database row
+  let unsavedFilePaths: string[] = [];
+
   try {
     const { eventBudget, eventConsultant, eventAttachment, ...rest } =
       createEventPayloadSchema.parse(data);
@@ -26,19 +32,14 @@ export const createEvent = async (data: CreateEventPayloadType) => {
     if (!eventBudget.length) throw new Error("Add event budget");
 
     // save files and get path
-    const newFiles = eventAttachment
-      .filter((attachment) => attachment.file)
-      .map((attachment) => attachment.file as File);
+    const attachmentsData = await Promise.all(
+      eventAttachment.map(async ({ file, event_id, ...attachment }) => {
+        if (!file)
+          return { ...attachment, file_path: attachment.file_path as string };
 
-    const savedFiles = (await saveFilesToStorage("events", newFiles)) ?? [];
-
-    let fileIndex = 0;
-    const attachmentsData = eventAttachment.map(
-      ({ file, event_id, ...attachment }) => ({
-        ...attachment,
-        file_path: file
-          ? savedFiles[fileIndex++].filePath
-          : (attachment.file_path as string),
+        const { filePath } = await saveFileToStorage("events", file);
+        unsavedFilePaths.push(filePath);
+        return { ...attachment, file_path: filePath };
       }),
     );
 
@@ -83,10 +84,13 @@ export const createEvent = async (data: CreateEventPayloadType) => {
 
     if (!event) throw new Error("Failed to create event");
 
+    // files are now referenced by the event, keep them from here on
+    unsavedFilePaths = [];
+
     // generate tracking ID
     const totalEventCount = await eventService.getEventCount({
       cacheOption: {
-        revalidate: "off",
+        cache: false,
       },
     });
     const trackingId = generateTrackingID(
@@ -113,11 +117,15 @@ export const createEvent = async (data: CreateEventPayloadType) => {
       message: "New event is created successfully",
     });
   } catch (error) {
+    await deleteFiles(unsavedFilePaths);
     return apiResponse.error({ error });
   }
 };
 
 export const updateEvent = async (id: string, data: UpdateEventPayloadType) => {
+  // files saved but not yet referenced by a database row
+  const unsavedFilePaths = new Set<string>();
+
   try {
     const { eventBudget, eventConsultant, eventAttachment, ...rest } =
       updateEventPayloadSchema.parse(data);
@@ -201,16 +209,7 @@ export const updateEvent = async (id: string, data: UpdateEventPayloadType) => {
       });
     }
 
-    // save any newly uploaded attachment files
-    const newAttachmentFiles = eventAttachment
-      .filter((attachment) => attachment.file)
-      .map((attachment) => attachment.file as File);
-
-    const savedAttachmentFiles =
-      (await saveFilesToStorage("events", newAttachmentFiles)) ?? [];
-
     // upsert attachments
-    let attachmentFileIndex = 0;
     for (const {
       id: attachmentId,
       event_id: _attachmentEventId,
@@ -222,14 +221,17 @@ export const updateEvent = async (id: string, data: UpdateEventPayloadType) => {
         (item) => item.id === attachmentId,
       );
 
-      const newFilePath = file
-        ? savedAttachmentFiles[attachmentFileIndex++].filePath
-        : (file_path as string);
+      let newFilePath = file_path as string;
+      if (file) {
+        newFilePath = (await saveFileToStorage("events", file)).filePath;
+        unsavedFilePaths.add(newFilePath);
+      }
 
       await eventAttachmentService.upsertEventAttachment({
         filter: { id: attachmentId ?? "" },
         data: { ...attachmentData, event_id: id, file_path: newFilePath },
       });
+      unsavedFilePaths.delete(newFilePath);
 
       // delete previous file when it is replaced by a new upload
       if (file && previous?.file_path) {
@@ -263,6 +265,8 @@ export const updateEvent = async (id: string, data: UpdateEventPayloadType) => {
       message: "Event is updated successfully",
     });
   } catch (error) {
+    console.log(error);
+    await deleteFiles([...unsavedFilePaths]);
     return apiResponse.error({ error });
   }
 };

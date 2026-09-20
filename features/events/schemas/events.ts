@@ -24,7 +24,7 @@ export const createEventDTOSchema = z.object({
     .min(3, "At least 3 characters")
     .max(250, "not more than 250 character"),
 
-  event_date: z.coerce.date("Select event date"),
+  event_date: z.date("Select event date"),
 
   employee_id: z
     .string("Enter employee id")
@@ -103,6 +103,7 @@ export const createEventDTOSchema = z.object({
 
   sap_area_code: z
     .string("Select an area")
+    .min(1, "Select an area")
     .max(6, "not more than 6 character"),
 });
 
@@ -167,6 +168,9 @@ export const eventExportQuerySchema = eventQuerySchema.omit({
 export type CreateEventDTOType = z.infer<typeof createEventDTOSchema>;
 export type UpdateEventDTOType = z.infer<typeof updateEventDTOSchema>;
 export type CreateEventPayloadType = z.infer<typeof createEventPayloadSchema>;
+export type CreateEventPayloadInputType = z.input<
+  typeof createEventPayloadSchema
+>;
 export type UpdateEventPayloadType = z.infer<typeof updateEventPayloadSchema>;
 export type EventQueryType = z.infer<typeof eventQuerySchema>;
 export type EventExportQueryType = z.infer<typeof eventExportQuerySchema>;
