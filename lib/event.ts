@@ -33,6 +33,13 @@ export const getApproverEventStatus = (
   const currentUserLastStatus =
     eventUserStatus?.[0]?.event_status_histories?.[0];
 
+  console.log(
+    eventType,
+    eventTypeRole,
+    currentUserLastStatus,
+    currentUserSubmission,
+  );
+
   return {
     eventType,
     eventTypeRole,

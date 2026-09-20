@@ -1,4 +1,7 @@
-import { ApproverTypeBadge, UserRoleBadge } from "@/components/shared/badge/badge";
+import {
+  ApproverTypeBadge,
+  UserRoleBadge,
+} from "@/components/shared/badge/badge";
 import { Step, StepContainer } from "@/components/shared/progress/step";
 import {
   Section,
@@ -39,7 +42,7 @@ export default async function EventPreviewPage({ params }: { params: Params }) {
         <SectionHeadingWithBackButton
           title="Events"
           subtitle="dashboard / event / preview"
-          href={'/dashboard/events'}
+          href={"/dashboard/events"}
         />
       </SectionHeader>
 
@@ -73,7 +76,7 @@ const EventDetailsSection = async ({ params }: { params: Params }) => {
   );
 
   if (!canBypassStatusCheck) {
-    if (currentUserSubmission !== 'pending') {
+    if (currentUserSubmission !== "pending") {
       return (
         <Section className="border p-6 rounded-md mt-10">
           <div className="flex flex-col gap-6 max-w-4xl mx-auto">
@@ -82,7 +85,8 @@ const EventDetailsSection = async ({ params }: { params: Params }) => {
             <p className="text-center">
               This event - ({res.data.product.name}) /{" "}
               {res.data.event_type?.title} / <strong>{res.data.title}</strong>{" "}
-              is <em>{currentUserSubmission}</em> {res.data?.current_status === 'rejected' ? '' : 'by you'}.
+              is <em>{currentUserSubmission}</em>{" "}
+              {res.data?.current_status === "rejected" ? "" : "by you"}.
             </p>
           </div>
         </Section>
@@ -109,7 +113,7 @@ const EventDetailsSection = async ({ params }: { params: Params }) => {
         eventData={res.data}
       />
 
-      {(role === "ec" || role === 'superadmin') && (
+      {(role === "ec" || role === "superadmin") && (
         <SectionContent className="border rounded-md p-6">
           <div className="max-w-4xl mx-auto w-full flex flex-col gap-6">
             <SectionHeading2>Tracking No.</SectionHeading2>
@@ -167,30 +171,38 @@ const EventStatusHistorySection = async ({ params }: { params: Params }) => {
         <Separator />
         <StepContainer>
           {res.data?.map((item, index) => {
-            const approver = item.event_approvers
-            const approverFullName = approver.users?.full_name ?? ''
+            const approver = item.event_approvers;
+            const approverFullName = approver.users?.full_name ?? "";
 
-            const approverType = item.remarks?.split(':')[0]
-            const comment = item.remarks?.split(':')[1]
+            const approverType = item.remarks?.split(":")[0];
+            const comment = item.remarks?.split(":")[1];
 
             return (
               <Step
                 key={item.id}
                 status={item.status}
-                description={<><br /><strong>
-                  {approverFullName} </strong>
-                  <em className="text-sm">({approver.employee_id})</em>{" "}: {" "}
-                  <UserRoleBadge type={approver.user_role as "ao"}>{approver.user_role}</UserRoleBadge>
-                  <ApproverTypeBadge type={approverType as 'final'}>{approverType}</ApproverTypeBadge>
-                  <br />
-                  <blockquote className="relative border rounded-md p-8 py-4 bg-background text-sm mt-3 isolate">
-                    <QuoteIcon className="size-3.5 fill-muted text-muted absolute rotate-180 -z-1 top-3 left-2" />
-                    {comment}
-                  </blockquote></>}
+                description={
+                  <>
+                    <br />
+                    <strong>{approverFullName} </strong>
+                    <em className="text-sm">({approver.employee_id})</em> :{" "}
+                    <UserRoleBadge type={approver.user_role as "ao"}>
+                      {approver.user_role}
+                    </UserRoleBadge>
+                    <ApproverTypeBadge type={approverType as "final"}>
+                      {approverType}
+                    </ApproverTypeBadge>
+                    <br />
+                    <blockquote className="relative border rounded-md p-8 py-4 bg-background text-sm mt-3 isolate">
+                      <QuoteIcon className="size-3.5 fill-muted text-muted absolute rotate-180 -z-1 top-3 left-2" />
+                      {comment}
+                    </blockquote>
+                  </>
+                }
                 createdAt={item.created_at as Date}
                 isLast={res.count === index + 1}
               />
-            )
+            );
           })}
         </StepContainer>
       </div>

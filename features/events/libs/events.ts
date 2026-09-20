@@ -25,7 +25,15 @@ const eventSingleInclude = {
   },
   product: { select: { name: true } },
   area: { select: { area_name: true } },
-  event_type: { include: { approver: true } },
+  event_type: {
+    include: {
+      approver: {
+        orderBy: {
+          created_at: "asc",
+        },
+      },
+    },
+  },
   event_approvers: { include: { event_status_histories: true } },
   users: {
     select: { full_name: true, employee_id: true, designation: true },

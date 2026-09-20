@@ -38,21 +38,12 @@ export default async function EventsPage({
 }) {
   const pageTitle = "Events";
 
-  const pageData = getPageData(pageTitle, "superadmin");
-
   const user = await getAuthUser();
 
   return (
     <Section>
       <SectionHeader>
-        <SectionHeading>
-          {pageData && (
-            <SectionHeadingIcon>
-              <pageData.icon />
-            </SectionHeadingIcon>
-          )}
-          {pageTitle}
-        </SectionHeading>
+        <SectionHeading>{pageTitle}</SectionHeading>
 
         <SectionActions>
           {user?.role.includes("ao") && <CreateEventButton />}
