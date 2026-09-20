@@ -1,10 +1,10 @@
-import { EventSingleProps } from "@/features/event/lib/event";
+import type { EventSingleProps } from "@/features/events/libs/events";
 
 export const getApproverEventStatus = (
   event: EventSingleProps,
   role: string,
 ) => {
-  const eventStatus = event.event_approver;
+  const eventStatus = event.event_approvers;
   const eventApproverCount = event.event_type?.approver.length || 0;
   const getApproverIndex =
     eventStatus.length < eventApproverCount
@@ -15,21 +15,23 @@ export const getApproverEventStatus = (
     event.event_type?.approver?.[getApproverIndex]?.user_type;
 
   // get user status submission
-  const eventUserStatus = event.event_approver.filter(
+  const eventUserStatus = event.event_approvers.filter(
     (item) => item.user_role === role,
   );
 
   // if previous approver rejects
-  const prevRejected = event.event_approver.filter(
-    (i) => i.event_status_history[0]?.status === "rejected",
+  const prevRejected = event.event_approvers.filter(
+    (i) => i.event_status_histories[0]?.status === "rejected",
   );
 
   const currentUserSubmission: any =
     prevRejected.length > 0
       ? "rejected"
-      : (eventUserStatus?.[0]?.event_status_history?.[0]?.status ?? "pending");
+      : (eventUserStatus?.[0]?.event_status_histories?.[0]?.status ??
+        "pending");
 
-  const currentUserLastStatus = eventUserStatus?.[0]?.event_status_history?.[0];
+  const currentUserLastStatus =
+    eventUserStatus?.[0]?.event_status_histories?.[0];
 
   return {
     eventType,

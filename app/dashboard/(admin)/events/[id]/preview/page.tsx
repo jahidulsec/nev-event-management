@@ -11,14 +11,13 @@ import {
   SectionHeadingWithBackButton,
 } from "@/components/shared/typography/heading";
 import { Separator } from "@/components/ui/separator";
+import FirstApproverForm from "@/features/event-consultants/components/first-approver-form";
+import { getEventStatusHistories } from "@/features/event-status-histories/libs/event-status-histories";
 import ECApprovalForm from "@/features/event/components/ec-approval-form";
-import EventSection from "@/features/event/components/event-section";
-import FirstApproverForm from "@/features/event/components/first-approver-form";
-import { EventStatusSection } from "@/features/event/components/preview/event-status-section";
-import EventStatusUpdateForm from "@/features/event/components/status-form";
-import TrackingEventForm from "@/features/event/components/tracking-form";
-import { getEvent } from "@/features/event/lib/event";
-import { getEventStatusHistories } from "@/features/event/lib/status-history";
+import EventSection from "@/features/events/components/event-section";
+import { EventStatusSection } from "@/features/event-status-histories/components/event-status-section";
+import TrackingEventForm from "@/features/events/components/tracking-form";
+import { getEvent } from "@/features/events/libs/events";
 import { getAuthUser, getDashboardRole } from "@/lib/dal";
 import { getApproverEventStatus } from "@/lib/event";
 import { event_current_status } from "@/lib/generated/prisma/client";
@@ -27,6 +26,7 @@ import { Params } from "@/types/search-params";
 import { QuoteIcon } from "lucide-react";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import EventStatusUpdateForm from "@/features/event-status-histories/components/status-form";
 
 export default async function EventPreviewPage({ params }: { params: Params }) {
   const dashboardRole = await getDashboardRole();
@@ -122,7 +122,7 @@ const EventDetailsSection = async ({ params }: { params: Params }) => {
         </SectionContent>
       )}
 
-      {res.data.event_consultant.length !== 0 && (
+      {res.data.event_consultants.length !== 0 && (
         <SectionContent className="border rounded-md p-6">
           <div className="max-w-4xl mx-auto w-full flex flex-col gap-6">
             <SectionHeading2>Event Coordinator Approval</SectionHeading2>
@@ -167,7 +167,7 @@ const EventStatusHistorySection = async ({ params }: { params: Params }) => {
         <Separator />
         <StepContainer>
           {res.data?.map((item, index) => {
-            const approverFullName = item?.event_approver.user[
+            const approverFullName = item?.event_approvers.user[
               (item?.event_approver.user_role === "director_sales"
                 ? "franchise_head"
                 : item?.event_approver.user_role) as "ao"

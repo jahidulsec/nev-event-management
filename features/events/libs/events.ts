@@ -17,6 +17,24 @@ export type EventMultiProps = Prisma.eventsGetPayload<{
   };
 }>;
 
+const eventSingleInclude = {
+  event_attachments: true,
+  event_budgets: true,
+  event_consultants: {
+    include: { doctor: true, event_consultant_approvals: true },
+  },
+  product: { select: { name: true } },
+  event_type: { include: { approver: true } },
+  event_approvers: { include: { event_status_histories: true } },
+  users: {
+    select: { full_name: true, employee_id: true, designation: true },
+  },
+} satisfies Prisma.eventsInclude;
+
+export type EventSingleProps = Prisma.eventsGetPayload<{
+  include: typeof eventSingleInclude;
+}>;
+
 export const getEvents = async (query: QuerySchemaType) => {
   try {
     const { page, size, search } = QuerySchema.parse(query);
@@ -83,6 +101,7 @@ export const getEvent = async (
         filter: {
           id,
         },
+        options: { include: eventSingleInclude },
         cacheOption: {
           revalidate: revalidate,
         },
