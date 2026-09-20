@@ -43,9 +43,11 @@ export default function PrintSection({
   const attachments = eventData.event_attachments;
   const [attachmentImages, setAttachmentImages] = React.useState<
     { id: string | number; src: string }[] | null
-  >(null);
+  >(attachments.length > 0 ? null : []);
 
   React.useEffect(() => {
+    if (attachments.length === 0) return;
+
     let cancelled = false;
 
     Promise.all(
@@ -94,11 +96,13 @@ export default function PrintSection({
           />
         </Page>
 
-        {attachmentImages.map((item) => (
-          <Page size={"A4"} key={item.id}>
-            <Image src={item.src} />
-          </Page>
-        ))}
+        {attachmentImages.length > 0
+          ? attachmentImages.map((item) => (
+              <Page size={"A4"} key={item.id}>
+                <Image src={item.src} />
+              </Page>
+            ))
+          : null}
       </Document>
     </PDFViewer>
   );
