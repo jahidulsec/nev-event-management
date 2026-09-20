@@ -22,6 +22,7 @@ import { AuthUser } from "@/types/auth-user";
 import { cn } from "@/lib/utils";
 import { EventMultiProps } from "../libs/events";
 import { useAuthContext } from "@/providers/auth";
+import Link from "next/link";
 
 export default function EventTable({
   data,
@@ -179,12 +180,9 @@ export default function EventTable({
             </TableActionButton>
             {!authUser?.role.includes("ao") && (
               <TableActionButton tooltip="Preview" variant={"edit"}>
-                <a
-                  target="_blank"
-                  href={`/dashboard/events/${value.id}/preview`}
-                >
+                <Link href={`/dashboard/events/${value.id}/preview`}>
                   <Eye /> <span className="sr-only">Preview</span>
-                </a>
+                </Link>
               </TableActionButton>
             )}
             {authUser?.role.includes("ec") ||

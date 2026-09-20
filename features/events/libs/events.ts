@@ -24,7 +24,9 @@ const eventSingleInclude = {
     include: { doctor: true, event_consultant_approvals: true },
   },
   product: { select: { name: true } },
-  area: { select: { area_name: true } },
+  area: {
+    select: { area_name: true, area: { select: { area_name: true } } },
+  },
   event_type: {
     include: {
       approver: {
@@ -34,7 +36,13 @@ const eventSingleInclude = {
       },
     },
   },
-  event_approvers: { include: { event_status_histories: true } },
+  event_approvers: {
+    include: {
+      event_status_histories: true,
+      users: { select: { full_name: true, designation: true } },
+    },
+    orderBy: { created_at: "asc" },
+  },
   users: {
     select: { full_name: true, employee_id: true, designation: true },
   },
