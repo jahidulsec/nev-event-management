@@ -10,6 +10,8 @@ import {
   CreateEventPayloadType,
   updateEventPayloadSchema,
   UpdateEventPayloadType,
+  updateEventTrackingPayloadSchema,
+  UpdateEventTrackingPayloadType,
 } from "@/features/events/schemas/events";
 import { eventService } from "@/services/events";
 import { eventBudgetService } from "@/services/event-budgets";
@@ -267,6 +269,28 @@ export const updateEvent = async (id: string, data: UpdateEventPayloadType) => {
   } catch (error) {
     console.log(error);
     await deleteFiles([...unsavedFilePaths]);
+    return apiResponse.error({ error });
+  }
+};
+
+export const updateEventTrackingNumber = async (
+  data: UpdateEventTrackingPayloadType,
+) => {
+  try {
+    const { event_id, track_no } = updateEventTrackingPayloadSchema.parse(data);
+
+    const event = await eventService.updateEvent({
+      filter: { id: event_id },
+      data: { track_no },
+    });
+
+    if (!event) throw new Error("Failed to update tracking number");
+
+    return apiResponse.single({
+      data: event,
+      message: "Add tracking number successfully",
+    });
+  } catch (error) {
     return apiResponse.error({ error });
   }
 };

@@ -142,6 +142,14 @@ export const updateEventPayloadSchema = updateEventDTOSchema.extend({
     .default([]),
 });
 
+export const updateEventTrackingPayloadSchema = z.object({
+  event_id: z.string("Enter event id"),
+  track_no: z
+    .string("Add a tracking no")
+    .min(2, "At least 2 characters")
+    .max(50, "not more than 50 character"),
+});
+
 export const eventQuerySchema = QuerySchema.extend({
   employee_id: z.string().optional(),
   sap_area_code: z.string().optional(),
@@ -172,5 +180,8 @@ export type CreateEventPayloadInputType = z.input<
   typeof createEventPayloadSchema
 >;
 export type UpdateEventPayloadType = z.infer<typeof updateEventPayloadSchema>;
+export type UpdateEventTrackingPayloadType = z.infer<
+  typeof updateEventTrackingPayloadSchema
+>;
 export type EventQueryType = z.infer<typeof eventQuerySchema>;
 export type EventExportQueryType = z.infer<typeof eventExportQuerySchema>;

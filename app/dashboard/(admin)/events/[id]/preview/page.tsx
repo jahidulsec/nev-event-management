@@ -11,9 +11,8 @@ import {
   SectionHeadingWithBackButton,
 } from "@/components/shared/typography/heading";
 import { Separator } from "@/components/ui/separator";
-import FirstApproverForm from "@/features/event-consultants/components/first-approver-form";
+import FirstApproverForm from "@/features/event-consultant-approvers/components/first-approver-form";
 import { getEventStatusHistories } from "@/features/event-status-histories/libs/event-status-histories";
-import ECApprovalForm from "@/features/event/components/ec-approval-form";
 import EventSection from "@/features/events/components/event-section";
 import { EventStatusSection } from "@/features/event-status-histories/components/event-status-section";
 import TrackingEventForm from "@/features/events/components/tracking-form";
@@ -27,11 +26,12 @@ import { QuoteIcon } from "lucide-react";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import EventStatusUpdateForm from "@/features/event-status-histories/components/status-form";
+import ECApprovalForm from "@/features/event-approvers/components/ec-approval-form";
 
 export default async function EventPreviewPage({ params }: { params: Params }) {
   const dashboardRole = await getDashboardRole();
 
-  if (dashboardRole === "ao") return notFound();
+  // if (dashboardRole === "ao") return notFound();
 
   return (
     <Section>
@@ -167,11 +167,8 @@ const EventStatusHistorySection = async ({ params }: { params: Params }) => {
         <Separator />
         <StepContainer>
           {res.data?.map((item, index) => {
-            const approverFullName = item?.event_approvers.user[
-              (item?.event_approver.user_role === "director_sales"
-                ? "franchise_head"
-                : item?.event_approver.user_role) as "ao"
-            ]?.["full_name"] ?? ''
+            const approver = item.event_approvers
+            const approverFullName = approver.users?.full_name ?? ''
 
             const approverType = item.remarks?.split(':')[0]
             const comment = item.remarks?.split(':')[1]
@@ -182,8 +179,8 @@ const EventStatusHistorySection = async ({ params }: { params: Params }) => {
                 status={item.status}
                 description={<><br /><strong>
                   {approverFullName} </strong>
-                  <em className="text-sm">({item.event_approver.user_id})</em>{" "}: {" "}
-                  <UserRoleBadge type={item.event_approver.user_role}>{item.event_approver.user_role}</UserRoleBadge>
+                  <em className="text-sm">({approver.employee_id})</em>{" "}: {" "}
+                  <UserRoleBadge type={approver.user_role as "ao"}>{approver.user_role}</UserRoleBadge>
                   <ApproverTypeBadge type={approverType as 'final'}>{approverType}</ApproverTypeBadge>
                   <br />
                   <blockquote className="relative border rounded-md p-8 py-4 bg-background text-sm mt-3 isolate">

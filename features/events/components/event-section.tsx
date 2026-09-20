@@ -1,6 +1,6 @@
 import { AuthUserRole } from "@/types/auth-user";
 import React from "react";
-import { EventSingleProps } from "../lib/event";
+import { EventSingleProps } from "../libs/events";
 import {
   Field,
   FieldGroup,
@@ -31,12 +31,12 @@ export default function EventSection({
   prevData: EventSingleProps;
   role: AuthUserRole;
 }) {
-  const totalBudget = prevData.event_budget?.reduce(
+  const totalBudget = prevData.event_budgets.reduce(
     (acc, sum) => acc + Number(sum.unit_cost) * sum.unit,
     0,
   );
 
-  const totalHonorarium = prevData.event_consultant?.reduce(
+  const totalHonorarium = prevData.event_consultants.reduce(
     (acc, sum) => acc + Number(sum.honorarium || 0),
     0,
   );
@@ -62,19 +62,19 @@ export default function EventSection({
 
       {/* Requester information */}
       <FieldContainer>
-        <CustomField
-          title="AO Full Name"
-          value={prevData?.user.ao?.full_name}
-        />
+        <CustomField title="AO Full Name" value={prevData.users?.full_name} />
         <FieldGroup className="md:grid-cols-3 md:grid">
-          <CustomField title="Work Area" value={prevData?.user_id} />{" "}
+          <CustomField
+            title="Work Area"
+            value={`${prevData.area.area_name} (${prevData.sap_area_code})`}
+          />{" "}
           <CustomField
             title="Employee ID"
-            value={prevData?.user.ao?.employee_id ?? ""}
+            value={prevData.users?.employee_id ?? ""}
           />{" "}
           <CustomField
             title="Designation"
-            value={prevData?.user.ao?.designation}
+            value={prevData.users?.designation}
           />
         </FieldGroup>
       </FieldContainer>
@@ -203,8 +203,8 @@ export default function EventSection({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {prevData.event_budget.length > 0 ? (
-              prevData.event_budget.map((item) => (
+            {prevData.event_budgets.length > 0 ? (
+              prevData.event_budgets.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell>{item.item}</TableCell>
                   <TableCell>{item.unit}</TableCell>
@@ -221,16 +221,16 @@ export default function EventSection({
                 </TableCell>
               </TableRow>
             )}
-            {prevData.event_consultant.length > 0 && (
+            {prevData.event_consultants.length > 0 && (
               <TableRow>
                 <TableCell>Honorarium</TableCell>
-                <TableCell>{prevData.event_consultant.length}</TableCell>
+                <TableCell>{prevData.event_consultants.length}</TableCell>
                 <TableCell>-</TableCell>
                 <TableCell>{formatNumber(totalHonorarium)}</TableCell>
               </TableRow>
             )}
           </TableBody>
-          {prevData.event_budget.length !== 0 && (
+          {prevData.event_budgets.length !== 0 && (
             <TableFooter>
               <TableRow>
                 <TableCell colSpan={3}>Total</TableCell>
@@ -257,8 +257,8 @@ export default function EventSection({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {prevData.event_consultant.length > 0 ? (
-              prevData.event_consultant.map((item) => (
+            {prevData.event_consultants.length > 0 ? (
+              prevData.event_consultants.map((item) => (
                 <TableRow key={item.id}>
                   <TableCell>
                     {item.doctor.full_name},{" "}
@@ -281,7 +281,7 @@ export default function EventSection({
               </TableRow>
             )}
           </TableBody>
-          {prevData.event_budget.length !== 0 && (
+          {prevData.event_consultants.length !== 0 && (
             <TableFooter>
               <TableRow>
                 <TableCell colSpan={4}>Total</TableCell>
@@ -297,8 +297,8 @@ export default function EventSection({
       {/* attachement section */}
       <Card className="gap-3">
         <h4 className="font-semibold">Attachments</h4>
-        {prevData.event_attachment.length > 0 ? (
-          prevData.event_attachment.map((item) => (
+        {prevData.event_attachments.length > 0 ? (
+          prevData.event_attachments.map((item) => (
             <Field key={item.id}>
               {item.file_path && (
                 <a

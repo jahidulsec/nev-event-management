@@ -1,7 +1,7 @@
 "use client";
 
 import { Form } from "@/components/shared/form/form";
-import { EventSingleProps } from "../lib/event";
+import { EventSingleProps } from "@/features/events/libs/events";
 import { Separator } from "@/components/ui/separator";
 import {
   Field,
@@ -12,20 +12,20 @@ import {
 } from "@/components/ui/field";
 import { formatNumber, getTitleCase } from "@/utils/formatter";
 import { Controller, useForm } from "react-hook-form";
-import {
-  EventFirstApprovalSchema,
-  EventFirstApprovalType,
-} from "../actions/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Select } from "@/components/shared/select/select";
 import { yesNoList } from "@/lib/data";
 import { FormButton } from "@/components/shared/button/button";
 import { AuthUser, AuthUserRole } from "@/types/auth-user";
-import { createFirstApproverApproval } from "../actions/consultant-approval";
 import { toast } from "sonner";
 import { CustomField } from "@/components/shared/field/field";
 import { SectionContent } from "@/components/shared/section/section";
 import { SectionHeading2 } from "@/components/shared/typography/heading";
+import { createFirstApproverApproval } from "../actions/event-consultant-approvers";
+import {
+  createFirstApproverApprovalPayloadSchema,
+  CreateFirstApproverApprovalPayloadType,
+} from "../schema/schema";
 
 export default function FirstApproverForm({
   eventData,
@@ -36,7 +36,7 @@ export default function FirstApproverForm({
   role: AuthUserRole;
   authUser: AuthUser;
 }) {
-  const consultants = eventData.event_consultant;
+  const consultants = eventData.event_consultants;
 
   if (consultants.length === 0) return null;
 
@@ -72,21 +72,24 @@ export default function FirstApproverForm({
                 title="Different District?"
                 value={getTitleCase(item.in_different_district ?? "")}
               />
-              <CustomField title="Night Stay?" value={getTitleCase(item.night_stay ?? "") } />
+              <CustomField
+                title="Night Stay?"
+                value={getTitleCase(item.night_stay ?? "")}
+              />
             </div>
             <Separator className="my-3" />
 
             {eventData.event_type?.approver?.[0]?.user_type === role &&
-            !item.event_consultant_approval?.first_approver_id ? (
+            !item.event_consultant_approvals?.first_approver_id ? (
               <ApprovalForm consultant_id={item.id} authUser={authUser} />
             ) : (
               <div className="grid grid-cols-2 gap-3">
                 <CustomField
                   title="Suitable for participants?"
                   value={
-                    item.event_consultant_approval?.is_suitable
+                    item.event_consultant_approvals?.is_suitable
                       ? getTitleCase(
-                          item.event_consultant_approval?.is_suitable,
+                          item.event_consultant_approvals?.is_suitable,
                         )
                       : "Not approved yet"
                   }
@@ -94,9 +97,9 @@ export default function FirstApproverForm({
                 <CustomField
                   title="Relevant TA/Topic Expert?"
                   value={
-                    item.event_consultant_approval?.topic_expert
+                    item.event_consultant_approvals?.topic_expert
                       ? getTitleCase(
-                          item.event_consultant_approval?.topic_expert,
+                          item.event_consultant_approvals?.topic_expert,
                         )
                       : "Not approved yet"
                   }
@@ -117,16 +120,15 @@ const ApprovalForm = ({
   authUser: AuthUser;
   consultant_id: string;
 }) => {
-  const form = useForm<EventFirstApprovalType>({
-    resolver: zodResolver(EventFirstApprovalSchema),
+  const form = useForm<CreateFirstApproverApprovalPayloadType>({
+    resolver: zodResolver(createFirstApproverApprovalPayloadSchema),
     defaultValues: {
       consultant_id: consultant_id,
-      first_approver_id: authUser.workAreaCode,
+      first_approver_id: authUser.employeeId,
     },
   });
 
-  const onSubmit = async (data: EventFirstApprovalType) => {
-    console.log(data);
+  const onSubmit = async (data: CreateFirstApproverApprovalPayloadType) => {
     const res = await createFirstApproverApproval(data);
 
     toast[res.success ? "success" : "error"](res.message);

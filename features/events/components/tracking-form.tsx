@@ -9,11 +9,14 @@ import {
 } from "@/components/ui/field";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
-import { EventTrackingSchema, EventTrackingType } from "../actions/schema";
 import { Input } from "@/components/ui/input";
 import { FormButton } from "@/components/shared/button/button";
-import { updateEventTrackingNumber } from "../actions/event";
 import { toast } from "sonner";
+import { updateEventTrackingNumber } from "../actions/event";
+import {
+  updateEventTrackingPayloadSchema,
+  UpdateEventTrackingPayloadType,
+} from "../schemas/events";
 
 export default function TrackingEventForm({
   eventId,
@@ -22,15 +25,15 @@ export default function TrackingEventForm({
   trackingNo?: string;
   eventId: string;
 }) {
-  const form = useForm<EventTrackingType>({
-    resolver: zodResolver(EventTrackingSchema),
+  const form = useForm<UpdateEventTrackingPayloadType>({
+    resolver: zodResolver(updateEventTrackingPayloadSchema),
     defaultValues: {
       track_no: trackingNo,
       event_id: eventId,
     },
   });
 
-  const onSubmit = async (data: EventTrackingType) => {
+  const onSubmit = async (data: UpdateEventTrackingPayloadType) => {
     const res = await updateEventTrackingNumber(data);
 
     toast[res.success ? "success" : "error"](res.message);
@@ -39,7 +42,7 @@ export default function TrackingEventForm({
   if(trackingNo) return <div className="max-w-4xl">
     <FieldGroup className="gap-3">
       <FieldLabel>Tracking No.</FieldLabel>
-      <Input value={trackingNo} />
+      <Input value={trackingNo} readOnly />
     </FieldGroup>
   </div>
 

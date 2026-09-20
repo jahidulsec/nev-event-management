@@ -24,6 +24,7 @@ const eventSingleInclude = {
     include: { doctor: true, event_consultant_approvals: true },
   },
   product: { select: { name: true } },
+  area: { select: { area_name: true } },
   event_type: { include: { approver: true } },
   event_approvers: { include: { event_status_histories: true } },
   users: {

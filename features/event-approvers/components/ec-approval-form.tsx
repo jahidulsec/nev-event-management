@@ -1,26 +1,25 @@
 "use client";
 
 import React from "react";
-import { EventSingleProps } from "../lib/event";
+import { EventSingleProps } from "../../events/libs/events";
 import { CustomField } from "@/components/shared/field/field";
 import { AuthUser } from "@/types/auth-user";
 import { Separator } from "@/components/ui/separator";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { yesNoList } from "@/lib/data";
+import { getTitleCase } from "@/utils/formatter";
 import { Select } from "@/components/shared/select/select";
 import { FormButton } from "@/components/shared/button/button";
 import { Form } from "@/components/shared/form/form";
 import { Input } from "@/components/ui/input";
-import { EventECApprovalSchema, EventECApprovalType } from "../actions/schema";
-import { createECapproval } from "../actions/consultant-approval";
+import {
+  createECApprovalPayloadSchema,
+  CreateECApprovalPayloadType,
+} from "../schema/schema";
+import { createECApproval } from "../actions/event-approvers";
 
 export default function ECApprovalForm({
   eventData,
@@ -29,50 +28,51 @@ export default function ECApprovalForm({
   eventData: EventSingleProps;
   authUser: AuthUser;
 }) {
-  const consultants = eventData.event_consultant;
+  const consultants = eventData.event_consultants;
 
   if (consultants.length === 0) return null;
+
   return (
     <div className="flex flex-col gap-6">
-      {consultants.map((item) => (
-        <div
-          className="border rounded-md p-3 flex flex-col gap-3 border-primary/50"
-          key={item.id}
-        >
-          <CustomField title="Doctor" value={item.doctor.full_name} />
-          <Separator />
-          <div className="">
-            {authUser.role.includes("ec") &&
-            !!!item.event_consultant_approval?.ec_id ? (
+      {consultants.map((item) => {
+        const approval = item.event_consultant_approvals;
+
+        return (
+          <div
+            className="border rounded-md p-3 flex flex-col gap-3 border-primary/50"
+            key={item.id}
+          >
+            <CustomField title="Doctor" value={item.doctor.full_name} />
+            <Separator />
+            {authUser.role.includes("ec") && !approval?.ec_id ? (
               <ApprovalForm authUser={authUser} consultant_id={item.id} />
             ) : (
               <div className="flex flex-wrap sm:flex-nowrap gap-3">
                 <CustomField
                   title="Honorarium Check"
                   value={
-                    item?.event_consultant_approval?.honorarium_check ??
-                    "Not approved yet"
+                    approval?.honorarium_check
+                      ? getTitleCase(approval.honorarium_check)
+                      : "Not approved yet"
                   }
                 />
                 <CustomField
                   title="Consultant Form Attached?"
                   value={
-                    item?.event_consultant_approval?.consultant_form_attached ??
-                    "Not approved yet"
+                    approval?.consultant_form_attached
+                      ? getTitleCase(approval.consultant_form_attached)
+                      : "Not approved yet"
                   }
                 />
                 <CustomField
                   title="nTh Engagement?"
-                  value={
-                    item?.event_consultant_approval?.nth_engagement?.toString() ??
-                    "Not approved yet"
-                  }
+                  value={approval?.nth_engagement?.toString() ?? "Not approved yet"}
                 />
               </div>
             )}
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
@@ -84,19 +84,20 @@ const ApprovalForm = ({
   authUser: AuthUser;
   consultant_id: string;
 }) => {
-  const form = useForm<EventECApprovalType>({
-    resolver: zodResolver(EventECApprovalSchema),
+  const form = useForm<CreateECApprovalPayloadType>({
+    resolver: zodResolver(createECApprovalPayloadSchema),
     defaultValues: {
-      consultant_id: consultant_id,
-      ec_id: authUser.workAreaCode,
+      consultant_id,
+      ec_id: authUser.employeeId,
     },
   });
 
-  const onSubmit = async (data: EventECApprovalType) => {
-    const res = await createECapproval(data);
+  const onSubmit = async (data: CreateECApprovalPayloadType) => {
+    const res = await createECApproval(data);
 
     toast[res.success ? "success" : "error"](res.message);
   };
+
   return (
     <Form
       onSubmit={form.handleSubmit(onSubmit)}
@@ -123,7 +124,7 @@ const ApprovalForm = ({
         />
         <Controller
           control={form.control}
-          name="hororarium_check"
+          name="honorarium_check"
           render={({ field, fieldState }) => (
             <Field data-invalid={fieldState.invalid}>
               <FieldLabel htmlFor={field.name}>Honorarium Check?</FieldLabel>
@@ -137,7 +138,6 @@ const ApprovalForm = ({
             </Field>
           )}
         />
-
         <Controller
           control={form.control}
           name="nth_engagement"
@@ -147,6 +147,7 @@ const ApprovalForm = ({
               <Input
                 type="number"
                 {...field}
+                value={Number.isNaN(field.value) ? "" : (field.value ?? "")}
                 onChange={(e) => field.onChange(e.target.valueAsNumber)}
                 id={field.name}
                 placeholder="enter nth engagement"
