@@ -11,6 +11,9 @@ export type EventMultiProps = Prisma.eventsGetPayload<{
     users: { select: { full_name: true; employee_id: true } };
     product: { select: { name: true } };
     event_type: true;
+    event_approvers: {
+      select: { employee_id: true; user_role: true };
+    };
   };
 }>;
 
@@ -53,6 +56,11 @@ export const getEvents = async (query: QuerySchemaType) => {
             users: { select: { full_name: true, employee_id: true } },
             product: { select: { name: true } },
             event_type: true,
+            event_approvers: {
+              select: { employee_id: true, user_role: true },
+              orderBy: { created_at: "desc" },
+              take: 1,
+            },
           },
         },
       }),

@@ -25,7 +25,7 @@ import { getPageData } from "@/utils/helper";
 import { Suspense } from "react";
 import { getTitleCase } from "@/utils/formatter";
 import { Metadata } from "next";
-import { AppMetaData } from "@/lib/data";
+import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from "@/utils/settings";
 
 export const metadata: Metadata = {
   title: `Events`,
@@ -56,9 +56,9 @@ export default async function EventsPage({
 
         <SectionActions>
           {user?.role.includes("ao") && <CreateEventButton />}
-          {user?.role.some((i) => i === "ec" || i === "superadmin") && (
+          {/* {user?.role.some((i) => i === "ec" || i === "superadmin") && (
             <ExportButton />
-          )}
+          )} */}
         </SectionActions>
       </SectionHeader>
 
@@ -98,8 +98,8 @@ const TableSection = async ({
   const dashboardAreaCode = await getDashboardArea();
 
   const res = await getEvents({
-    page: Number(page),
-    size: Number(size),
+    page: Number(page || DEFAULT_PAGE),
+    size: Number(size || DEFAULT_PAGE_SIZE),
     search: search?.toString().trim(),
     // work_area_code: dashboardAreaCode ?? undefined,
     // role: dashboardRole as any,
@@ -117,7 +117,7 @@ const TableSection = async ({
 
   return (
     <ErrorBoundary message={!res.success ? res.message : undefined}>
-      <EventTable data={res?.data ?? []} authUser={authUser as AuthUser} />
+      <EventTable data={res?.data ?? []} />
       <PagePagination count={res.count} />
     </ErrorBoundary>
   );

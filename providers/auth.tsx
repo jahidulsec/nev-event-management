@@ -5,6 +5,8 @@ import React from "react";
 
 type AuthContextProps = {
   user: AuthUser;
+  role: string;
+  sapAreaCode?: string;
 };
 
 const AuthContext = React.createContext<AuthContextProps | undefined>(
@@ -14,9 +16,17 @@ const AuthContext = React.createContext<AuthContextProps | undefined>(
 export const AuthProvider = ({
   children,
   authUser,
-}: React.PropsWithChildren & { authUser: AuthUser }) => {
+  currentRole,
+  currentArea,
+}: React.PropsWithChildren & {
+  authUser: AuthUser;
+  currentRole: string;
+  currentArea?: string;
+}) => {
   return (
-    <AuthContext.Provider value={{ user: authUser }}>
+    <AuthContext.Provider
+      value={{ user: authUser, role: currentRole, sapAreaCode: currentArea }}
+    >
       {children}
     </AuthContext.Provider>
   );

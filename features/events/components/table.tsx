@@ -12,18 +12,16 @@ import { Edit, Eye, Printer, Trash2, Workflow } from "lucide-react";
 import React from "react";
 import { deleteEvent } from "../actions/event";
 import { TableActionButton } from "@/components/shared/button/button";
-import { EventMultiProps } from "../lib/event";
 import { Badge } from "@/components/ui/badge";
 import { useRouter } from "@bprogress/next";
 import { getCostLimitText } from "@/utils/helper";
-import {
-  StatusBadge,
-  UserRoleBadge,
-} from "@/components/shared/badge/badge";
+import { StatusBadge, UserRoleBadge } from "@/components/shared/badge/badge";
 import { FormDialog } from "@/components/shared/modal/modal";
 import { ApproverFlowChart } from "@/components/shared/flowchart/approver";
 import { AuthUser } from "@/types/auth-user";
 import { cn } from "@/lib/utils";
+import { EventMultiProps } from "../libs/events";
+import { useAuthContext } from "@/providers/auth";
 
 export default function EventTable({
   data,
@@ -32,11 +30,11 @@ export default function EventTable({
   data: EventMultiProps[];
   authUser?: AuthUser;
 }) {
+  const { user } = useAuthContext();
+
   const [del, setDel] = React.useState<string | boolean>(false);
   const [pending, startTransition] = React.useTransition();
-  const [flowchart, setFlowchart] = React.useState<
-    string | boolean
-  >(false);
+  const [flowchart, setFlowchart] = React.useState<string | boolean>(false);
   const serialColumn = useTableSerialColumn<EventMultiProps>();
 
   const router = useRouter();
@@ -60,33 +58,39 @@ export default function EventTable({
       header: "Event Date",
       cell: ({ row }) => (
         <div>
-
-          {row.original.event_date ?
+          {row.original.event_date ? (
             <>
-              <p className="font-medium">{formatDate(row.original.event_date)}</p>
-              <p className="text-muted-foreground font-semibold text-xs">{formatTime(row.original.event_date)}</p>
+              <p className="font-medium">
+                {formatDate(row.original.event_date)}
+              </p>
+              <p className="text-muted-foreground font-semibold text-xs">
+                {formatTime(row.original.event_date)}
+              </p>
             </>
-            : "-"}
-
+          ) : (
+            "-"
+          )}
         </div>
       ),
     },
     {
-      accessorKey: "user_id",
+      accessorKey: "sap_area_code",
       header: "Work Area",
     },
     {
       id: "event_type",
       header: "Type",
       cell: ({ row }) => {
-        const value = row.original;
+        const value = row.original.event_type;
 
         return (
           <p className="text-wrap min-w-40">
-            {value.type_title} ({getCostLimitText({
-              upper_limit: value.upper_limit,
-              lower_limit: value.lower_limit
-            })})
+            {value?.title} (
+            {getCostLimitText({
+              upper_limit: Number(value?.upper_limit),
+              lower_limit: Number(value?.lower_limit),
+            })}
+            )
           </p>
         );
       },
@@ -94,7 +98,7 @@ export default function EventTable({
     {
       id: "product",
       header: "Product",
-      cell: ({ row }) => <p>{getTitleCase(row.original.name)}</p>,
+      cell: ({ row }) => <p>{getTitleCase(row.original.product.name)}</p>,
     },
     {
       id: "current_status",
@@ -104,7 +108,8 @@ export default function EventTable({
         return (
           <Badge
             variant={"outline"}
-            className={cn('border-transparent',
+            className={cn(
+              "border-transparent",
               status === "approved"
                 ? "bg-green-50 text-green-700"
                 : status === "rejected"
@@ -125,28 +130,28 @@ export default function EventTable({
 
         const value = row.original;
 
-        const lastApproverRole = value.last_approver_role
-        status = lastApproverRole ?
-          value.current_status === 'rejected'
-            ? "rejected" : "approved"
-          : 'pending'
+        const lastApproverRole = value.event_approvers[0]?.user_role ?? null;
+        status = lastApproverRole
+          ? value.current_status === "rejected"
+            ? "rejected"
+            : "approved"
+          : "pending";
 
         return (
           <p>
-            {lastApproverRole !== null ?
+            {lastApproverRole !== null ? (
               <>
-                <UserRoleBadge
-                  type={lastApproverRole}
-                >
+                <UserRoleBadge type={lastApproverRole}>
                   {lastApproverRole}
                 </UserRoleBadge>
                 <StatusBadge type={status}>{status}</StatusBadge>
-              </> : <>
+              </>
+            ) : (
+              <>
                 <StatusBadge type={status}>{status}</StatusBadge>
               </>
-            }
+            )}
           </p>
-
         );
       },
     },
@@ -168,16 +173,16 @@ export default function EventTable({
           <div className="flex justify-end items-center gap-1">
             <TableActionButton
               tooltip="Flowchart"
-              onClick={() => setFlowchart(value.type_id)}
+              onClick={() => setFlowchart(value.event_type_id ?? "")}
             >
               <Workflow /> <span className="sr-only">Workflow</span>
             </TableActionButton>
             {!authUser?.role.includes("ao") && (
-              <TableActionButton
-                tooltip="Preview"
-                variant={"edit"}
-              >
-                <a target="_blank" href={`/dashboard/events/${value.id}/preview`}>
+              <TableActionButton tooltip="Preview" variant={"edit"}>
+                <a
+                  target="_blank"
+                  href={`/dashboard/events/${value.id}/preview`}
+                >
                   <Eye /> <span className="sr-only">Preview</span>
                 </a>
               </TableActionButton>
@@ -188,31 +193,31 @@ export default function EventTable({
                   {["processing", "rework"].includes(
                     row.original.current_status ?? "",
                   ) && (
-                      <TableActionButton
-                        tooltip="Edit"
-                        variant={"edit"}
-                        onClick={() =>
-                          router.push(`/dashboard/events/${value.id}`)
-                        }
-                      >
-                        <Edit /> <span className="sr-only">Edit</span>
-                      </TableActionButton>
-                    )}
+                    <TableActionButton
+                      tooltip="Edit"
+                      variant={"edit"}
+                      onClick={() =>
+                        router.push(`/dashboard/events/${value.id}`)
+                      }
+                    >
+                      <Edit /> <span className="sr-only">Edit</span>
+                    </TableActionButton>
+                  )}
                 </>
               ))}
 
             {(authUser?.role.some((i) => i === "ec") ||
               authUser?.role.includes("superadmin")) && (
-                <TableActionButton tooltip="Print" variant={"edit"}>
-                  <a
-                    href={`/print/event/${value.id}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Printer /> <span className="sr-only">Print</span>
-                  </a>
-                </TableActionButton>
-              )}
+              <TableActionButton tooltip="Print" variant={"edit"}>
+                <a
+                  href={`/print/event/${value.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <Printer /> <span className="sr-only">Print</span>
+                </a>
+              </TableActionButton>
+            )}
 
             {authUser?.role.includes("superadmin") && (
               <TableActionButton
@@ -251,7 +256,9 @@ export default function EventTable({
         onOpenChange={setFlowchart}
         formTitle="View approver flow"
       >
-        <ApproverFlowChart eventTypeId={typeof flowchart === 'string' ? flowchart : ''} />
+        <ApproverFlowChart
+          eventTypeId={typeof flowchart === "string" ? flowchart : ""}
+        />
       </FormDialog>
     </>
   );
