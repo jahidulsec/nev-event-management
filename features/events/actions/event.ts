@@ -18,6 +18,10 @@ import { eventBudgetService } from "@/services/event-budgets";
 import { eventConsultantService } from "@/services/event-consultants";
 import { eventAttachmentService } from "@/services/event-attachments";
 import { updateTag } from "next/cache";
+import { notify } from "@/services/notify";
+import { notifyNextApprover } from "@/lib/approver";
+import RequestorInitMail from "@/features/email/template/ao-init-mail";
+import { formatDateTime } from "@/utils/formatter";
 
 const deleteFiles = (filePaths: string[]) =>
   Promise.allSettled(filePaths.map((filePath) => deleteFile(filePath)));
@@ -80,6 +84,7 @@ export const createEvent = async (data: CreateEventPayloadType) => {
       options: {
         include: {
           event_type: { select: { title: true } },
+          users: { select: { email: true, full_name: true } },
         },
       },
     });
@@ -114,9 +119,30 @@ export const createEvent = async (data: CreateEventPayloadType) => {
       ],
     });
 
-    // create approver  list according to event type
-
     // create notificaion for creator
+    await notify({
+      recipient: {
+        email: event.users?.email ?? "",
+        employee_id: data.employee_id,
+      },
+      event_id: event.id,
+      message: "You created a new event proposal",
+      is_marked: "no",
+      status: "read_only",
+      email: {
+        subject: "You created a new event proposal",
+        html: RequestorInitMail({
+          eventTitle: event.title,
+          eventDate: formatDateTime(event.event_date),
+          typeTitle: event.event_type?.title ?? "",
+          status: event.current_status || "pending",
+          product: event.product_id.toUpperCase(),
+        }),
+      },
+    });
+
+    // notify first approver, resolved from the role of the event type's first approver
+    await notifyNextApprover(event, 0);
 
     return apiResponse.single({
       data: updateEvent,

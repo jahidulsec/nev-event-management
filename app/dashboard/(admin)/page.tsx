@@ -3,7 +3,6 @@ import { Section, SectionContent, SectionHeader } from '@/components/shared/sect
 import { SectionHeading2 } from '@/components/shared/typography/heading'
 import { Button } from '@/components/ui/button'
 import { getAuthUser } from '@/lib/dal'
-import { AuthUser } from '@/types/auth-user'
 import Link from 'next/link'
 
 export default async function DashboardPage() {

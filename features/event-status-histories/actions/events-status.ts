@@ -5,6 +5,10 @@ import { cacheTags } from "@/lib/server-cache";
 import { eventService } from "@/services/events";
 import { eventApproverService } from "@/services/event-approvers";
 import { eventStatusHistoryService } from "@/services/event-status-histories";
+import { notify } from "@/services/notify";
+import { notifyNextApprover } from "@/lib/approver";
+import EventCompletionMail from "@/features/email/template/completion-mail";
+import { formatDateTime } from "@/utils/formatter";
 import { updateTag } from "next/cache";
 import {
   createEventStatusPayloadSchema,
@@ -52,7 +56,13 @@ export const createEventStatus = async (data: CreateEventStatusPayloadType) => {
       options: {
         include: {
           event_approvers: true,
-          event_type: { select: { approver: true } },
+          event_type: {
+            select: {
+              title: true,
+              approver: { orderBy: { created_at: "asc" } },
+            },
+          },
+          users: { select: { employee_id: true, email: true, full_name: true } },
         },
       },
       cacheOption: { cache: false },
@@ -75,6 +85,34 @@ export const createEventStatus = async (data: CreateEventStatusPayloadType) => {
     updateTag(cacheTags.events);
     updateTag(cacheTags.eventStatusHistories);
     updateTag(cacheTags.eventStatusHistoriesCount);
+
+    if (isFinalApproval) {
+      // final approver approved, let the creator know the event is approved
+      await notify({
+        recipient: {
+          email: event.users?.email,
+          employee_id: event.users?.employee_id,
+        },
+        event_id,
+        message: "Your event proposal has been approved",
+        is_marked: "no",
+        status: "read_only",
+        email: {
+          subject: "Event status update",
+          html: EventCompletionMail({
+            eventTitle: event.title,
+            eventDate: formatDateTime(event.event_date),
+            typeTitle: event.event_type?.title ?? "",
+            status: "approved",
+            product: event.product_id.toUpperCase(),
+          }),
+        },
+      });
+    } else if (status === "approved") {
+      // approvers before the next one have already approved, so the number of
+      // approvals so far is the index of the next approver in the chain
+      await notifyNextApprover(event, event.event_approvers.length);
+    }
 
     return apiResponse.single({
       data: statusHistory,

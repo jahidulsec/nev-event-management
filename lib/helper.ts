@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/config/db";
-import { Prisma } from "./generated/prisma";
+import { Prisma } from "./generated/prisma/client";
 
 export const getApproverWorkArea = async (
   event: Prisma.eventGetPayload<{
