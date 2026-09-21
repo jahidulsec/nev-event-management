@@ -100,7 +100,7 @@ const ITEMS: QuickAccessItem[] = [
     key: "event-types",
     label: "Event types",
     description: "Cost limits and approvers",
-    href: "/dashboard/permission",
+    href: "/dashboard/event-type",
     icon: UserLock,
     permission: "event_type:view",
   },

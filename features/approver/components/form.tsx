@@ -23,9 +23,9 @@ import {
   createApprover,
   updateApprover,
 } from "@/features/approver/actions/approver";
-import { getEventTypes } from "../../event/lib/type";
 import { getCostLimitText } from "@/utils/helper";
 import { useParams } from "next/navigation";
+import { getEventTypes } from "@/features/event-type/libs/event-type";
 
 export default function EventTypeApproverForm({
   onClose,

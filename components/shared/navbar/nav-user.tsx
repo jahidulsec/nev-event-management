@@ -4,7 +4,7 @@ import { AuthUser } from "@/types/auth-user";
 import Link from "next/link";
 import { ProfileButton } from "../button/profile-button";
 import RoleSelect from "../../../features/dashboard/components/role-select";
-import { getNotificationStats } from "@/features/notifications/lib/notification";
+import { getNotificationStats } from "@/features/notifications/libs/notifications";
 import { Badge } from "@/components/ui/badge";
 
 export default async function NavUser({
@@ -14,7 +14,7 @@ export default async function NavUser({
   user: AuthUser;
   role: string;
 }) {
-  const res = await getNotificationStats({ work_area_code: user.workAreaCode });
+  const res = await getNotificationStats({ employee_id: user.employeeId });
 
   const [total, marked] = [res.data?.total ?? 0, res.data?.marked ?? 0];
   const unmarked = total - marked;

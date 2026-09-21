@@ -46,7 +46,7 @@ export function StatCard({
         <div className="min-w-0">
           <p
             className={cn(
-              "font-heading font-semibold leading-none",
+              "font-semibold leading-none",
               hero ? "text-5xl" : "text-3xl",
             )}
           >

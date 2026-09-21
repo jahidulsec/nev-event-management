@@ -80,7 +80,7 @@ export default function EventTypeTable({
                 tooltip="Approvers"
                 onClick={() =>
                   router.push(
-                    `/dashboard/permission/event-type/${row.original.id}`,
+                    `/dashboard/event-type/${row.original.id}`,
                   )
                 }
               >
