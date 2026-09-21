@@ -9,7 +9,6 @@ import {
   SectionHeadingIcon,
 } from "@/components/shared/typography/heading";
 import { getPageData } from "@/utils/helper";
-import TabSection from "@/components/permission/tab-section";
 import CreatEventTypeButton from "@/features/event-type/components/create-button";
 import { TableSkeleton } from "@/components/shared/skeleton/table";
 import { ErrorBoundary } from "@/components/shared/boundary/error-boundary";
@@ -45,9 +44,7 @@ export default function PermissionEventTypePage({
             {pageTitle}
           </SectionHeading>
         </SectionHeader>
-        <TabSection>
-          <CreatEventTypeButton />
-        </TabSection>
+        <CreatEventTypeButton />
 
         <SectionContent>
           <Suspense fallback={<TableSkeleton />}>
