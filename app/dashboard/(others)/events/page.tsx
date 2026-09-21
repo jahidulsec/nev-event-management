@@ -18,14 +18,14 @@ import CreateEventButton from "@/features/events/components/create-button";
 import ExportButton from "@/features/events/components/export-button";
 import EventTable from "@/features/events/components/table";
 import { getEvents } from "@/features/events/libs/events";
+import { EventQueryType } from "@/features/events/schemas/events";
 import { getAuthUser, getDashboardArea, getDashboardRole } from "@/lib/dal";
-import { AuthUser } from "@/types/auth-user";
 import { SearchParams } from "@/types/search-params";
-import { getPageData } from "@/utils/helper";
 import { Suspense } from "react";
 import { getTitleCase } from "@/utils/formatter";
 import { Metadata } from "next";
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from "@/utils/settings";
+import { db } from "@/config/db";
 
 export const metadata: Metadata = {
   title: `Events`,
@@ -92,18 +92,19 @@ const TableSection = async ({
     page: Number(page || DEFAULT_PAGE),
     size: Number(size || DEFAULT_PAGE_SIZE),
     search: search?.toString().trim(),
-    // work_area_code: dashboardAreaCode ?? undefined,
-    // role: dashboardRole as any,
-    // status: ["ec", "superadmin"].includes(dashboardRole ?? "")
-    //   ? (status?.toString() as "approved")
-    //   : "processing",
-    // start: start?.toString(),
-    // end: end?.toString(),
-    // is_archived: is_archived
-    //   ? is_archived.toString() === "yes"
-    //     ? "yes"
-    //     : "no"
-    //   : "no",
+    role: dashboardRole as EventQueryType["role"],
+    sap_area_code: dashboardAreaCode ?? undefined,
+    employee_id: authUser?.employeeId,
+    start: start?.toString(),
+    end: end?.toString(),
+    status: ["ec", "superadmin"].includes(dashboardRole ?? "")
+      ? (status?.toString() as "approved")
+      : "processing",
+    is_archived: is_archived
+      ? is_archived.toString() === "yes"
+        ? "yes"
+        : "no"
+      : "no",
   });
 
   return (

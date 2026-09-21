@@ -74,6 +74,37 @@ const getEventCount = async ({
     cacheOption,
   );
 
+const getEventIdsByCurrentApprover = async ({
+  role,
+  cacheOption,
+}: {
+  role: string;
+  cacheOption?: ServerCacheOptions;
+}): Promise<string[]> =>
+  cachedRead(
+    async () => {
+      const rows = await db.$queryRaw<{ event_id: string }[]>`
+        SELECT t.event_id
+        FROM (
+          SELECT
+            e.id AS event_id,
+            a.user_type,
+            ROW_NUMBER() OVER (PARTITION BY e.id ORDER BY a.created_at ASC) AS rn
+          FROM events e
+          JOIN approver a ON a.event_type_id = e.event_type_id
+          LEFT JOIN event_approvers ea
+            ON ea.event_id = e.id AND ea.user_role = a.user_type
+          WHERE ea.id IS NULL
+        ) t
+        WHERE t.rn = 1 AND t.user_type = ${role}
+      `;
+      return rows.map((row) => row.event_id);
+    },
+    cacheTags.events,
+    ["current-approver", role],
+    cacheOption,
+  );
+
 const createEvent = async <T extends Prisma.eventsDefaultArgs>({
   data,
   options,
@@ -133,6 +164,7 @@ export const eventService = {
   getEventUniq,
   getEventCount,
   getEvents,
+  getEventIdsByCurrentApprover,
   createEvent,
   updateEvent,
   deleteEvent,

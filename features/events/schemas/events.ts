@@ -1,4 +1,4 @@
-import { yesNoEnum } from "@/schemas/common";
+import { userRoleSchema, yesNoEnum } from "@/schemas/common";
 import { QuerySchema } from "@/schemas/query";
 import z from "zod";
 import {
@@ -111,8 +111,14 @@ export const updateEventDTOSchema = createEventDTOSchema.partial();
 
 export const createEventPayloadSchema = createEventDTOSchema.extend({
   eventBudget: z.array(createEventBudgetDTOSchema),
-  eventConsultant: z.array(createEventConsultantDTOSchema).optional().default([]),
-  eventAttachment: z.array(createEventAttachmentDTOSchema).optional().default([]),
+  eventConsultant: z
+    .array(createEventConsultantDTOSchema)
+    .optional()
+    .default([]),
+  eventAttachment: z
+    .array(createEventAttachmentDTOSchema)
+    .optional()
+    .default([]),
 });
 
 export const updateEventPayloadSchema = updateEventDTOSchema.extend({
@@ -164,6 +170,7 @@ export const eventQuerySchema = QuerySchema.extend({
     .string()
     .regex(/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/)
     .optional(),
+  role: userRoleSchema.optional(),
 });
 
 export const eventExportQuerySchema = eventQuerySchema.omit({

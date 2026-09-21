@@ -1,10 +1,10 @@
 "use server";
 
 import { apiResponse } from "@/lib/response";
-import { QuerySchema, QuerySchemaType } from "@/schemas/query";
 import { eventService } from "@/services/events";
 import { Prisma } from "@/lib/generated/prisma/client";
 import { ServerCacheOptions } from "@/lib/server-cache";
+import { eventQuerySchema, EventQueryType } from "../schemas/events";
 
 export type EventMultiProps = Prisma.eventsGetPayload<{
   include: {
@@ -52,9 +52,52 @@ export type EventSingleProps = Prisma.eventsGetPayload<{
   include: typeof eventSingleInclude;
 }>;
 
-export const getEvents = async (query: QuerySchemaType) => {
+// area type goes mio -> rm -> zm -> sm -> wing, so an event area is at most 4 parents below the user's area
+const AREA_MAX_DEPTH = 4;
+
+// matches an event whose area is the given area or any of its descendants
+const getAreaHierarchyFilter = (
+  sap_area_code: string,
+): Prisma.areaWhereInput => {
+  const levels: Prisma.areaWhereInput[] = [{ sap_area_code }];
+  let nested: Prisma.areaWhereInput = { sap_area_code };
+
+  for (let depth = 0; depth < AREA_MAX_DEPTH; depth++) {
+    nested = { area: nested };
+    levels.push(nested);
+  }
+
+  return { OR: levels };
+};
+
+const getEventAccessFilter = ({
+  role,
+  employee_id,
+  sap_area_code,
+}: Pick<
+  EventQueryType,
+  "role" | "employee_id" | "sap_area_code"
+>): Prisma.eventsWhereInput => {
+  // superadmin can access all events
+  if (role === "superadmin") return {};
+
+  // ec, marketing can access events of their assigned products
+  if (role === "ec" || role === "marketing") {
+    return employee_id
+      ? { product: { user_product: { some: { employee_id } } } }
+      : { id: { in: [] } };
+  }
+
+  // other users can access events of their area and its child areas
+  return role && sap_area_code
+    ? { area: getAreaHierarchyFilter(sap_area_code) }
+    : { id: { in: [] } };
+};
+
+export const getEvents = async (query: EventQueryType) => {
   try {
-    const { page, size, search } = QuerySchema.parse(query);
+    const { page, size, search, role, sap_area_code, employee_id } =
+      eventQuerySchema.parse(query);
 
     const filter: Prisma.eventsWhereInput = {
       ...(search && {
@@ -76,6 +119,7 @@ export const getEvents = async (query: QuerySchemaType) => {
           },
         ],
       }),
+      ...getEventAccessFilter({ role, employee_id, sap_area_code }),
     };
 
     const [res, count] = await Promise.all([
