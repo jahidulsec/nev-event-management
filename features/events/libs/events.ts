@@ -4,6 +4,7 @@ import { apiResponse } from "@/lib/response";
 import { eventService } from "@/services/events";
 import { Prisma } from "@/lib/generated/prisma/client";
 import { ServerCacheOptions } from "@/lib/server-cache";
+import { getActivePermissions } from "@/lib/permission-guard";
 import { eventQuerySchema, EventQueryType } from "../schemas/events";
 
 export type EventMultiProps = Prisma.eventsGetPayload<{
@@ -99,6 +100,16 @@ export const getEvents = async (query: EventQueryType) => {
     const { page, size, search, role, sap_area_code, employee_id } =
       eventQuerySchema.parse(query);
 
+    const permissions = await getActivePermissions();
+
+    if (!permissions.includes("event:view"))
+      throw new Error("You do not have permission to view events");
+
+    // `event:view_all` bypasses the area/product scope
+    const accessFilter = permissions.includes("event:view_all")
+      ? {}
+      : getEventAccessFilter({ role, employee_id, sap_area_code });
+
     const filter: Prisma.eventsWhereInput = {
       ...(search && {
         OR: [
@@ -119,7 +130,7 @@ export const getEvents = async (query: EventQueryType) => {
           },
         ],
       }),
-      ...getEventAccessFilter({ role, employee_id, sap_area_code }),
+      ...accessFilter,
     };
 
     const [res, count] = await Promise.all([

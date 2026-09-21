@@ -48,14 +48,21 @@ type FormState =
   | { mode: "create"; parent?: AreaNode }
   | { mode: "edit"; node: AreaNode };
 
+export type AreaTreePermissions = {
+  create?: boolean;
+  update?: boolean;
+};
+
 function TreeNode({
   node,
   depth = 0,
+  permissions,
   onCreateChild,
   onEdit,
 }: {
   node: AreaNode;
   depth?: number;
+  permissions: AreaTreePermissions;
   onCreateChild: (node: AreaNode) => void;
   onEdit: (node: AreaNode) => void;
 }) {
@@ -94,19 +101,23 @@ function TreeNode({
         </ColorBadge>
 
         <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100">
-          <TableActionButton
-            tooltip="Add sub-area"
-            onClick={() => onCreateChild(node)}
-          >
-            <PlusCircle /> <span className="sr-only">Add sub-area</span>
-          </TableActionButton>
-          <TableActionButton
-            tooltip="Edit"
-            variant="edit"
-            onClick={() => onEdit(node)}
-          >
-            <Edit /> <span className="sr-only">Edit</span>
-          </TableActionButton>
+          {permissions.create && (
+            <TableActionButton
+              tooltip="Add sub-area"
+              onClick={() => onCreateChild(node)}
+            >
+              <PlusCircle /> <span className="sr-only">Add sub-area</span>
+            </TableActionButton>
+          )}
+          {permissions.update && (
+            <TableActionButton
+              tooltip="Edit"
+              variant="edit"
+              onClick={() => onEdit(node)}
+            >
+              <Edit /> <span className="sr-only">Edit</span>
+            </TableActionButton>
+          )}
         </div>
       </div>
 
@@ -117,6 +128,7 @@ function TreeNode({
               key={child.sap_area_code}
               node={child}
               depth={depth + 1}
+              permissions={permissions}
               onCreateChild={onCreateChild}
               onEdit={onEdit}
             />
@@ -127,7 +139,13 @@ function TreeNode({
   );
 }
 
-export default function PreviewTree({ data }: { data: area[] }) {
+export default function PreviewTree({
+  data,
+  permissions = {},
+}: {
+  data: area[];
+  permissions?: AreaTreePermissions;
+}) {
   const tree = React.useMemo(() => buildAreaTree(data), [data]);
   const [formState, setFormState] = React.useState<FormState | null>(null);
 
@@ -160,6 +178,7 @@ export default function PreviewTree({ data }: { data: area[] }) {
         <TreeNode
           key={node.sap_area_code}
           node={node}
+          permissions={permissions}
           onCreateChild={(parent) => setFormState({ mode: "create", parent })}
           onEdit={(node) => setFormState({ mode: "edit", node })}
         />

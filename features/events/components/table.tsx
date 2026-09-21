@@ -18,18 +18,23 @@ import { getCostLimitText } from "@/utils/helper";
 import { StatusBadge, UserRoleBadge } from "@/components/shared/badge/badge";
 import { FormDialog } from "@/components/shared/modal/modal";
 import { ApproverFlowChart } from "@/components/shared/flowchart/approver";
-import { AuthUser } from "@/types/auth-user";
 import { cn } from "@/lib/utils";
 import { EventMultiProps } from "../libs/events";
 import { useAuthContext } from "@/providers/auth";
 import Link from "next/link";
 
+export type EventTablePermissions = {
+  update?: boolean;
+  print?: boolean;
+  delete?: boolean;
+};
+
 export default function EventTable({
   data,
-  authUser,
+  permissions = {},
 }: {
   data: EventMultiProps[];
-  authUser?: AuthUser;
+  permissions?: EventTablePermissions;
 }) {
   const { user } = useAuthContext();
 
@@ -178,34 +183,26 @@ export default function EventTable({
             >
               <Workflow /> <span className="sr-only">Workflow</span>
             </TableActionButton>
-            {!authUser?.role.includes("ao") && (
-              <TableActionButton tooltip="Preview" variant={"edit"}>
-                <Link href={`/dashboard/events/${value.id}/preview`}>
-                  <Eye /> <span className="sr-only">Preview</span>
-                </Link>
-              </TableActionButton>
-            )}
-            {authUser?.role.includes("ec") ||
-              (authUser?.role.includes("superadmin") && (
-                <>
-                  {["processing", "rework"].includes(
-                    row.original.current_status ?? "",
-                  ) && (
-                    <TableActionButton
-                      tooltip="Edit"
-                      variant={"edit"}
-                      onClick={() =>
-                        router.push(`/dashboard/events/${value.id}`)
-                      }
-                    >
-                      <Edit /> <span className="sr-only">Edit</span>
-                    </TableActionButton>
-                  )}
-                </>
-              ))}
+            <TableActionButton tooltip="Preview" variant={"edit"}>
+              <Link href={`/dashboard/events/${value.id}/preview`}>
+                <Eye /> <span className="sr-only">Preview</span>
+              </Link>
+            </TableActionButton>
 
-            {(authUser?.role.some((i) => i === "ec") ||
-              authUser?.role.includes("superadmin")) && (
+            {permissions.update &&
+              ["processing", "rework"].includes(
+                row.original.current_status ?? "",
+              ) && (
+                <TableActionButton
+                  tooltip="Edit"
+                  variant={"edit"}
+                  onClick={() => router.push(`/dashboard/events/${value.id}`)}
+                >
+                  <Edit /> <span className="sr-only">Edit</span>
+                </TableActionButton>
+              )}
+
+            {permissions.print && (
               <TableActionButton tooltip="Print" variant={"edit"}>
                 <a
                   href={`/print/event/${value.id}`}
@@ -217,7 +214,7 @@ export default function EventTable({
               </TableActionButton>
             )}
 
-            {authUser?.role.includes("superadmin") && (
+            {permissions.delete && (
               <TableActionButton
                 tooltip="delete"
                 variant={"delete"}

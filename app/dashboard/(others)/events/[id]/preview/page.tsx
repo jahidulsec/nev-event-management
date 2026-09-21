@@ -1,9 +1,4 @@
 import {
-  ApproverTypeBadge,
-  UserRoleBadge,
-} from "@/components/shared/badge/badge";
-import { Step, StepContainer } from "@/components/shared/progress/step";
-import {
   Section,
   SectionContent,
   SectionHeader,
@@ -15,7 +10,7 @@ import {
 } from "@/components/shared/typography/heading";
 import { Separator } from "@/components/ui/separator";
 import FirstApproverForm from "@/features/event-consultant-approvers/components/first-approver-form";
-import { getEventStatusHistories } from "@/features/event-status-histories/libs/event-status-histories";
+import { EventStatusHistorySection } from "@/features/event-status-histories/components/event-status-history";
 import EventSection from "@/features/events/components/event-section";
 import { EventStatusSection } from "@/features/event-status-histories/components/event-status-section";
 import TrackingEventForm from "@/features/events/components/tracking-form";
@@ -25,16 +20,19 @@ import { getApproverEventStatus } from "@/lib/event";
 import { event_current_status } from "@/lib/generated/prisma/client";
 import { AuthUser } from "@/types/auth-user";
 import { Params } from "@/types/search-params";
-import { QuoteIcon } from "lucide-react";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import EventStatusUpdateForm from "@/features/event-status-histories/components/status-form";
 import ECApprovalForm from "@/features/event-approvers/components/ec-approval-form";
+import { NoAccess } from "@/components/shared/state/state";
+import { getActivePermissions } from "@/lib/permission-guard";
+import { Permission } from "@/lib/permissions";
 
 export default async function EventPreviewPage({ params }: { params: Params }) {
-  const dashboardRole = await getDashboardRole();
+  const permissions = await getActivePermissions();
+  const { id } = await params;
 
-  // if (dashboardRole === "ao") return notFound();
+  if (!permissions.includes("event:view")) return <NoAccess />;
 
   return (
     <Section>
@@ -47,17 +45,23 @@ export default async function EventPreviewPage({ params }: { params: Params }) {
       </SectionHeader>
 
       <Suspense fallback={<SectionSpinner />}>
-        <EventDetailsSection params={params} />
+        <EventDetailsSection params={params} permissions={permissions} />
       </Suspense>
 
       <Suspense fallback={<SectionSpinner />}>
-        <EventStatusHistorySection params={params} />
+        <EventStatusHistorySection eventId={id?.toString() ?? ""} />
       </Suspense>
     </Section>
   );
 }
 
-const EventDetailsSection = async ({ params }: { params: Params }) => {
+const EventDetailsSection = async ({
+  params,
+  permissions,
+}: {
+  params: Params;
+  permissions: Permission[];
+}) => {
   const { id } = await params;
   const res = await getEvent(id?.toString() ?? "");
   const user = await getAuthUser();
@@ -107,13 +111,15 @@ const EventDetailsSection = async ({ params }: { params: Params }) => {
         <EventSection role={role as string} prevData={res.data} />
       </SectionContent>
 
-      <FirstApproverForm
-        authUser={user as AuthUser}
-        role={role as string}
-        eventData={res.data}
-      />
+      {permissions.includes("event:approve") && (
+        <FirstApproverForm
+          authUser={user as AuthUser}
+          role={role as string}
+          eventData={res.data}
+        />
+      )}
 
-      {(role === "ec" || role === "superadmin") && (
+      {permissions.includes("event:update_tracking") && (
         <SectionContent className="border rounded-md p-6">
           <div className="max-w-4xl mx-auto w-full flex flex-col gap-6">
             <SectionHeading2>Tracking No.</SectionHeading2>
@@ -126,17 +132,21 @@ const EventDetailsSection = async ({ params }: { params: Params }) => {
         </SectionContent>
       )}
 
-      {res.data.event_consultants.length !== 0 && (
-        <SectionContent className="border rounded-md p-6">
-          <div className="max-w-4xl mx-auto w-full flex flex-col gap-6">
-            <SectionHeading2>Event Coordinator Approval</SectionHeading2>
-            <Separator />
-            <ECApprovalForm authUser={user as AuthUser} eventData={res.data} />
-          </div>
-        </SectionContent>
-      )}
+      {permissions.includes("event:approve") &&
+        res.data.event_consultants.length !== 0 && (
+          <SectionContent className="border rounded-md p-6">
+            <div className="max-w-4xl mx-auto w-full flex flex-col gap-6">
+              <SectionHeading2>Event Coordinator Approval</SectionHeading2>
+              <Separator />
+              <ECApprovalForm
+                authUser={user as AuthUser}
+                eventData={res.data}
+              />
+            </div>
+          </SectionContent>
+        )}
 
-      {!["ao"].includes(role as string) && (
+      {permissions.includes("event:approve") && (
         <SectionContent className="border rounded-md">
           <div className="max-w-4xl mx-auto flex flex-col w-full py-10 gap-6 p-6">
             <SectionHeading2>Approval Section</SectionHeading2>
@@ -150,62 +160,5 @@ const EventDetailsSection = async ({ params }: { params: Params }) => {
         </SectionContent>
       )}
     </>
-  );
-};
-
-const EventStatusHistorySection = async ({ params }: { params: Params }) => {
-  const { id } = await params;
-
-  const res = await getEventStatusHistories({
-    page: 1,
-    size: 100,
-    event_id: id?.toString(),
-  });
-
-  if (res.data?.length === 0) return null;
-
-  return (
-    <div className="border rounded-md p-4 mt-6 py-10">
-      <div className="max-w-4xl mx-auto w-full flex flex-col gap-6">
-        <SectionHeading2>Event Approval History</SectionHeading2>
-        <Separator />
-        <StepContainer>
-          {res.data?.map((item, index) => {
-            const approver = item.event_approvers;
-            const approverFullName = approver.users?.full_name ?? "";
-
-            const approverType = item.remarks?.split(":")[0];
-            const comment = item.remarks?.split(":")[1];
-
-            return (
-              <Step
-                key={item.id}
-                status={item.status}
-                description={
-                  <>
-                    <br />
-                    <strong>{approverFullName} </strong>
-                    <em className="text-sm">({approver.employee_id})</em> :{" "}
-                    <UserRoleBadge type={approver.user_role as "ao"}>
-                      {approver.user_role}
-                    </UserRoleBadge>
-                    <ApproverTypeBadge type={approverType as "final"}>
-                      {approverType}
-                    </ApproverTypeBadge>
-                    <br />
-                    <blockquote className="relative border rounded-md p-8 py-4 bg-background text-sm mt-3 isolate">
-                      <QuoteIcon className="size-3.5 fill-muted text-muted absolute rotate-180 -z-1 top-3 left-2" />
-                      {comment}
-                    </blockquote>
-                  </>
-                }
-                createdAt={item.created_at as Date}
-                isLast={res.count === index + 1}
-              />
-            );
-          })}
-        </StepContainer>
-      </div>
-    </div>
   );
 };

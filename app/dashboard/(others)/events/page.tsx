@@ -25,7 +25,8 @@ import { Suspense } from "react";
 import { getTitleCase } from "@/utils/formatter";
 import { Metadata } from "next";
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from "@/utils/settings";
-import { db } from "@/config/db";
+import { NoAccess } from "@/components/shared/state/state";
+import { getActivePermissions } from "@/lib/permission-guard";
 
 export const metadata: Metadata = {
   title: `Events`,
@@ -38,7 +39,9 @@ export default async function EventsPage({
 }) {
   const pageTitle = "Events";
 
-  const user = await getAuthUser();
+  const permissions = await getActivePermissions();
+
+  if (!permissions.includes("event:view")) return <NoAccess />;
 
   return (
     <Section>
@@ -46,10 +49,8 @@ export default async function EventsPage({
         <SectionHeading>{pageTitle}</SectionHeading>
 
         <SectionActions>
-          {user?.role.includes("ao") && <CreateEventButton />}
-          {/* {user?.role.some((i) => i === "ec" || i === "superadmin") && (
-            <ExportButton />
-          )} */}
+          {permissions.includes("event:create") && <CreateEventButton />}
+          {permissions.includes("event:print") && <ExportButton />}
         </SectionActions>
       </SectionHeader>
 
@@ -85,6 +86,7 @@ const TableSection = async ({
     await searchParams;
 
   const authUser = await getAuthUser();
+  const permissions = await getActivePermissions();
   const dashboardRole = await getDashboardRole();
   const dashboardAreaCode = await getDashboardArea();
 
@@ -109,7 +111,14 @@ const TableSection = async ({
 
   return (
     <ErrorBoundary message={!res.success ? res.message : undefined}>
-      <EventTable data={res?.data ?? []} />
+      <EventTable
+        data={res?.data ?? []}
+        permissions={{
+          update: permissions.includes("event:update"),
+          print: permissions.includes("event:print"),
+          delete: permissions.includes("event:delete"),
+        }}
+      />
       <PagePagination count={res.count} />
     </ErrorBoundary>
   );

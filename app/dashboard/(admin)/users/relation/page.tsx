@@ -20,6 +20,9 @@ import { upsertUserProducts } from "@/features/users-product/actions/user-produc
 import CreateUserProductButton from "@/features/users-product/components/create-button";
 import UserProductTable from "@/features/users-product/components/table";
 import { getUserProducts } from "@/features/users-product/libs/user-product";
+import { NoAccess } from "@/components/shared/state/state";
+import { getActivePermissions } from "@/lib/permission-guard";
+import { RowPermissions } from "@/types/permission";
 import { SearchParams } from "@/types/search-params";
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from "@/utils/settings";
 import React from "react";
@@ -29,6 +32,13 @@ export default async function UserRelationPage({
 }: {
   searchParams: SearchParams;
 }) {
+  const permissions = await getActivePermissions();
+
+  const canViewArea = permissions.includes("user_area:view");
+  const canViewProduct = permissions.includes("user_product:view");
+
+  if (!canViewArea && !canViewProduct) return <NoAccess />;
+
   return (
     <Section>
       <SectionHeader>
@@ -36,46 +46,76 @@ export default async function UserRelationPage({
       </SectionHeader>
 
       <SectionContent>
-        <Tabs defaultValue="area">
+        <Tabs defaultValue={canViewArea ? "area" : "product"}>
           <TabsList>
-            <TabsTrigger value="area">Area Scope</TabsTrigger>
-            <TabsTrigger value="product">Product Scope</TabsTrigger>
+            {canViewArea && <TabsTrigger value="area">Area Scope</TabsTrigger>}
+            {canViewProduct && (
+              <TabsTrigger value="product">Product Scope</TabsTrigger>
+            )}
           </TabsList>
 
-          <TabsContent value="area">
-            <SectionContent className="mt-4">
-              <SectionHeader>
-                <SearchForm />
+          {canViewArea && (
+            <TabsContent value="area">
+              <SectionContent className="mt-4">
+                <SectionHeader>
+                  <SearchForm />
 
-                <SectionActions>
-                  <ExcelUploadButton action={upsertUserAreas as any} />
-                  <DownloadButton filePath="/public/templates/user_area_template.xlsx" />
-                  <CreateUserAreaButton />
-                </SectionActions>
-              </SectionHeader>
+                  <SectionActions>
+                    {permissions.includes("user_area:import") && (
+                      <>
+                        <ExcelUploadButton action={upsertUserAreas as any} />
+                        <DownloadButton filePath="/public/templates/user_area_template.xlsx" />
+                      </>
+                    )}
+                    {permissions.includes("user_area:create") && (
+                      <CreateUserAreaButton />
+                    )}
+                  </SectionActions>
+                </SectionHeader>
 
-              <React.Suspense fallback={<TableSkeleton />}>
-                <AreaScopeContainer searchParams={searchParams} />
-              </React.Suspense>
-            </SectionContent>
-          </TabsContent>
+                <React.Suspense fallback={<TableSkeleton />}>
+                  <AreaScopeContainer
+                    searchParams={searchParams}
+                    permissions={{
+                      update: permissions.includes("user_area:update"),
+                      delete: permissions.includes("user_area:delete"),
+                    }}
+                  />
+                </React.Suspense>
+              </SectionContent>
+            </TabsContent>
+          )}
 
-          <TabsContent value="product">
-            <SectionContent className="mt-4">
-              <SectionHeader>
-                <SearchForm />
-                <SectionActions>
-                  <ExcelUploadButton action={upsertUserProducts as any} />
-                  <DownloadButton filePath="/public/templates/user_product_template.xlsx" />
-                  <CreateUserProductButton />
-                </SectionActions>
-              </SectionHeader>
+          {canViewProduct && (
+            <TabsContent value="product">
+              <SectionContent className="mt-4">
+                <SectionHeader>
+                  <SearchForm />
+                  <SectionActions>
+                    {permissions.includes("user_product:import") && (
+                      <>
+                        <ExcelUploadButton action={upsertUserProducts as any} />
+                        <DownloadButton filePath="/public/templates/user_product_template.xlsx" />
+                      </>
+                    )}
+                    {permissions.includes("user_product:create") && (
+                      <CreateUserProductButton />
+                    )}
+                  </SectionActions>
+                </SectionHeader>
 
-              <React.Suspense fallback={<TableSkeleton />}>
-                <ProductScopeContainer searchParams={searchParams} />
-              </React.Suspense>
-            </SectionContent>
-          </TabsContent>
+                <React.Suspense fallback={<TableSkeleton />}>
+                  <ProductScopeContainer
+                    searchParams={searchParams}
+                    permissions={{
+                      update: permissions.includes("user_product:update"),
+                      delete: permissions.includes("user_product:delete"),
+                    }}
+                  />
+                </React.Suspense>
+              </SectionContent>
+            </TabsContent>
+          )}
         </Tabs>
       </SectionContent>
     </Section>
@@ -84,8 +124,10 @@ export default async function UserRelationPage({
 
 const AreaScopeContainer = async ({
   searchParams,
+  permissions,
 }: {
   searchParams: SearchParams;
+  permissions: RowPermissions;
 }) => {
   const { page, size, search } = await searchParams;
 
@@ -97,7 +139,7 @@ const AreaScopeContainer = async ({
 
   return (
     <ErrorBoundary message={res.success ? undefined : res.message}>
-      <UserAreaTable data={res.data ?? []} />
+      <UserAreaTable data={res.data ?? []} permissions={permissions} />
       <PagePagination count={res.count} />
     </ErrorBoundary>
   );
@@ -105,8 +147,10 @@ const AreaScopeContainer = async ({
 
 const ProductScopeContainer = async ({
   searchParams,
+  permissions,
 }: {
   searchParams: SearchParams;
+  permissions: RowPermissions;
 }) => {
   const { page, size, search } = await searchParams;
 
@@ -118,7 +162,7 @@ const ProductScopeContainer = async ({
 
   return (
     <ErrorBoundary message={res.success ? undefined : res.message}>
-      <UserProductTable data={res.data ?? []} />
+      <UserProductTable data={res.data ?? []} permissions={permissions} />
       <PagePagination count={res.count} />
     </ErrorBoundary>
   );

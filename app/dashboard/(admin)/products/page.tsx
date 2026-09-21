@@ -18,11 +18,12 @@ import { createProducts } from "@/features/product/actions/product";
 import CreateProductButton from "@/features/product/components/create-button";
 import ProductTable from "@/features/product/components/table";
 import { getProducts } from "@/features/product/lib/product";
-import { getDashboardRole } from "@/lib/dal";
+import { NoAccess } from "@/components/shared/state/state";
+import { getActivePermissions } from "@/lib/permission-guard";
+import { RowPermissions } from "@/types/permission";
 import { SearchParams } from "@/types/search-params";
 import { getPageData } from "@/utils/helper";
 import { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 export const metadata: Metadata = {
@@ -38,9 +39,9 @@ export default async function ProductsPage({
 
   const pageData = getPageData(pageTitle, "superadmin");
 
-  const role = await getDashboardRole();
+  const permissions = await getActivePermissions();
 
-  if (role !== "superadmin") return notFound();
+  if (!permissions.includes("product:view")) return <NoAccess />;
 
   return (
     <>
@@ -57,15 +58,25 @@ export default async function ProductsPage({
 
           <SectionActions>
             <SearchForm />
-            <DownloadButton filePath="/public/templates/products_list_template.xlsx" />
-            <ExcelUploadButton action={createProducts} />
-            <CreateProductButton />
+            {permissions.includes("product:import") && (
+              <>
+                <DownloadButton filePath="/public/templates/products_list_template.xlsx" />
+                <ExcelUploadButton action={createProducts} />
+              </>
+            )}
+            {permissions.includes("product:create") && <CreateProductButton />}
           </SectionActions>
         </SectionHeader>
 
         <SectionContent>
           <Suspense fallback={<TableSkeleton />}>
-            <TableSection searchParams={searchParams} />
+            <TableSection
+              searchParams={searchParams}
+              permissions={{
+                update: permissions.includes("product:update"),
+                delete: permissions.includes("product:delete"),
+              }}
+            />
           </Suspense>
         </SectionContent>
       </Section>
@@ -75,8 +86,10 @@ export default async function ProductsPage({
 
 const TableSection = async ({
   searchParams,
+  permissions,
 }: {
   searchParams: SearchParams;
+  permissions: RowPermissions;
 }) => {
   const { page, size, search } = await searchParams;
 
@@ -88,7 +101,7 @@ const TableSection = async ({
 
   return (
     <ErrorBoundary message={!res.success ? res.message : undefined}>
-      <ProductTable data={res?.data ?? []} />
+      <ProductTable data={res?.data ?? []} permissions={permissions} />
       <PagePagination count={res.count} />
     </ErrorBoundary>
   );

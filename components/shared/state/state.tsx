@@ -1,4 +1,4 @@
-import { Construction, Folder } from "lucide-react";
+import { Construction, Folder, Lock } from "lucide-react";
 
 import {
   Empty,
@@ -37,4 +37,20 @@ function CommingSoon() {
   );
 }
 
-export { NoData, CommingSoon };
+function NoAccess() {
+  return (
+    <Empty>
+      <EmptyHeader>
+        <EmptyMedia variant="icon">
+          <Lock />
+        </EmptyMedia>
+        <EmptyTitle>No Access</EmptyTitle>
+      </EmptyHeader>
+      <EmptyDescription>
+        Your role does not have permission to view this page.
+      </EmptyDescription>
+    </Empty>
+  );
+}
+
+export { NoData, CommingSoon, NoAccess };

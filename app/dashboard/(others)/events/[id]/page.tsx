@@ -4,24 +4,30 @@ import {
   SectionContent,
   SectionHeader,
 } from "@/components/shared/section/section";
-import { SectionHeadingWithBackButton } from "@/components/shared/typography/heading";
-import EventForm from "@/features/event/components/form";
-import { getEvent } from "@/features/event/lib/event";
+import {
+  SectionHeading2,
+  SectionHeadingWithBackButton,
+} from "@/components/shared/typography/heading";
+import { NoAccess } from "@/components/shared/state/state";
+import { SectionSpinner } from "@/components/shared/spinner/section";
+import { Separator } from "@/components/ui/separator";
+import { getEventTypes } from "@/features/event-type/libs/event-type";
+import { EventStatusHistorySection } from "@/features/event-status-histories/components/event-status-history";
+import EventStatusUpdateForm from "@/features/event-status-histories/components/status-form";
+import EventForm from "@/features/events/components/form";
+import { getEvent } from "@/features/events/libs/events";
+import { getEventFormValues } from "@/features/events/utils/form-values";
+import { getAuthUser, getDashboardRole } from "@/lib/dal";
+import { getActivePermissions } from "@/lib/permission-guard";
+import { AuthUser } from "@/types/auth-user";
 import { Params } from "@/types/search-params";
 import { notFound } from "next/navigation";
-import { getEventTypes } from "@/features/event/lib/type";
-import { getAuthUser, getDashboardRole } from "@/lib/dal";
-import { AuthUser } from "@/types/auth-user";
-import EventStatusUpdateForm from "@/features/event/components/status-form";
-import { Separator } from "@/components/ui/separator";
-import { getEventStatusHistories } from "@/features/event/lib/status-history";
-import { SectionSpinner } from "@/components/shared/spinner/section";
-import { Step, StepContainer } from "@/components/shared/progress/step";
 
 export default async function EventDetailsPage({ params }: { params: Params }) {
-  const dashboardRole = await getDashboardRole();
+  const permissions = await getActivePermissions();
+  const { id } = await params;
 
-  if (dashboardRole !== "ec" && dashboardRole !== 'superadmin') return notFound();
+  if (!permissions.includes("event:update")) return <NoAccess />;
 
   return (
     <Section>
@@ -29,24 +35,35 @@ export default async function EventDetailsPage({ params }: { params: Params }) {
         <SectionHeadingWithBackButton
           title="Events"
           subtitle="dashboard / event / edit"
+          href={"/dashboard/events"}
         />
       </SectionHeader>
       <Suspense fallback={<SectionSpinner />}>
-        <EventFormSection params={params} />
+        <EventFormSection
+          eventId={id?.toString() ?? ""}
+          canApprove={permissions.includes("event:approve")}
+        />
       </Suspense>
       <Suspense fallback={<SectionSpinner />}>
-        <EventStatusHistorySection params={params} />
+        <EventStatusHistorySection eventId={id?.toString() ?? ""} />
       </Suspense>
     </Section>
   );
 }
 
-const EventFormSection = async ({ params }: { params: Params }) => {
-  const { id } = await params;
-  const res = await getEvent(id?.toString() ?? "");
-  const eventTypeRes = await getEventTypes({ page: 1, size: 100 });
-  const user = await getAuthUser();
-  const role = await getDashboardRole();
+const EventFormSection = async ({
+  eventId,
+  canApprove,
+}: {
+  eventId: string;
+  canApprove: boolean;
+}) => {
+  const [res, eventTypeRes, user, role] = await Promise.all([
+    getEvent(eventId),
+    getEventTypes({ page: 1, size: 100 }),
+    getAuthUser(),
+    getDashboardRole(),
+  ]);
 
   if (!res.data) return notFound();
 
@@ -54,15 +71,14 @@ const EventFormSection = async ({ params }: { params: Params }) => {
     <>
       <SectionContent className="border p-6 rounded-md">
         <EventForm
-          authUser={user as AuthUser}
           eventTypes={eventTypeRes.data ?? []}
-          prevData={res.data}
+          prevData={getEventFormValues(res.data)}
         />
       </SectionContent>
-      {!["ao"].includes(role as string) && (
+      {canApprove && (
         <SectionContent className="border rounded-md">
-          <div className="max-w-2xl mx-auto flex flex-col w-full py-10 gap-6">
-            <h4 className="w-full text-2xl font-medium">Approval Section</h4>
+          <div className="max-w-4xl mx-auto flex flex-col w-full py-10 gap-6 p-6">
+            <SectionHeading2>Approval Section</SectionHeading2>
             <Separator />
             <EventStatusUpdateForm
               role={role as string}
@@ -73,37 +89,5 @@ const EventFormSection = async ({ params }: { params: Params }) => {
         </SectionContent>
       )}
     </>
-  );
-};
-
-const EventStatusHistorySection = async ({ params }: { params: Params }) => {
-  const { id } = await params;
-
-  const res = await getEventStatusHistories({
-    page: 1,
-    size: 100,
-    event_id: id?.toString(),
-  });
-
-  if (res.data?.length === 0) return null;
-
-  return (
-    <div className="border rounded-md p-4 mt-6 py-10">
-      <div className="max-w-2xl mx-auto w-full flex flex-col gap-6">
-        <h4 className="w-full text-2xl font-medium">Event Approval History</h4>
-        <Separator />
-        <StepContainer>
-          {res.data?.map((item, index) => (
-            <Step
-              key={item.id}
-              status={item.status}
-              description={`${item.event_approver.user_role} (${item.event_approver.user_id}) - ${item.remarks}`}
-              createdAt={item.created_at as Date}
-              isLast={res.count === index + 1}
-            />
-          ))}
-        </StepContainer>
-      </div>
-    </div>
   );
 };

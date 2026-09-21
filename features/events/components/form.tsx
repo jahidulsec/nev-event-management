@@ -120,13 +120,11 @@ export default function EventForm({
       }
     }
 
-    const res =
-      // prevData?.id
-      // ? await updateEvent(prevData.id, data)
-      // :
-      await createEvent(data);
+    const res = prevData?.id
+      ? await updateEvent(prevData.id, data)
+      : await createEvent(data);
 
-      toast[res.success ? "success" : "error"](res.message);
+    toast[res.success ? "success" : "error"](res.message);
 
     if (res.success) {
       router.push("/dashboard/events");

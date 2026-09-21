@@ -19,11 +19,18 @@ import { ApproverFlowChart } from "@/components/shared/flowchart/approver";
 import { useRouter } from "@bprogress/next";
 import { deleteEventType } from "../actions/event-type";
 import { EventTypeMultiProps } from "../libs/event-type";
+import { RowPermissions } from "@/types/permission";
+
+export type EventTypeTablePermissions = RowPermissions & {
+  approvers?: boolean;
+};
 
 export default function EventTypeTable({
   data,
+  permissions = {},
 }: {
   data: EventTypeMultiProps[];
+  permissions?: EventTypeTablePermissions;
 }) {
   const [edit, setEdit] = React.useState<EventTypeMultiProps | boolean>(false);
   const [flowchart, setFlowchart] = React.useState<
@@ -68,37 +75,43 @@ export default function EventTypeTable({
 
         return (
           <div className="flex justify-end items-center gap-1">
-            <TableActionButton
-              tooltip="Approvers"
-              onClick={() =>
-                router.push(
-                  `/dashboard/permission/event-type/${row.original.id}`,
-                )
-              }
-            >
-              <PlusCircle /> <span className="sr-only">View</span>
-            </TableActionButton>
+            {permissions.approvers && (
+              <TableActionButton
+                tooltip="Approvers"
+                onClick={() =>
+                  router.push(
+                    `/dashboard/permission/event-type/${row.original.id}`,
+                  )
+                }
+              >
+                <PlusCircle /> <span className="sr-only">View</span>
+              </TableActionButton>
+            )}
             <TableActionButton
               tooltip="Flowchart"
               onClick={() => setFlowchart(value.id)}
             >
               <Workflow /> <span className="sr-only">Workflow</span>
             </TableActionButton>
-            <TableActionButton
-              tooltip="Edit"
-              variant={"edit"}
-              onClick={() => setEdit(value)}
-            >
-              <Edit /> <span className="sr-only">Edit</span>
-            </TableActionButton>
-            <TableActionButton
-              tooltip="Delete"
-              variant={"delete"}
-              disabled={pending}
-              onClick={() => setDel(value.id)}
-            >
-              <Trash2 /> <span className="sr-only">Delete</span>
-            </TableActionButton>
+            {permissions.update && (
+              <TableActionButton
+                tooltip="Edit"
+                variant={"edit"}
+                onClick={() => setEdit(value)}
+              >
+                <Edit /> <span className="sr-only">Edit</span>
+              </TableActionButton>
+            )}
+            {permissions.delete && (
+              <TableActionButton
+                tooltip="Delete"
+                variant={"delete"}
+                disabled={pending}
+                onClick={() => setDel(value.id)}
+              >
+                <Trash2 /> <span className="sr-only">Delete</span>
+              </TableActionButton>
+            )}
           </div>
         );
       },

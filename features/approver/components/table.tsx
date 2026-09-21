@@ -10,6 +10,7 @@ import { formatDate, formatNumber } from "@/utils/formatter";
 import { ColumnDef } from "@tanstack/react-table";
 import { Edit, Trash2 } from "lucide-react";
 import React from "react";
+import { RowPermissions } from "@/types/permission";
 import { deleteApprover } from "@/features/approver/actions/approver";
 import { TableActionButton } from "@/components/shared/button/button";
 import EventTypeApproverForm from "./form";
@@ -22,8 +23,10 @@ import {
 
 export default function EventTypeApproverTable({
   data,
+  permissions = {},
 }: {
   data: ApproverMultiProps[];
+  permissions?: RowPermissions;
 }) {
   const [edit, setEdit] = React.useState<ApproverMultiProps | boolean>(false);
   const [del, setDel] = React.useState<string | boolean>(false);
@@ -94,21 +97,25 @@ export default function EventTypeApproverTable({
 
         return (
           <div className="flex justify-end items-center gap-1">
-            <TableActionButton
-              tooltip="Edit"
-              variant={"edit"}
-              onClick={() => setEdit(value)}
-            >
-              <Edit /> <span className="sr-only">Edit</span>
-            </TableActionButton>
-            <TableActionButton
-              tooltip="Delete"
-              variant={"delete"}
-              disabled={pending}
-              onClick={() => setDel(value.id)}
-            >
-              <Trash2 /> <span className="sr-only">Delete</span>
-            </TableActionButton>
+            {permissions.update && (
+              <TableActionButton
+                tooltip="Edit"
+                variant={"edit"}
+                onClick={() => setEdit(value)}
+              >
+                <Edit /> <span className="sr-only">Edit</span>
+              </TableActionButton>
+            )}
+            {permissions.delete && (
+              <TableActionButton
+                tooltip="Delete"
+                variant={"delete"}
+                disabled={pending}
+                onClick={() => setDel(value.id)}
+              >
+                <Trash2 /> <span className="sr-only">Delete</span>
+              </TableActionButton>
+            )}
           </div>
         );
       },

@@ -8,7 +8,7 @@ import {
   NotificationQueryType,
   notificationStatsQuerySchema,
   NotificationStatsQueryType,
-} from "@/notifications/schema/schema";
+} from "@/features/notifications/schema/schema";
 
 export type NotificationMultiProps = Prisma.notificationsGetPayload<{
   include: {
@@ -80,16 +80,19 @@ export const getNotificationStats = async (
   try {
     const { employee_id } = notificationStatsQuerySchema.parse(query);
 
-    const [total, marked] = await Promise.all([
+    const [total, marked, action] = await Promise.all([
       notificationService.getNotificationCount({ filter: { employee_id } }),
       notificationService.getNotificationCount({
         filter: { employee_id, is_marked: "yes" },
+      }),
+      notificationService.getNotificationCount({
+        filter: { employee_id, status: "action" },
       }),
     ]);
 
     return apiResponse.single({
       message: "Get notification stats successful",
-      data: { total, marked },
+      data: { total, marked, action },
     });
   } catch (error) {
     return apiResponse.error({ error });

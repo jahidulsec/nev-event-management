@@ -7,7 +7,7 @@ import {
   createNotificationDTOSchema,
   UpdateNotificationDTOType,
   updateNotificationDTOSchema,
-} from "@/notifications/schema/schema";
+} from "@/features/notifications/schema/schema";
 
 export const createNotification = async (data: CreateNotificationDTOType) => {
   try {

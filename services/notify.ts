@@ -1,5 +1,5 @@
-import { createNotification } from "@/notifications/actions/notifications";
-import { CreateNotificationDTOType } from "@/notifications/schema/schema";
+import { createNotification } from "@/features/notifications/actions/notifications";
+import { CreateNotificationDTOType } from "@/features/notifications/schema/schema";
 import { sendEmail } from "./email";
 
 export type NotifyInput = {

@@ -1,10 +1,9 @@
-import { getAuthUser, getDashboardRole } from "@/lib/dal";
-import { notFound, redirect } from "next/navigation";
+import { NoAccess } from "@/components/shared/state/state";
+import { hasPermission } from "@/lib/permission-guard";
+import { redirect } from "next/navigation";
 
 export default async function EventPermissionsPage() {
-  const role = await getDashboardRole();
-
-  if (role !== "superadmin") return notFound();
+  if (!(await hasPermission("event_type:view"))) return <NoAccess />;
 
   return redirect("/dashboard/permission/event-type");
 }

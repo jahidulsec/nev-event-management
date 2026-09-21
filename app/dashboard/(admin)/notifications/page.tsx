@@ -12,25 +12,29 @@ import {
   SectionHeading,
   SectionHeadingIcon,
 } from "@/components/shared/typography/heading";
-import NotificationList from "@/features/notifications/components/shared/notification-list";
-import { getNotifications } from "@/features/notifications/lib/notification";
+import { NoAccess, NoData } from "@/components/shared/state/state";
 import { getAuthUser } from "@/lib/dal";
+import { hasPermission } from "@/lib/permission-guard";
 import { SearchParams } from "@/types/search-params";
 import { DEFAULT_PAGE_SIZE } from "@/utils/settings";
 import { Bell } from "lucide-react";
 import { Metadata } from "next";
 import { Suspense } from "react";
+import NotificationCard from "@/features/notifications/components/notification-card";
+import { getNotifications } from "@/features/notifications/libs/notifications";
 
 export const metadata: Metadata = {
   title: `Notifications`,
 };
 
-export default function NotificationsPage({
+export default async function NotificationsPage({
   searchParams,
 }: {
   searchParams: SearchParams;
 }) {
   const pageTitle = "Notifications";
+
+  if (!(await hasPermission("notification:view"))) return <NoAccess />;
 
   return (
     <Section>
@@ -68,12 +72,20 @@ const TableSection = async ({
     page: Number(page || 1),
     size: Number(size || DEFAULT_PAGE_SIZE),
     search: search?.toString().trim(),
-    work_area_code: user?.workAreaCode,
+    employee_id: user?.employeeId,
   });
 
   return (
     <ErrorBoundary message={!res.success ? res.message : undefined}>
-      <NotificationList data={res?.data ?? []} />
+      {res.data?.length ? (
+        <div className="flex flex-col gap-3">
+          {res.data.map((item) => (
+            <NotificationCard key={item.id} data={item} />
+          ))}
+        </div>
+      ) : (
+        <NoData />
+      )}
       <PagePagination count={res.count} />
     </ErrorBoundary>
   );

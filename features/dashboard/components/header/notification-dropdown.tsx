@@ -1,6 +1,8 @@
 "use client";
 
 import type { ReactNode } from "react";
+import Link from "next/link";
+import { formatDistanceToNow } from "date-fns";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,77 +12,23 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import {
-  Headset,
-  LucideIcon,
-  Salad,
-  ScanText,
-  Star,
-  Video,
-} from "lucide-react";
+import { BellRing, Info } from "lucide-react";
+import type { NotificationMultiProps } from "@/features/notifications/libs/notifications";
 
 type Props = {
   trigger: ReactNode;
+  notifications: NotificationMultiProps[];
+  /** notifications that still need the user to act */
+  actionCount?: number;
   defaultOpen?: boolean;
   align?: "start" | "center" | "end";
 };
 
-type MenuItem = {
-  textColor: string;
-  bgColor: string;
-  icon: LucideIcon;
-  title: string;
-  desc: string;
-  time: string;
-};
-
-const PROFILE_ITEMS: MenuItem[] = [
-  {
-    textColor: "stroke-blue-500",
-    bgColor: "bg-blue-500/10",
-    icon: Star,
-    title: "Event Today",
-    desc: "Just reminder that you have to",
-    time: "9:00 AM",
-  },
-  {
-    textColor: "stroke-orange-400",
-    bgColor: "bg-orange-400/10",
-    icon: Video,
-    title: "Team Meeting",
-    desc: "Discuss project updates and next steps",
-    time: "10:00 AM",
-  },
-  {
-    textColor: "stroke-teal-400",
-    bgColor: "bg-teal-400/10",
-    icon: Salad,
-    title: "Lunch Break",
-    desc: "Take a break and recharge",
-    time: "12:30 PM",
-  },
-  {
-    textColor: "stroke-red-500",
-    bgColor: "bg-red-500/10",
-    icon: Headset,
-    title: "Client Call",
-    desc: "Monthly check-in with the client",
-    time: "3:00 PM",
-  },
-  {
-    textColor: "stroke-sky-400",
-    bgColor: "bg-sky-400/10",
-    icon: ScanText,
-    title: "Project Review",
-    desc: "Review project deliverables with client",
-    time: "4:00 PM",
-  },
-];
-
 const NotificationDropdown = ({
   trigger,
+  notifications,
+  actionCount = 0,
   defaultOpen,
   align = "end",
 }: Props) => {
@@ -99,41 +47,79 @@ const NotificationDropdown = ({
               <p className="text-base font-medium text-popover-foreground">
                 Notifications
               </p>
-              <Badge className="h-5 font-normal leading-0">5 New</Badge>
+              {actionCount > 0 && (
+                <Badge className="h-5 font-normal leading-0">
+                  {actionCount} {actionCount === 1 ? "Action" : "Actions"}
+                </Badge>
+              )}
             </DropdownMenuLabel>
 
             {/* Notifications */}
-            {PROFILE_ITEMS.map(
-              ({ bgColor, textColor, icon: Icon, title, desc, time }) => (
-                <DropdownMenuItem
-                  key={title}
-                  className={
-                    "mx-1.5 my-1 p-2 flex items-center justify-between cursor-pointer"
-                  }
-                >
-                  <div className="flex items-center gap-3">
-                    <div className={cn("p-2.5 rounded-xl", bgColor)}>
-                      <Icon size={20} className={cn("size-5", textColor)} />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-popover-foreground">
-                        {title}
-                      </p>
-                      <p className="max-w-52 truncate text-sm text-muted-foreground">
-                        {desc}
-                      </p>
-                    </div>
-                  </div>
-                  <p className="text-xs text-muted-foreground">{time}</p>
-                </DropdownMenuItem>
-              ),
+            {notifications.length === 0 && (
+              <p className="px-4 py-6 text-center text-sm text-muted-foreground">
+                No notifications yet
+              </p>
             )}
+
+            {notifications.map((item) => {
+              const isAction = item.status === "action";
+              const Icon = isAction ? BellRing : Info;
+
+              return (
+                <DropdownMenuItem
+                  key={item.id}
+                  asChild
+                  className="mx-1.5 my-1 p-2 cursor-pointer"
+                >
+                  <Link
+                    href={`/dashboard/events/${item.event_id}/preview`}
+                    className="flex items-center justify-between gap-3"
+                  >
+                    <div className="flex min-w-0 items-center gap-3">
+                      <div
+                        className={cn(
+                          "shrink-0 p-2.5 rounded-xl",
+                          isAction ? "bg-orange-400/10" : "bg-blue-500/10",
+                        )}
+                      >
+                        <Icon
+                          className={cn(
+                            "size-5",
+                            isAction ? "text-orange-500" : "text-blue-500",
+                          )}
+                        />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="max-w-52 truncate text-sm font-medium text-popover-foreground">
+                          {item.message}
+                        </p>
+                        <p className="max-w-52 truncate text-sm text-muted-foreground">
+                          {item.events?.title}
+                        </p>
+                      </div>
+                    </div>
+                    {item.created_at && (
+                      <p className="shrink-0 text-xs text-muted-foreground">
+                        {formatDistanceToNow(item.created_at, {
+                          addSuffix: true,
+                        })}
+                      </p>
+                    )}
+                  </Link>
+                </DropdownMenuItem>
+              );
+            })}
 
             {/* button */}
             <div className="mx-1.5 my-1 p-2">
-              <Button className="rounded-xl w-full cursor-pointer hover:bg-primary/80">
-                See All Notifications
-              </Button>
+              <DropdownMenuItem
+                asChild
+                className="justify-center rounded-xl bg-primary py-2 font-medium text-primary-foreground cursor-pointer focus:bg-primary/80 focus:text-primary-foreground"
+              >
+                <Link href="/dashboard/notifications">
+                  See All Notifications
+                </Link>
+              </DropdownMenuItem>
             </div>
           </DropdownMenuGroup>
         </DropdownMenuContent>

@@ -12,12 +12,19 @@ import { role } from "@/lib/generated/prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { Edit, Trash2 } from "lucide-react";
 import React from "react";
+import { RowPermissions } from "@/types/permission";
 import { deleteRole } from "../actions/role";
 import { TableActionButton } from "@/components/shared/button/button";
 import RoleForm from "./role-form";
 import { UserRoleBadge } from "@/components/shared/badge/badge";
 
-export default function RoleTable({ data }: { data: role[] }) {
+export default function RoleTable({
+  data,
+  permissions = {},
+}: {
+  data: role[];
+  permissions?: RowPermissions;
+}) {
   const [edit, setEdit] = React.useState<role | boolean>(false);
   const [del, setDel] = React.useState<string | boolean>(false);
   const [pending, startTransition] = React.useTransition();
@@ -51,21 +58,25 @@ export default function RoleTable({ data }: { data: role[] }) {
 
         return (
           <div className="flex justify-end items-center gap-1">
-            <TableActionButton
-              tooltip="Edit"
-              variant={"edit"}
-              onClick={() => setEdit(value)}
-            >
-              <Edit /> <span className="sr-only">Edit</span>
-            </TableActionButton>
-            <TableActionButton
-              tooltip="Delete"
-              variant={"delete"}
-              disabled={pending}
-              onClick={() => setDel(value.role)}
-            >
-              <Trash2 /> <span className="sr-only">Delete</span>
-            </TableActionButton>
+            {permissions.update && (
+              <TableActionButton
+                tooltip="Edit"
+                variant={"edit"}
+                onClick={() => setEdit(value)}
+              >
+                <Edit /> <span className="sr-only">Edit</span>
+              </TableActionButton>
+            )}
+            {permissions.delete && (
+              <TableActionButton
+                tooltip="Delete"
+                variant={"delete"}
+                disabled={pending}
+                onClick={() => setDel(value.role)}
+              >
+                <Trash2 /> <span className="sr-only">Delete</span>
+              </TableActionButton>
+            )}
           </div>
         );
       },

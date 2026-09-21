@@ -11,13 +11,20 @@ import { formatDate } from "@/utils/formatter";
 import { ColumnDef } from "@tanstack/react-table";
 import { Edit, Trash2 } from "lucide-react";
 import React from "react";
+import { RowPermissions } from "@/types/permission";
 import { deleteUser } from "../actions/users";
 import { TableActionButton } from "@/components/shared/button/button";
 import { UserMultiProps } from "../libs/users";
 import UserForm from "./user-form";
 import { StatusBadge, UserRoleBadge } from "@/components/shared/badge/badge";
 
-export default function UserTable({ data }: { data: UserMultiProps[] }) {
+export default function UserTable({
+  data,
+  permissions = {},
+}: {
+  data: UserMultiProps[];
+  permissions?: RowPermissions;
+}) {
   const [edit, setEdit] = React.useState<UserMultiProps | boolean>(false);
   const [del, setDel] = React.useState<string | boolean>(false);
   const [pending, startTransition] = React.useTransition();
@@ -82,21 +89,25 @@ export default function UserTable({ data }: { data: UserMultiProps[] }) {
 
         return (
           <div className="flex justify-end items-center gap-1">
-            <TableActionButton
-              tooltip="Edit"
-              variant={"edit"}
-              onClick={() => setEdit(value)}
-            >
-              <Edit /> <span className="sr-only">Edit</span>
-            </TableActionButton>
-            <TableActionButton
-              tooltip="Delete"
-              variant={"delete"}
-              disabled={pending}
-              onClick={() => setDel(value.employee_id)}
-            >
-              <Trash2 /> <span className="sr-only">Delete</span>
-            </TableActionButton>
+            {permissions.update && (
+              <TableActionButton
+                tooltip="Edit"
+                variant={"edit"}
+                onClick={() => setEdit(value)}
+              >
+                <Edit /> <span className="sr-only">Edit</span>
+              </TableActionButton>
+            )}
+            {permissions.delete && (
+              <TableActionButton
+                tooltip="Delete"
+                variant={"delete"}
+                disabled={pending}
+                onClick={() => setDel(value.employee_id)}
+              >
+                <Trash2 /> <span className="sr-only">Delete</span>
+              </TableActionButton>
+            )}
           </div>
         );
       },

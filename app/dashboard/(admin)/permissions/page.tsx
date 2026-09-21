@@ -15,12 +15,18 @@ import {
 import PermissionManager from "@/features/permission/components/permission-manager";
 import PermissionSkeleton from "@/features/permission/components/permission-skeleton";
 import { getRolePermissions } from "@/features/permission/libs/permission";
+import { NoAccess } from "@/components/shared/state/state";
+import { getActivePermissions } from "@/lib/permission-guard";
 
 export const metadata: Metadata = {
   title: "Permissions",
 };
 
-export default function PermissionsPage() {
+export default async function PermissionsPage() {
+  const permissions = await getActivePermissions();
+
+  if (!permissions.includes("permission:view")) return <NoAccess />;
+
   return (
     <Section>
       <SectionHeader>
@@ -39,19 +45,21 @@ export default function PermissionsPage() {
 
       <SectionContent>
         <React.Suspense fallback={<PermissionSkeleton />}>
-          <PermissionSection />
+          <PermissionSection
+            canManage={permissions.includes("permission:manage")}
+          />
         </React.Suspense>
       </SectionContent>
     </Section>
   );
 }
 
-const PermissionSection = async () => {
+const PermissionSection = async ({ canManage }: { canManage: boolean }) => {
   const res = await getRolePermissions();
 
   return (
     <ErrorBoundary message={!res.success ? res.message : undefined}>
-      <PermissionManager data={res.data ?? []} />
+      <PermissionManager data={res.data ?? []} canManage={canManage} />
     </ErrorBoundary>
   );
 };

@@ -3,10 +3,12 @@ import { Section, SectionContent, SectionHeader } from '@/components/shared/sect
 import { SectionHeading2 } from '@/components/shared/typography/heading'
 import { Button } from '@/components/ui/button'
 import { getAuthUser } from '@/lib/dal'
+import { hasPermission } from '@/lib/permission-guard'
 import Link from 'next/link'
 
 export default async function DashboardPage() {
     const authUser = await getAuthUser();
+    const canViewNotifications = await hasPermission("notification:view");
     return (
         <>
             <Section>
@@ -15,9 +17,11 @@ export default async function DashboardPage() {
                         <SectionHeading2 className="text-xl font-semibold text-primary w-fit">
                             Recent Activities
                         </SectionHeading2>
-                        <Button className="text-secondary" variant={"link"} asChild>
-                            <Link href={"/dashboard/notifications"}>See all</Link>
-                        </Button>
+                        {canViewNotifications && (
+                            <Button className="text-secondary" variant={"link"} asChild>
+                                <Link href={"/dashboard/notifications"}>See all</Link>
+                            </Button>
+                        )}
                     </SectionHeader>
                     <SectionContent>
                         {/* <NotificationSection user={authUser as AuthUser} /> */}

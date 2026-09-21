@@ -17,12 +17,15 @@ import PagePagination from "@/components/shared/pagination/pagination";
 import { SearchParams } from "@/types/search-params";
 import { Metadata } from "next";
 import { getEventTypes } from "@/features/event-type/libs/event-type";
+import { NoAccess } from "@/components/shared/state/state";
+import { getActivePermissions } from "@/lib/permission-guard";
+import { EventTypeTablePermissions } from "@/features/event-type/components/table";
 
 export const metadata: Metadata = {
   title: `Event Type - Permission`,
 };
 
-export default function PermissionEventTypePage({
+export default async function PermissionEventTypePage({
   searchParams,
 }: {
   searchParams: SearchParams;
@@ -30,6 +33,10 @@ export default function PermissionEventTypePage({
   const pageTitle = "Permissions";
 
   const pageData = getPageData(pageTitle, "superadmin");
+
+  const permissions = await getActivePermissions();
+
+  if (!permissions.includes("event_type:view")) return <NoAccess />;
 
   return (
     <>
@@ -43,12 +50,21 @@ export default function PermissionEventTypePage({
             )}
             {pageTitle}
           </SectionHeading>
+          {permissions.includes("event_type:create") && (
+            <CreatEventTypeButton />
+          )}
         </SectionHeader>
-        <CreatEventTypeButton />
 
         <SectionContent>
           <Suspense fallback={<TableSkeleton />}>
-            <TableSection searchParams={searchParams} />
+            <TableSection
+              searchParams={searchParams}
+              permissions={{
+                update: permissions.includes("event_type:update"),
+                delete: permissions.includes("event_type:delete"),
+                approvers: permissions.includes("approver:view"),
+              }}
+            />
           </Suspense>
         </SectionContent>
       </Section>
@@ -58,8 +74,10 @@ export default function PermissionEventTypePage({
 
 const TableSection = async ({
   searchParams,
+  permissions,
 }: {
   searchParams: SearchParams;
+  permissions: EventTypeTablePermissions;
 }) => {
   const { page, size, search } = await searchParams;
 
@@ -71,7 +89,7 @@ const TableSection = async ({
 
   return (
     <ErrorBoundary message={!res.success ? res.message : undefined}>
-      <EventTypeTable data={res?.data ?? []} />
+      <EventTypeTable data={res?.data ?? []} permissions={permissions} />
       <PagePagination count={res.count} />
     </ErrorBoundary>
   );

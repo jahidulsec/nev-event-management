@@ -15,15 +15,22 @@ import { upsertUsers } from "@/features/users/actions/users";
 import CreateUserButton from "@/features/users/components/create-button";
 import UserTable from "@/features/users/components/user-table";
 import { getUsers } from "@/features/users/libs/users";
+import { NoAccess } from "@/components/shared/state/state";
+import { getActivePermissions } from "@/lib/permission-guard";
+import { RowPermissions } from "@/types/permission";
 import { SearchParams } from "@/types/search-params";
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from "@/utils/settings";
 import React from "react";
 
-export default function UserPage({
+export default async function UserPage({
   searchParams,
 }: {
   searchParams: SearchParams;
 }) {
+  const permissions = await getActivePermissions();
+
+  if (!permissions.includes("user:view")) return <NoAccess />;
+
   return (
     <Section>
       <SectionHeader>
@@ -31,15 +38,25 @@ export default function UserPage({
 
         <SectionActions>
           <SearchForm />
-          <ExcelUploadButton action={upsertUsers as any} />
-          <DownloadButton filePath="/public/templates/user_template.xlsx" />
-          <CreateUserButton />
+          {permissions.includes("user:import") && (
+            <>
+              <ExcelUploadButton action={upsertUsers as any} />
+              <DownloadButton filePath="/public/templates/user_template.xlsx" />
+            </>
+          )}
+          {permissions.includes("user:create") && <CreateUserButton />}
         </SectionActions>
       </SectionHeader>
 
       <SectionContent>
         <React.Suspense fallback={<TableSkeleton />}>
-          <TableContainer searchParams={searchParams} />{" "}
+          <TableContainer
+            searchParams={searchParams}
+            permissions={{
+              update: permissions.includes("user:update"),
+              delete: permissions.includes("user:delete"),
+            }}
+          />{" "}
         </React.Suspense>
       </SectionContent>
     </Section>
@@ -48,8 +65,10 @@ export default function UserPage({
 
 const TableContainer = async ({
   searchParams,
+  permissions,
 }: {
   searchParams: SearchParams;
+  permissions: RowPermissions;
 }) => {
   const { page, size, search } = await searchParams;
   const res = await getUsers({
@@ -60,7 +79,7 @@ const TableContainer = async ({
 
   return (
     <ErrorBoundary message={res.message ? undefined : res.message}>
-      <UserTable data={res.data ?? []} />
+      <UserTable data={res.data ?? []} permissions={permissions} />
       <PagePagination count={res.count} />
     </ErrorBoundary>
   );

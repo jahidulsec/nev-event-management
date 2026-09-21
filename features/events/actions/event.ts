@@ -22,6 +22,7 @@ import { notify } from "@/services/notify";
 import { notifyNextApprover } from "@/lib/approver";
 import RequestorInitMail from "@/features/email/template/ao-init-mail";
 import { formatDateTime } from "@/utils/formatter";
+import { assertPermission } from "@/lib/permission-guard";
 
 const deleteFiles = (filePaths: string[]) =>
   Promise.allSettled(filePaths.map((filePath) => deleteFile(filePath)));
@@ -159,6 +160,8 @@ export const updateEvent = async (id: string, data: UpdateEventPayloadType) => {
   const unsavedFilePaths = new Set<string>();
 
   try {
+    await assertPermission("event:update");
+
     const { eventBudget, eventConsultant, eventAttachment, ...rest } =
       updateEventPayloadSchema.parse(data);
 
@@ -327,6 +330,8 @@ export const updateEventTrackingNumber = async (
 
 export const deleteEvent = async (id: string) => {
   try {
+    await assertPermission("event:delete");
+
     const event = await eventService.deleteEvent({
       filter: { id },
       options: {

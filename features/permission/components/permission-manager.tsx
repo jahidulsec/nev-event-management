@@ -78,8 +78,11 @@ const countDifference = (a: Set<string>, b: Set<string>) =>
 
 export default function PermissionManager({
   data,
+  canManage = false,
 }: {
   data: RolePermissionItem[];
+  /** Without it the matrix is read-only and the save controls are hidden. */
+  canManage?: boolean;
 }) {
   // `saved` mirrors the database, `draft` holds edits that are not saved yet
   const [saved, setSaved] = React.useState(() => toPermissionMap(data));
@@ -156,29 +159,33 @@ export default function PermissionManager({
 
       <div className="flex items-center justify-between flex-wrap gap-3 min-h-9">
         <p className="text-sm text-muted-foreground">
-          {changeCount
-            ? `${changeCount} unsaved ${changeCount === 1 ? "change" : "changes"} in ${changedRoles.length} ${changedRoles.length === 1 ? "role" : "roles"}`
-            : "Click an icon to grant or revoke a permission."}
+          {!canManage
+            ? "You have read-only access to permissions."
+            : changeCount
+              ? `${changeCount} unsaved ${changeCount === 1 ? "change" : "changes"} in ${changedRoles.length} ${changedRoles.length === 1 ? "role" : "roles"}`
+              : "Click an icon to grant or revoke a permission."}
         </p>
 
-        <div className="flex items-center gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            disabled={!changeCount || pending}
-            onClick={() => setDraft(saved)}
-          >
-            Discard
-          </Button>
-          <FormButton
-            type="button"
-            isPending={pending}
-            disabled={!changeCount}
-            onClick={onSave}
-          >
-            Save changes
-          </FormButton>
-        </div>
+        {canManage && (
+          <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              disabled={!changeCount || pending}
+              onClick={() => setDraft(saved)}
+            >
+              Discard
+            </Button>
+            <FormButton
+              type="button"
+              isPending={pending}
+              disabled={!changeCount}
+              onClick={onSave}
+            >
+              Save changes
+            </FormButton>
+          </div>
+        )}
       </div>
 
       <Card className="rounded-3xl py-0 gap-0 overflow-hidden">
@@ -240,7 +247,9 @@ export default function PermissionManager({
                               key={key}
                               icon={ACTION_ICONS[action]}
                               active={draft[role].has(key)}
-                              disabled={role === SUPERADMIN_ROLE || pending}
+                              disabled={
+                                !canManage || role === SUPERADMIN_ROLE || pending
+                              }
                               label={PERMISSION_ACTION_LABELS[action]}
                               description={`${PERMISSION_ACTION_LABELS[action]} ${group.label.toLowerCase()} for ${role}`}
                               onToggle={() => toggle(role, key)}

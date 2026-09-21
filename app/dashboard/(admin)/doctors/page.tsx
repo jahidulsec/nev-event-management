@@ -18,11 +18,12 @@ import { createDoctors } from "@/features/doctor/actions/doctor";
 import CreateDoctorButton from "@/features/doctor/components/create-button";
 import DoctorTable from "@/features/doctor/components/table";
 import { getDoctors } from "@/features/doctor/lib/doctor";
-import { getDashboardRole } from "@/lib/dal";
+import { NoAccess } from "@/components/shared/state/state";
+import { getActivePermissions } from "@/lib/permission-guard";
+import { RowPermissions } from "@/types/permission";
 import { SearchParams } from "@/types/search-params";
 import { getPageData } from "@/utils/helper";
 import { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { Suspense } from "react";
 
 export const metadata: Metadata = {
@@ -38,9 +39,9 @@ export default async function DoctorsPage({
 
   const pageData = getPageData(pageTitle, "superadmin");
 
-  const role = await getDashboardRole();
+  const permissions = await getActivePermissions();
 
-  if (role !== "superadmin") return notFound();
+  if (!permissions.includes("doctor:view")) return <NoAccess />;
 
   return (
     <>
@@ -57,15 +58,25 @@ export default async function DoctorsPage({
 
           <SectionActions>
             <SearchForm />
-            <DownloadButton filePath="/public/templates/doctor_list_template.xlsx" />
-            <ExcelUploadButton action={createDoctors} />
-            <CreateDoctorButton />
+            {permissions.includes("doctor:import") && (
+              <>
+                <DownloadButton filePath="/public/templates/doctor_list_template.xlsx" />
+                <ExcelUploadButton action={createDoctors} />
+              </>
+            )}
+            {permissions.includes("doctor:create") && <CreateDoctorButton />}
           </SectionActions>
         </SectionHeader>
 
         <SectionContent>
           <Suspense fallback={<TableSkeleton />}>
-            <TableSection searchParams={searchParams} />
+            <TableSection
+              searchParams={searchParams}
+              permissions={{
+                update: permissions.includes("doctor:update"),
+                delete: permissions.includes("doctor:delete"),
+              }}
+            />
           </Suspense>
         </SectionContent>
       </Section>
@@ -75,8 +86,10 @@ export default async function DoctorsPage({
 
 const TableSection = async ({
   searchParams,
+  permissions,
 }: {
   searchParams: SearchParams;
+  permissions: RowPermissions;
 }) => {
   const { page, size, search } = await searchParams;
 
@@ -88,7 +101,7 @@ const TableSection = async ({
 
   return (
     <ErrorBoundary message={!res.success ? res.message : undefined}>
-      <DoctorTable data={res?.data ?? []} />
+      <DoctorTable data={res?.data ?? []} permissions={permissions} />
       <PagePagination count={res.count} />
     </ErrorBoundary>
   );
