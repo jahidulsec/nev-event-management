@@ -13,17 +13,17 @@ import {
 } from "@/components/ui/field";
 import { FormButton } from "@/components/shared/button/button";
 import {
-  EventTypeApproverSchema,
-  EventTypeApproverType,
-} from "../../actions/schema";
+  approverPayloadSchema,
+  ApproverPayloadType,
+} from "@/features/approver/schema/schema";
 import { Select } from "@/components/shared/select/select";
 import React from "react";
 import { approverTypeList, userRoleList } from "@/lib/data";
 import {
-  createEventTypeApprover,
-  updateEventTypeApprover,
-} from "../../actions/type-approver";
-import { getEventTypes } from "../../lib/type";
+  createApprover,
+  updateApprover,
+} from "@/features/approver/actions/approver";
+import { getEventTypes } from "../../event/lib/type";
 import { getCostLimitText } from "@/utils/helper";
 import { useParams } from "next/navigation";
 
@@ -39,8 +39,8 @@ export default function EventTypeApproverForm({
 
   const params = useParams();
 
-  const form = useForm<EventTypeApproverType>({
-    resolver: zodResolver(EventTypeApproverSchema),
+  const form = useForm<ApproverPayloadType>({
+    resolver: zodResolver(approverPayloadSchema),
     defaultValues: {
       event_type_id: params?.typeId?.toString() ?? prevData?.event_type_id,
       type: prevData?.type,
@@ -48,10 +48,10 @@ export default function EventTypeApproverForm({
     },
   });
 
-  async function onSubmit(data: EventTypeApproverType) {
+  async function onSubmit(data: ApproverPayloadType) {
     const res = prevData
-      ? await updateEventTypeApprover(prevData.id, data)
-      : await createEventTypeApprover(data);
+      ? await updateApprover(prevData.id, data)
+      : await createApprover(data);
     toast[res.success ? "success" : "error"](res.message);
 
     if (res.success) {

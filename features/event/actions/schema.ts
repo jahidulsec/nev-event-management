@@ -1,6 +1,5 @@
 import {
   eventApproverStatusEnum,
-  eventApproverTypeEnum,
   userRoleSchema,
   yesNoEnum,
 } from "@/schemas/common";
@@ -22,21 +21,6 @@ export const EventTypeQuerySchema = QuerySchema.extend({
 
 export type EventTypeType = z.infer<typeof EventTypeSchema>;
 export type EventTypeQueryType = z.infer<typeof EventTypeQuerySchema>;
-
-export const EventTypeApproverSchema = z.object({
-  event_type_id: z.string("Select a event type"),
-  user_type: userRoleSchema,
-  type: eventApproverTypeEnum,
-});
-
-export const EventTypeApproverQuerySchema = QuerySchema.extend({
-  type_id: z.string().optional(),
-});
-
-export type EventTypeApproverType = z.infer<typeof EventTypeApproverSchema>;
-export type EventTypeApproverQueryType = z.infer<
-  typeof EventTypeApproverQuerySchema
->;
 
 export const EventBudgetSchema = z.object({
   id: z.string().optional(),

@@ -15,6 +15,8 @@ export const cacheTags = {
   userAreasCount: "user-areas-count",
   events: "events",
   eventsCount: "events-count",
+  approvers: "approvers",
+  approversCount: "approvers-count",
   eventApprovers: "event-approvers",
   eventApproversCount: "event-approvers-count",
   eventBudgets: "event-budgets",

@@ -6,9 +6,9 @@ import {
   SectionHeader,
 } from "@/components/shared/section/section";
 import { SectionHeadingWithBackButton } from "@/components/shared/typography/heading";
-import CreatEventTypeApproverButton from "@/features/event/components/type-approver/create-button";
-import EventTypeApproverTable from "@/features/event/components/type-approver/table";
-import { getEventTypeApprovers } from "@/features/event/lib/type-approver";
+import CreatEventTypeApproverButton from "@/features/approver/components/create-button";
+import EventTypeApproverTable from "@/features/approver/components/table";
+import { getApprovers } from "@/features/approver/libs/approver";
 import { Params, SearchParams } from "@/types/search-params";
 import React, { Suspense } from "react";
 
@@ -50,7 +50,7 @@ const ApproversContainer = async ({
 }) => {
   const { page, size, search } = await searchParams;
   const { typeId } = await params;
-  const res = await getEventTypeApprovers({
+  const res = await getApprovers({
     page: Number(page),
     size: Number(size),
     search: search?.toString().trim(),

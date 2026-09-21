@@ -7,27 +7,27 @@ import {
   ServerCacheOptions,
 } from "@/lib/server-cache";
 
-const getNotificationUniq = async <T extends Prisma.notificationDefaultArgs>({
+const getNotificationUniq = async <T extends Prisma.notificationsDefaultArgs>({
   filter,
   options,
   cacheOption,
 }: {
-  filter: Prisma.notificationWhereUniqueInput;
-  options?: Prisma.SelectSubset<T, Prisma.notificationDefaultArgs>;
+  filter: Prisma.notificationsWhereUniqueInput;
+  options?: Prisma.SelectSubset<T, Prisma.notificationsDefaultArgs>;
   cacheOption?: Partial<ServerCacheOptions>;
-}): Promise<Prisma.notificationGetPayload<T> | null> =>
+}): Promise<Prisma.notificationsGetPayload<T> | null> =>
   cachedRead(
     () =>
-      db.notification.findUnique({
+      db.notifications.findUnique({
         where: filter,
-        ...(options as Prisma.notificationDefaultArgs),
-      }) as Promise<Prisma.notificationGetPayload<T> | null>,
+        ...(options as Prisma.notificationsDefaultArgs),
+      }) as Promise<Prisma.notificationsGetPayload<T> | null>,
     cacheTags.notifications,
     [JSON.stringify(filter), JSON.stringify(options ?? {})],
     cacheOption,
   );
 
-const getNotifications = async <T extends Prisma.notificationDefaultArgs>({
+const getNotifications = async <T extends Prisma.notificationsDefaultArgs>({
   filter,
   options,
   take,
@@ -35,22 +35,22 @@ const getNotifications = async <T extends Prisma.notificationDefaultArgs>({
   sort,
   cacheOption,
 }: {
-  filter?: Prisma.notificationWhereInput;
-  options?: Prisma.SelectSubset<T, Prisma.notificationDefaultArgs>;
+  filter?: Prisma.notificationsWhereInput;
+  options?: Prisma.SelectSubset<T, Prisma.notificationsDefaultArgs>;
   take?: number;
   skip?: number;
-  sort?: Prisma.notificationOrderByWithRelationInput;
+  sort?: Prisma.notificationsOrderByWithRelationInput;
   cacheOption?: ServerCacheOptions;
-}): Promise<Prisma.notificationGetPayload<T>[] | null> =>
+}): Promise<Prisma.notificationsGetPayload<T>[] | null> =>
   cachedRead(
     () =>
-      db.notification.findMany({
+      db.notifications.findMany({
         where: filter,
         take,
         skip,
         orderBy: sort,
-        ...(options as Prisma.notificationDefaultArgs),
-      }) as Promise<Prisma.notificationGetPayload<T>[] | null>,
+        ...(options as Prisma.notificationsDefaultArgs),
+      }) as Promise<Prisma.notificationsGetPayload<T>[] | null>,
     cacheTags.notifications,
     [
       JSON.stringify(filter),
@@ -64,50 +64,50 @@ const getNotificationCount = async ({
   filter,
   cacheOption,
 }: {
-  filter?: Prisma.notificationWhereInput;
+  filter?: Prisma.notificationsWhereInput;
   cacheOption?: ServerCacheOptions;
 }): Promise<number> =>
   cachedRead(
-    () => db.notification.count({ where: filter }),
+    () => db.notifications.count({ where: filter }),
     cacheTags.notificationsCount,
     [JSON.stringify(filter)],
     cacheOption,
   );
 
-const createNotification = async <T extends Prisma.notificationDefaultArgs>({
+const createNotification = async <T extends Prisma.notificationsDefaultArgs>({
   data,
   options,
 }: {
-  data: Prisma.notificationCreateInput;
-  options?: Prisma.SelectSubset<T, Prisma.notificationDefaultArgs>;
-}): Promise<Prisma.notificationGetPayload<T> | null> =>
+  data: Prisma.notificationsCreateInput;
+  options?: Prisma.SelectSubset<T, Prisma.notificationsDefaultArgs>;
+}): Promise<Prisma.notificationsGetPayload<T> | null> =>
   mutate(
     async () =>
-      (await db.notification.create({
+      (await db.notifications.create({
         data,
-        ...(options as Prisma.notificationDefaultArgs),
-      })) as Prisma.notificationGetPayload<T> | null,
+        ...(options as Prisma.notificationsDefaultArgs),
+      })) as Prisma.notificationsGetPayload<T> | null,
     [cacheTags.notifications, cacheTags.notificationsCount],
   );
 
-const updateNotification = async <T extends Prisma.notificationDefaultArgs>({
+const updateNotification = async <T extends Prisma.notificationsDefaultArgs>({
   data,
   options,
   filter,
   revalidateTags,
 }: {
-  filter: Prisma.notificationWhereUniqueInput;
-  data: Prisma.notificationUpdateInput;
-  options?: Prisma.SelectSubset<T, Prisma.notificationDefaultArgs>;
+  filter: Prisma.notificationsWhereUniqueInput;
+  data: Prisma.notificationsUpdateInput;
+  options?: Prisma.SelectSubset<T, Prisma.notificationsDefaultArgs>;
   revalidateTags?: string[];
-}): Promise<Prisma.notificationGetPayload<T> | null> =>
+}): Promise<Prisma.notificationsGetPayload<T> | null> =>
   mutate(
     async () =>
-      (await db.notification.update({
+      (await db.notifications.update({
         where: filter,
         data,
-        ...(options as Prisma.notificationDefaultArgs),
-      })) as Prisma.notificationGetPayload<T> | null,
+        ...(options as Prisma.notificationsDefaultArgs),
+      })) as Prisma.notificationsGetPayload<T> | null,
     [
       cacheTags.notifications,
       cacheTags.notificationsCount,
@@ -120,12 +120,12 @@ const updateNotifications = async ({
   data,
   revalidateTags,
 }: {
-  filter: Prisma.notificationWhereInput;
-  data: Prisma.notificationUpdateManyMutationInput;
+  filter: Prisma.notificationsWhereInput;
+  data: Prisma.notificationsUpdateManyMutationInput;
   revalidateTags?: string[];
 }): Promise<Prisma.BatchPayload> =>
   mutate(
-    () => db.notification.updateMany({ where: filter, data }),
+    () => db.notifications.updateMany({ where: filter, data }),
     [
       cacheTags.notifications,
       cacheTags.notificationsCount,
@@ -133,21 +133,21 @@ const updateNotifications = async ({
     ],
   );
 
-const deleteNotification = async <T extends Prisma.notificationDefaultArgs>({
+const deleteNotification = async <T extends Prisma.notificationsDefaultArgs>({
   options,
   filter,
   revalidateTags,
 }: {
-  filter: Prisma.notificationWhereUniqueInput;
-  options?: Prisma.SelectSubset<T, Prisma.notificationDefaultArgs>;
+  filter: Prisma.notificationsWhereUniqueInput;
+  options?: Prisma.SelectSubset<T, Prisma.notificationsDefaultArgs>;
   revalidateTags?: string[];
-}): Promise<Prisma.notificationGetPayload<T> | null> =>
+}): Promise<Prisma.notificationsGetPayload<T> | null> =>
   mutate(
     async () =>
-      (await db.notification.delete({
+      (await db.notifications.delete({
         where: filter,
-        ...(options as Prisma.notificationDefaultArgs),
-      })) as Prisma.notificationGetPayload<T> | null,
+        ...(options as Prisma.notificationsDefaultArgs),
+      })) as Prisma.notificationsGetPayload<T> | null,
     [
       cacheTags.notifications,
       cacheTags.notificationsCount,

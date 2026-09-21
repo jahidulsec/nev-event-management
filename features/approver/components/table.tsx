@@ -10,11 +10,11 @@ import { formatDate, formatNumber } from "@/utils/formatter";
 import { ColumnDef } from "@tanstack/react-table";
 import { Edit, Trash2 } from "lucide-react";
 import React from "react";
-import { deleteEventTypeApprover } from "../../actions/type-approver";
+import { deleteApprover } from "@/features/approver/actions/approver";
 import { TableActionButton } from "@/components/shared/button/button";
 import EventTypeApproverForm from "./form";
 import { FormSheet } from "@/components/shared/sheet/sheet";
-import { ApproverMultiProps } from "../../lib/type-approver";
+import { ApproverMultiProps } from "@/features/approver/libs/approver";
 import {
   ApproverTypeBadge,
   UserRoleBadge,
@@ -133,7 +133,7 @@ export default function EventTypeApproverTable({
           const id = typeof del !== "boolean" ? del : "";
 
           startTransition(() => {
-            deleteToastTemplate(() => deleteEventTypeApprover(id));
+            deleteToastTemplate(() => deleteApprover(id));
           });
         }}
       />

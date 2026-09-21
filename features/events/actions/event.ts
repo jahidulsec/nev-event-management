@@ -114,6 +114,10 @@ export const createEvent = async (data: CreateEventPayloadType) => {
       ],
     });
 
+    // create approver  list according to event type
+
+    // create notificaion for creator
+
     return apiResponse.single({
       data: updateEvent,
       message: "New event is created successfully",

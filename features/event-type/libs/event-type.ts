@@ -1,28 +1,28 @@
 "use server";
 
-import { apiResponse } from "@/lib/response";
-import { QuerySchema, QuerySchemaType } from "@/schemas/query";
-import { eventTypeService } from "@/services/event-type";
 import { Prisma } from "@/lib/generated/prisma/client";
+import { apiResponse } from "@/lib/response";
 import { ServerCacheOptions } from "@/lib/server-cache";
+import { eventTypeService } from "@/services/event-type";
+import { getCleanData } from "@/utils/formatter";
+import { getSerializeData } from "@/utils/helper";
+import { eventTypeQuerySchema, EventTypeQueryType } from "../schema/schema";
 
 export type EventTypeMultiProps = Prisma.event_typeGetPayload<{
   include: { approver: true };
 }>;
 
-export const getEventTypes = async (query: QuerySchemaType) => {
+export const getEventTypes = async (query: EventTypeQueryType) => {
   try {
-    const { page, size, search } = QuerySchema.parse(query);
+    const { page, size, search, sort } = eventTypeQuerySchema.parse(
+      getCleanData(query),
+    );
 
     const filter: Prisma.event_typeWhereInput = {
       ...(search && {
-        OR: [
-          {
-            title: {
-              startsWith: search,
-            },
-          },
-        ],
+        title: {
+          contains: search,
+        },
       }),
     };
 
@@ -32,16 +32,28 @@ export const getEventTypes = async (query: QuerySchemaType) => {
         take: size,
         skip: (page - 1) * size,
         sort: {
-          title: "asc",
+          title: sort ?? "asc",
         },
         options: {
-          include: { approver: true },
+          include: {
+            approver: {
+              select: {
+                user_type: true,
+                type: true,
+              },
+              orderBy: { created_at: "asc" },
+            },
+          },
         },
       }),
       eventTypeService.getEventTypeCount({ filter }),
     ]);
 
-    return apiResponse.multi({ data: res ?? [], count });
+    return apiResponse.multi<EventTypeMultiProps>({
+      message: "Get event types successful",
+      data: getSerializeData(res ?? []) as EventTypeMultiProps[],
+      count,
+    });
   } catch (error) {
     return apiResponse.error({ error });
   }
@@ -52,20 +64,16 @@ export const getEventType = async (
   revalidate?: ServerCacheOptions["revalidate"],
 ) => {
   try {
-    const [res] = await Promise.all([
-      eventTypeService.getEventTypeUniq({
-        filter: {
-          id,
-        },
-        cacheOption: {
-          revalidate: revalidate,
-        },
-      }),
-    ]);
+    const res = await eventTypeService.getEventTypeUniq({
+      filter: { id },
+      cacheOption: { revalidate },
+    });
+
+    if (!res) throw new Error("Data not found");
 
     return apiResponse.single({
-      data: res,
-      message: "GET event type successful",
+      data: getSerializeData(res) as typeof res,
+      message: "Get event type successful",
     });
   } catch (error) {
     return apiResponse.error({ error });

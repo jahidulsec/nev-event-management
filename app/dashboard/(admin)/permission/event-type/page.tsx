@@ -10,14 +10,14 @@ import {
 } from "@/components/shared/typography/heading";
 import { getPageData } from "@/utils/helper";
 import TabSection from "@/components/permission/tab-section";
-import CreatEventTypeButton from "@/features/event/components/type/create-button";
+import CreatEventTypeButton from "@/features/event-type/components/create-button";
 import { TableSkeleton } from "@/components/shared/skeleton/table";
 import { ErrorBoundary } from "@/components/shared/boundary/error-boundary";
-import EventTypeTable from "@/features/event/components/type/table";
+import EventTypeTable from "@/features/event-type/components/table";
 import PagePagination from "@/components/shared/pagination/pagination";
-import { getEventTypes } from "@/features/event/lib/type";
 import { SearchParams } from "@/types/search-params";
 import { Metadata } from "next";
+import { getEventTypes } from "@/features/event-type/libs/event-type";
 
 export const metadata: Metadata = {
   title: `Event Type - Permission`,
