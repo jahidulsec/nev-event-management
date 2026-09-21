@@ -30,7 +30,7 @@ export default async function PermissionEventTypePage({
 }: {
   searchParams: SearchParams;
 }) {
-  const pageTitle = "Permissions";
+  const pageTitle = "Event Type";
 
   const pageData = getPageData(pageTitle, "superadmin");
 

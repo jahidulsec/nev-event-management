@@ -1,49 +1,38 @@
-import { ErrorBoundary } from '@/components/shared/boundary/error-boundary'
-import { Section, SectionContent, SectionHeader } from '@/components/shared/section/section'
-import { SectionHeading2 } from '@/components/shared/typography/heading'
-import { Button } from '@/components/ui/button'
-import { getAuthUser } from '@/lib/dal'
-import { hasPermission } from '@/lib/permission-guard'
-import Link from 'next/link'
+import { Section } from "@/components/shared/section/section";
+import { AdminDashboard } from "@/features/dashboard/components/home/admin-dashboard";
+import { DashboardSkeleton } from "@/features/dashboard/components/home/skeleton";
+import { UserDashboard } from "@/features/dashboard/components/home/user-dashboard";
+import { getAuthUser, getDashboardArea, getDashboardRole } from "@/lib/dal";
+import { SUPERADMIN_ROLE } from "@/lib/permissions";
+import { Metadata } from "next";
+import { Suspense } from "react";
+
+export const metadata: Metadata = {
+  title: `Dashboard`,
+};
 
 export default async function DashboardPage() {
-    const authUser = await getAuthUser();
-    const canViewNotifications = await hasPermission("notification:view");
-    return (
-        <>
-            <Section>
-                <div className="border p-6 rounded-md">
-                    <SectionHeader>
-                        <SectionHeading2 className="text-xl font-semibold text-primary w-fit">
-                            Recent Activities
-                        </SectionHeading2>
-                        {canViewNotifications && (
-                            <Button className="text-secondary" variant={"link"} asChild>
-                                <Link href={"/dashboard/notifications"}>See all</Link>
-                            </Button>
-                        )}
-                    </SectionHeader>
-                    <SectionContent>
-                        {/* <NotificationSection user={authUser as AuthUser} /> */}
-                    </SectionContent>
-                </div>
-            </Section>
-        </>
-    )
+  const [authUser, role, area] = await Promise.all([
+    getAuthUser(),
+    getDashboardRole(),
+    getDashboardArea(),
+  ]);
+
+  // the layout redirects unauthenticated visitors to /login
+  if (!authUser) return null;
+
+  // superadmin gets the organisation-wide analytics view, everyone else a personal work queue
+  const isSuperadmin = role === SUPERADMIN_ROLE;
+
+  return (
+    <Section className="flex flex-col gap-6 pb-10">
+      <Suspense fallback={<DashboardSkeleton variant={isSuperadmin ? "admin" : "user"} />}>
+        {isSuperadmin ? (
+          <AdminDashboard user={authUser} />
+        ) : (
+          <UserDashboard user={authUser} role={role} sapAreaCode={area} />
+        )}
+      </Suspense>
+    </Section>
+  );
 }
-
-
-
-// const NotificationSection = async ({ user }: { user: AuthUser }) => {
-//     const res = await getNotifications({
-//         page: 1,
-//         size: 20,
-//         work_area_code: user.employeeId,
-//     });
-
-//     return (
-//         <ErrorBoundary message={!res.success ? res.message : undefined}>
-//             <NotificationList data={res.data ?? []} />
-//         </ErrorBoundary>
-//     );
-// };

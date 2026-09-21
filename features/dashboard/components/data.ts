@@ -24,9 +24,9 @@ const NavData = {
       items: [
         { label: "Events", icon: Ticket, href: "/dashboard/events" },
         {
-          label: "Type/Permission",
+          label: "Type",
           icon: UserLock,
-          href: "/dashboard/permission",
+          href: "/dashboard/event-type",
         },
       ],
     },

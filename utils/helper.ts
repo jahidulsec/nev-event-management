@@ -1,4 +1,3 @@
-import { navlist } from "@/lib/data";
 import {
   event_budget,
   event_consultant,
@@ -6,11 +5,12 @@ import {
 } from "@/lib/generated/prisma/client";
 import { AuthUserRole } from "@/types/auth-user";
 import { formatNumber } from "./formatter";
-import { EventTypeMultiProps } from "@/features/event/lib/type";
+import { EventTypeMultiProps } from "@/features/event-type/libs/event-type";
+import NavData from "@/features/dashboard/components/data";
 
 export function getPageData(title: string, role: AuthUserRole) {
-  return navlist[role as "superadmin"].find(
-    (i) => i.title.toLowerCase() === title.toLowerCase(),
+  return NavData[role as "superadmin"].find(
+    (i) => i.label.toLowerCase() === title.toLowerCase(),
   );
 }
 
