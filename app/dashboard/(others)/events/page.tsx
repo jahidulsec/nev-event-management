@@ -49,8 +49,8 @@ export default async function EventsPage({
         <SectionHeading>{pageTitle}</SectionHeading>
 
         <SectionActions>
-          {permissions.includes("event:create") && <CreateEventButton />}
           {permissions.includes("event:print") && <ExportButton />}
+          {permissions.includes("event:create") && <CreateEventButton />}
         </SectionActions>
       </SectionHeader>
 
