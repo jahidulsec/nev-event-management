@@ -41,6 +41,10 @@ else
     echo "3. Build application build"
     npm run build
 
+    echo ""
+    echo "4. Postinstall of application build"
+    npm run postinstall
+
     # check pm2 process app exist
     if pm2 jlist | grep -q "\"name\":\"$app_name\""; then
         echo "App exists"
