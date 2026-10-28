@@ -51,7 +51,7 @@ export default function NavTitle({
 
           <nav className="flex-1 overflow-y-auto">
             <ul className="flex flex-col gap-3 px-6">
-              {navlist[role as "ao"].map((item) => (
+              {navlist?.[role as "ao"]?.map((item) => (
                 <li key={item.title} className="w-full">
                   <Button
                     variant={pathname === item.url ? "outline" : "ghost"}
