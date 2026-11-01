@@ -6,6 +6,7 @@ export default function ApproverRequestMail({
   typeTitle,
   eventDate,
   requestorName,
+  approverRole,
 }: {
   product: string;
   typeTitle: string;
@@ -14,6 +15,7 @@ export default function ApproverRequestMail({
   approverName?: string;
   eventDate?: string;
   requestorName?: string;
+  approverRole?: string;
 }) {
   return `
  <div style="font-family: Arial, sans-serif; background:#f6f6f6; padding:20px;">
@@ -36,7 +38,9 @@ export default function ApproverRequestMail({
                 </p>
 
                 <p style="margin-top:12px;">
-                    You have a new <strong>event proposal</strong> that requires your approval.
+                    You have a new <strong>event proposal</strong> that requires your approval${
+                      approverRole ? ` as <strong>${approverRole}</strong>` : ""
+                    }.
                 </p>
 
                 <p style="margin-top:16px; font-size:14px;">

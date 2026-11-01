@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/config/db";
-import { Prisma, product, user } from "@/lib/generated/prisma";
+import { Prisma, product, user } from "@/lib/generated/prisma/client";
 import { apiResponse } from "@/lib/response";
 import { getCleanData } from "@/utils/formatter";
 import { ProductQuerySchema, ProductQueryType } from "../actions/schema";

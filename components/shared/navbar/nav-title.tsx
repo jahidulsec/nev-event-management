@@ -14,7 +14,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { navlist } from "@/lib/data";
-import RoleSelect from "./role-select";
+import RoleSelect from "../../../features/dashboard/components/role-select";
 import { AppLogo } from "../logo/app";
 import { useRouter } from "@bprogress/next";
 

@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  const file = await db.event_attachment.findFirst({
+  const file = await db.event_attachments.findFirst({
     where: {
       file_path: fPath?.toString(),
     },

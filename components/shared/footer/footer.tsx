@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 const Footer = ({ className }: { className?: string }) => {
   return (
-    <footer className={cn("p-6 bg-muted text-foreground mt-10", className)}>
+    <footer className={cn("p-6 bg-muted/35 text-foreground mt-10", className)}>
       <div className="container mx-auto flex justify-between items-center flex-wrap text-sm gap-y-6 gap-x-3">
         <LogoFull width={200} />
         <div className="">

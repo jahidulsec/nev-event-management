@@ -25,7 +25,7 @@ const FormSheet = ({
         {/* form */}
         <div
           className={cn(
-            "px-4 h-full max-h-[calc(100vh - 100px)] overflow-y-auto",
+            "px-4 pb-4 h-full max-h-[calc(100vh - 100px)] overflow-y-auto",
             className
           )}
           {...props}

@@ -3,6 +3,9 @@ import { format } from "date-fns";
 export function formatDate(date: Date) {
   return format(date, "LLL dd, yyyy");
 }
+export function formatTime(date: Date) {
+  return format(date, "h:mm aaa");
+}
 
 export function formatDateTime(date: Date) {
   return format(date, "LLL dd, yyyy - h:mm aaa");
@@ -97,3 +100,6 @@ export const numberToWords = (num: number): string => {
 
   return word.trim();
 };
+
+export const toArray = <T>(value: T | T[] | undefined): T[] =>
+  value === undefined ? [] : Array.isArray(value) ? value : [value];

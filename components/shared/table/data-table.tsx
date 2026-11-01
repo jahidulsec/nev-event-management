@@ -38,7 +38,7 @@ export const useTableSerialColumn = <T,>(): ColumnDef<T> => {
         ? Number(searchParams.get("page"))
         : DEFAULT_PAGE;
       const serial = (validatedPage - 1) * validatedSize + row.index + 1;
-      return <p>{serial}</p>;
+      return <p className="font-semibold">{serial}</p>;
     },
   };
 };
@@ -56,7 +56,7 @@ export function DataTable<TData, TValue>({
   return (
     <div className="overflow-hidden rounded-md border">
       <Table>
-        <TableHeader>
+        <TableHeader className="bg-muted/35">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
@@ -65,9 +65,9 @@ export function DataTable<TData, TValue>({
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
                   </TableHead>
                 );
               })}

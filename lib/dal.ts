@@ -38,3 +38,23 @@ export const getDashboardRole = async () => {
     return null;
   }
 };
+
+
+
+export const getDashboardArea = async () => {
+  try {
+    // get cookie
+    const cookie = await cookies();
+
+    // get session
+    const session = cookie.get("area")?.value;
+
+    // get user data
+    const area = await decrypt(session);
+
+    return area?.sapAreaCode as string;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};

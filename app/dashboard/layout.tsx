@@ -1,23 +1,32 @@
 import { Footer } from "@/components/shared/footer/footer";
-import AppNav from "@/components/shared/navbar/app-nav";
-import { getAuthUser } from "@/lib/dal";
+import Header from "@/features/dashboard/components/header";
+import { getAuthUser, getDashboardArea, getDashboardRole } from "@/lib/dal";
+import { AuthProvider } from "@/providers/auth";
 import { redirect } from "next/navigation";
 import React from "react";
 
-export default async function DashboardLayout({
+export default async function AdminLayout({
   children,
 }: React.PropsWithChildren) {
-  const authUser = await getAuthUser();
+  const user = await getAuthUser();
+  const role = await getDashboardRole();
+  const area = await getDashboardArea();
 
-  if (!authUser) redirect("/login");
+  if (!user) redirect("/login");
 
   return (
-    <div className="relative">
-      <AppNav />
-      <main className="min-h-[calc(100vh-205px)] pt-6 flex flex-col gap-6">
-        {children}
-      </main>
-      <Footer />
-    </div>
+    <AuthProvider
+      authUser={user}
+      currentRole={role as string}
+      currentArea={area as string}
+    >
+      <div className="min-h-screen bg-background relative">
+        <Header />
+        <main className="min-h-[calc(100vh-270px)] pt-6 flex flex-col gap-6">
+          {children}
+        </main>
+        <Footer />
+      </div>
+    </AuthProvider>
   );
 }

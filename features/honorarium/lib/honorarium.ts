@@ -5,7 +5,7 @@ import {
   honorarium_calculation,
   honorarium_designation,
   Prisma,
-} from "@/lib/generated/prisma";
+} from "@/lib/generated/prisma/client";
 import { apiResponse } from "@/lib/response";
 import { getSerializeData } from "@/utils/helper";
 

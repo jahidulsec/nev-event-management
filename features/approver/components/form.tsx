@@ -1,0 +1,149 @@
+"use client";
+
+import { approver, event_type } from "@/lib/generated/prisma/client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { Form } from "@/components/shared/form/form";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
+import { FormButton } from "@/components/shared/button/button";
+import {
+  approverPayloadSchema,
+  ApproverPayloadType,
+} from "@/features/approver/schema/schema";
+import { Select } from "@/components/shared/select/select";
+import React from "react";
+import { approverTypeList, userRoleList } from "@/lib/data";
+import {
+  createApprover,
+  updateApprover,
+} from "@/features/approver/actions/approver";
+import { getCostLimitText } from "@/utils/helper";
+import { useParams } from "next/navigation";
+import { getEventTypes } from "@/features/event-type/libs/event-type";
+
+export default function EventTypeApproverForm({
+  onClose,
+  prevData,
+}: {
+  onClose: () => void;
+  prevData?: approver;
+}) {
+  const [type, setType] = React.useState<event_type[]>([]);
+  const [pending, startTransition] = React.useTransition();
+
+  const params = useParams();
+
+  const form = useForm<ApproverPayloadType>({
+    resolver: zodResolver(approverPayloadSchema),
+    defaultValues: {
+      event_type_id: params?.typeId?.toString() ?? prevData?.event_type_id,
+      type: prevData?.type,
+      user_type: prevData?.user_type as any,
+    },
+  });
+
+  async function onSubmit(data: ApproverPayloadType) {
+    const res = prevData
+      ? await updateApprover(prevData.id, data)
+      : await createApprover(data);
+    toast[res.success ? "success" : "error"](res.message);
+
+    if (res.success) {
+      onClose();
+    }
+  }
+
+  // get event types
+  React.useEffect(() => {
+    const handleEventTypes = () => {
+      startTransition(async () => {
+        const res = await getEventTypes({ page: 1, size: 20 });
+        if (res.success) {
+          setType(res?.data ?? []);
+        }
+      });
+    };
+
+    handleEventTypes();
+  }, [prevData]);
+
+  return (
+    <Form onSubmit={form.handleSubmit(onSubmit)}>
+      <FieldGroup>
+        <Controller
+          control={form.control}
+          name="event_type_id"
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel>Event Type</FieldLabel>
+              <Select
+                placeholder="Select a type"
+                defaultValue={params?.typeId?.toString() ?? prevData?.event_type_id}
+                data={type.map((item) => ({
+                  label: `${item.title} (${getCostLimitText({ lower_limit: Number(item.lower_limit), upper_limit: Number(item.upper_limit) })})`,
+                  value: item.id,
+                }))}
+                onValueChange={(value) => {
+                  field.onChange(value);
+                }}
+              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+      </FieldGroup>
+
+      <FieldGroup>
+        <Controller
+          control={form.control}
+          name="user_type"
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel>User Role</FieldLabel>
+              <Select
+                placeholder="Select a type"
+                defaultValue={prevData?.user_type}
+                data={userRoleList.slice(2)}
+                onValueChange={(value) => {
+                  field.onChange(value);
+                }}
+              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+      </FieldGroup>
+
+      <FieldGroup>
+        <Controller
+          control={form.control}
+          name="type"
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel>Approver Type</FieldLabel>
+              <Select
+                defaultValue={prevData?.type}
+                placeholder="Select a type"
+                data={approverTypeList}
+                onValueChange={(value) => {
+                  field.onChange(value);
+                }}
+              />
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
+          )}
+        />
+      </FieldGroup>
+
+      <FormButton isPending={form.formState.isSubmitting} size={"lg"}>
+        Save
+      </FormButton>
+    </Form>
+  );
+}

@@ -16,18 +16,20 @@ export default function Icon() {
     // ImageResponse JSX element
     <div
       style={{
-        fontSize: 32,
+        fontSize: 24,
         width: "100%",
         height: "100%",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        backgroundColor: "transparent",
       }}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        width={32}
-        height={32}
+        width={24}
+        height={24}
+        viewBox="60 10 600 480"
         preserveAspectRatio="xMidYMid meet"
       >
         <path

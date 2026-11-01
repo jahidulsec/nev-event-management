@@ -17,7 +17,7 @@ const PasswordInput = ({ ...props }: React.ComponentProps<"input">) => {
       />
       <button
         type="button"
-        className="eye absolute top-[50%] -translate-y-[50%] right-3 cursor-pointer"
+        className="eye absolute top-[50%] -translate-y-1/2 right-3 cursor-pointer"
         onClick={() => {
           setShowPassword(!showPassword);
         }}
