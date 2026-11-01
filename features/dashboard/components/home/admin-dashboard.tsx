@@ -58,9 +58,7 @@ export async function AdminDashboard({ user }: { user: AuthUser }) {
     <ErrorBoundary message={!res.success ? res.message : undefined}>
       <SectionHeader>
         <div className="flex flex-col gap-1">
-          <SectionHeading>
-            Welcome back, {getFirstName(user.name)}
-          </SectionHeading>
+          <SectionHeading>Welcome back, {user.name}</SectionHeading>
           <SectionSubTitle className="flex items-center gap-2">
             <Badge variant="outline" className="gap-1">
               <ShieldCheck />

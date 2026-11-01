@@ -1,6 +1,12 @@
 import Link from "next/link";
 import { format } from "date-fns";
-import { BellRing, CalendarPlus, ClipboardCheck, MapPin, Undo2 } from "lucide-react";
+import {
+  BellRing,
+  CalendarPlus,
+  ClipboardCheck,
+  MapPin,
+  Undo2,
+} from "lucide-react";
 import { ErrorBoundary } from "@/components/shared/boundary/error-boundary";
 import { Button } from "@/components/ui/button";
 import {
@@ -105,9 +111,11 @@ export function UserDashboardView({
 
         <div className="relative flex flex-wrap items-end justify-between gap-6">
           <div className="flex flex-col gap-2">
-            <p className="text-sm opacity-80">{format(new Date(), "EEEE, LLL dd yyyy")}</p>
+            <p className="text-sm opacity-80">
+              {format(new Date(), "EEEE, LLL dd yyyy")}
+            </p>
             <h1 className="font-heading text-3xl font-bold">
-              Welcome back, {getFirstName(user.name)}
+              Welcome back, {user.name}
             </h1>
             <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm opacity-90">
               {role && <span>{getRoleLabel(role)}</span>}
@@ -148,16 +156,19 @@ export function UserDashboardView({
       {data?.canViewEvents && (
         <>
           {/* what needs doing */}
-          <section aria-labelledby="attention-heading" className="flex flex-col gap-3">
-            <h2 id="attention-heading" className="font-heading text-lg font-semibold">
+          <section
+            aria-labelledby="attention-heading"
+            className="flex flex-col gap-3"
+          >
+            <h2
+              id="attention-heading"
+              className="font-heading text-lg font-semibold"
+            >
               Needs your attention
             </h2>
 
             <div
-              className={cn(
-                "grid gap-4",
-                data.canApprove && "lg:grid-cols-2",
-              )}
+              className={cn("grid gap-4", data.canApprove && "lg:grid-cols-2")}
             >
               {data.canApprove && (
                 <AttentionCard
@@ -187,7 +198,10 @@ export function UserDashboardView({
                 tone="bg-blue-500/10 text-blue-600"
               >
                 {data.rework.items.length ? (
-                  <ActionList items={data.rework.items} count={data.rework.count} />
+                  <ActionList
+                    items={data.rework.items}
+                    count={data.rework.count}
+                  />
                 ) : (
                   <EmptyList>No events were sent back to you.</EmptyList>
                 )}
@@ -200,7 +214,8 @@ export function UserDashboardView({
             <CardHeader>
               <CardTitle>Events in your scope</CardTitle>
               <CardDescription>
-                {formatNumber(data.total)} in total across your area and products
+                {formatNumber(data.total)} in total across your area and
+                products
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-5">
@@ -230,8 +245,14 @@ export function UserDashboardView({
       )}
 
       {/* shortcuts */}
-      <section aria-labelledby="shortcuts-heading" className="flex flex-col gap-3">
-        <h2 id="shortcuts-heading" className="font-heading text-lg font-semibold">
+      <section
+        aria-labelledby="shortcuts-heading"
+        className="flex flex-col gap-3"
+      >
+        <h2
+          id="shortcuts-heading"
+          className="font-heading text-lg font-semibold"
+        >
           Quick access
         </h2>
         <QuickAccess permissions={permissions} variant="large" />
@@ -306,7 +327,12 @@ function AttentionCard({
     <Card className="gap-4">
       <CardHeader>
         <div className="flex items-center gap-3">
-          <span className={cn("flex size-10 items-center justify-center rounded-xl", tone)}>
+          <span
+            className={cn(
+              "flex size-10 items-center justify-center rounded-xl",
+              tone,
+            )}
+          >
             {icon}
           </span>
           <div className="flex flex-col gap-1">
@@ -315,7 +341,9 @@ function AttentionCard({
           </div>
         </div>
         <CardAction>
-          <span className="font-heading text-2xl font-semibold">{formatNumber(count)}</span>
+          <span className="font-heading text-2xl font-semibold">
+            {formatNumber(count)}
+          </span>
         </CardAction>
       </CardHeader>
       <CardContent>{children}</CardContent>
