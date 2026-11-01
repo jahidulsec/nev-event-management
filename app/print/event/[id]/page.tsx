@@ -6,6 +6,9 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import PrintContainer from "@/features/events/components/print/print-container";
 
+// permission check reads auth cookies
+export const instant = false;
+
 export const metadata: Metadata = {
   title: `Print - Event`,
 };

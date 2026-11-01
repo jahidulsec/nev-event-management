@@ -5,6 +5,9 @@ import { AuthProvider } from "@/providers/auth";
 import { redirect } from "next/navigation";
 import React from "react";
 
+// auth is cookie-based, so the dashboard can't produce a static shell
+export const instant = false;
+
 export default async function AdminLayout({
   children,
 }: React.PropsWithChildren) {
