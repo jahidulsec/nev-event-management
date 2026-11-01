@@ -14,15 +14,15 @@ export async function GET(
     }
 
     // get file path
-    const filePath = path.join(process.cwd() + file_path);
+    const filePath = path.join(/*turbopackIgnore: true*/ process.cwd() + file_path);
 
 
     // check if file exists in dir
-    if (!fs.existsSync(filePath)) {
+    if (!fs.existsSync(/*turbopackIgnore: true*/ filePath)) {
         return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    const stat = fs.statSync(filePath);
+    const stat = fs.statSync(/*turbopackIgnore: true*/ filePath);
     const fileSize = stat.size;
 
     console.log(fileSize)
@@ -34,7 +34,7 @@ export async function GET(
     // ===============================
     // 🔹 NORMAL FILE RESPONSE
     // ===============================
-    const stream = fs.readFileSync(filePath);
+    const stream = fs.readFileSync(/*turbopackIgnore: true*/ filePath);
 
     return new NextResponse(stream as any, {
         headers: {

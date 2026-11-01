@@ -2,6 +2,7 @@
 import { decrypt } from "@/lib/session";
 import { AuthUser, AuthUserRole } from "@/types/auth-user";
 import { cookies } from "next/headers";
+import { unstable_rethrow } from "next/navigation";
 
 export const getAuthUser = async () => {
   try {
@@ -16,6 +17,8 @@ export const getAuthUser = async () => {
 
     return user as AuthUser;
   } catch (error) {
+    // let Next.js handle its own prerender/dynamic errors
+    unstable_rethrow(error);
     console.error(error);
     return null;
   }
@@ -34,6 +37,8 @@ export const getDashboardRole = async () => {
 
     return role?.role as string;
   } catch (error) {
+    // let Next.js handle its own prerender/dynamic errors
+    unstable_rethrow(error);
     console.error(error);
     return null;
   }
@@ -54,6 +59,8 @@ export const getDashboardArea = async () => {
 
     return area?.sapAreaCode as string;
   } catch (error) {
+    // let Next.js handle its own prerender/dynamic errors
+    unstable_rethrow(error);
     console.error(error);
     return null;
   }

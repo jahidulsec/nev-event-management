@@ -31,11 +31,11 @@ export async function GET(req: NextRequest) {
   const fileName = file.document_title;
 
   // check if file exists in dir
-  if (!fs.existsSync(filePath)) {
+  if (!fs.existsSync(/*turbopackIgnore: true*/ filePath)) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
-  const stat = fs.statSync(filePath);
+  const stat = fs.statSync(/*turbopackIgnore: true*/ filePath);
   const fileSize = stat.size;
 
   console.log(fileSize);
@@ -60,7 +60,7 @@ export async function GET(req: NextRequest) {
     }
 
     const chunkSize = end - start + 1;
-    const stream = fs.createReadStream(filePath, { start, end });
+    const stream = fs.createReadStream(/*turbopackIgnore: true*/ filePath, { start, end });
 
     return new NextResponse(stream as any, {
       status: 206,
@@ -76,7 +76,7 @@ export async function GET(req: NextRequest) {
   // ===============================
   // 🔹 NORMAL FILE RESPONSE
   // ===============================
-  const stream = fs.createReadStream(filePath);
+  const stream = fs.createReadStream(/*turbopackIgnore: true*/ filePath);
 
   const isInline =
     contentType.startsWith("image") ||
