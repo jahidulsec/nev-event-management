@@ -162,6 +162,10 @@ export default function EventTable({
       },
     },
     {
+      accessorKey: "is_archived",
+      header: "Is Archived?"
+    },
+    {
       accessorKey: "created_at",
       header: "Created At",
       cell: ({ row }) => (

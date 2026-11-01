@@ -39,7 +39,11 @@ export default async function EventsPage({
 }) {
   const pageTitle = "Events";
 
-  const permissions = await getActivePermissions();
+  const [permissions, dashboardRole, query] = await Promise.all([
+    getActivePermissions(),
+    getDashboardRole(),
+    searchParams,
+  ]);
 
   if (!permissions.includes("event:view")) return <NoAccess />;
 
@@ -65,11 +69,23 @@ export default async function EventsPage({
             value: item,
           }))}
         />
+        {dashboardRole === "superadmin" && (
+          <Select
+            className="w-full sm:w-fit"
+            placeholder="Filter by archive"
+            paramsName="is_archived"
+            data={[
+              { label: "Unarchived", value: "no" },
+              { label: "Archived", value: "yes" },
+            ]}
+          />
+        )}
         <SearchForm className="sm:ml-auto bg-background" />
       </div>
 
       <SectionContent>
-        <Suspense fallback={<TableSkeleton />}>
+        {/* remount the table whenever a filter changes */}
+        <Suspense key={JSON.stringify(query)} fallback={<TableSkeleton />}>
           <TableSection searchParams={searchParams} />
         </Suspense>
       </SectionContent>
@@ -102,11 +118,8 @@ const TableSection = async ({
     status: ["ec", "superadmin"].includes(dashboardRole ?? "")
       ? (status?.toString() as "approved")
       : "processing",
-    is_archived: is_archived
-      ? is_archived.toString() === "yes"
-        ? "yes"
-        : "no"
-      : "no",
+    // only admin can view archived events
+    is_archived: is_archived?.toString() === "yes" ? "yes" : "no",
   });
 
   return (

@@ -63,8 +63,15 @@ export type EventSingleProps = Prisma.eventsGetPayload<{
 
 export const getEvents = async (query: EventQueryType) => {
   try {
-    const { page, size, search, role, sap_area_code, employee_id } =
-      eventQuerySchema.parse(query);
+    const {
+      page,
+      size,
+      search,
+      role,
+      sap_area_code,
+      employee_id,
+      is_archived,
+    } = eventQuerySchema.parse(query);
 
     const permissions = await getActivePermissions();
 
@@ -78,6 +85,10 @@ export const getEvents = async (query: EventQueryType) => {
     });
 
     const filter: Prisma.eventsWhereInput = {
+      // legacy rows may have a NULL is_archived, treat them as not archived
+      ...(is_archived && {
+        is_archived: is_archived === "yes" ? "yes" : "no",
+      }),
       ...(search && {
         OR: [
           {
@@ -272,97 +283,101 @@ export const getEventsExportInformation = async (
       },
     });
 
-    const rows: EventExportRow[] = (events ?? []).flatMap((event): EventExportRow[] => {
-      const findBudget = (item: string) =>
-        event.event_budgets.find((budget) => budget.item === item);
+    const rows: EventExportRow[] = (events ?? []).flatMap(
+      (event): EventExportRow[] => {
+        const findBudget = (item: string) =>
+          event.event_budgets.find((budget) => budget.item === item);
 
-      const budgetTotal = (budget?: { unit: number; unit_cost: unknown }) =>
-        budget ? budget.unit * Number(budget.unit_cost) : 0;
+        const budgetTotal = (budget?: { unit: number; unit_cost: unknown }) =>
+          budget ? budget.unit * Number(budget.unit_cost) : 0;
 
-      const foodBudget = findBudget(eventBudgetItem.food);
+        const foodBudget = findBudget(eventBudgetItem.food);
 
-      const totalBudget = event.event_budgets.reduce(
-        (acc, budget) => acc + budget.unit * Number(budget.unit_cost),
-        0,
-      );
-      const totalHonorarium = event.event_consultants.reduce(
-        (acc, consultant) => acc + Number(consultant.honorarium ?? 0),
-        0,
-      );
+        const totalBudget = event.event_budgets.reduce(
+          (acc, budget) => acc + budget.unit * Number(budget.unit_cost),
+          0,
+        );
+        const totalHonorarium = event.event_consultants.reduce(
+          (acc, consultant) => acc + Number(consultant.honorarium ?? 0),
+          0,
+        );
 
-      const base: Omit<
-        EventExportRow,
-        | "dr_child_id"
-        | "dr_name"
-        | "role"
-        | "honorarium"
-        | "h_words"
-        | "nth_engagement"
-      > = {
-        track_no: event.track_no,
-        work_area: event.area.area_name,
-        employee_id: event.employee_id,
-        full_name: event.users?.full_name ?? "-",
-        group_name: event.users?.group ?? null,
-        title: event.event_type?.title ?? event.type,
-        product: event.product.name,
-        event_title: event.title,
-        rm_name: event.area.area?.area_name ?? null,
-        rm_code: event.area.area?.sap_area_code ?? null,
-        created_at: event.created_at,
-        event_date: event.event_date,
-        venue: event.venue,
-        institute: event.institute,
-        institute_dept: event.institute_dept,
-        food_supplier: event.food_supplier,
-        external_participants: event.external_participants,
-        internal_participants: event.internal_participants,
-        total_participants:
-          event.internal_participants +
-          event.external_participants +
-          (event.other_participants ?? 0),
-        venue_charge: budgetTotal(findBudget(eventBudgetItem.venue)),
-        food_unit: foodBudget?.unit ?? 0,
-        food_per_cost: foodBudget ? Number(foodBudget.unit_cost) : 0,
-        food_cost: budgetTotal(foodBudget),
-        transportation: budgetTotal(findBudget(eventBudgetItem.transportation)),
-        projector: budgetTotal(findBudget(eventBudgetItem.projector)),
-        sound_system: budgetTotal(findBudget(eventBudgetItem.sound)),
-        other_cost: budgetTotal(findBudget(eventBudgetItem.other)),
-        total_budget: totalBudget,
-        total_eb_h: totalBudget + totalHonorarium,
-        current_status: event.current_status,
-        approval_date:
-          event.current_status === "approved"
-            ? (event.event_approvers[0]?.created_at ?? null)
-            : null,
-      };
+        const base: Omit<
+          EventExportRow,
+          | "dr_child_id"
+          | "dr_name"
+          | "role"
+          | "honorarium"
+          | "h_words"
+          | "nth_engagement"
+        > = {
+          track_no: event.track_no,
+          work_area: event.area.area_name,
+          employee_id: event.employee_id,
+          full_name: event.users?.full_name ?? "-",
+          group_name: event.users?.group ?? null,
+          title: event.event_type?.title ?? event.type,
+          product: event.product.name,
+          event_title: event.title,
+          rm_name: event.area.area?.area_name ?? null,
+          rm_code: event.area.area?.sap_area_code ?? null,
+          created_at: event.created_at,
+          event_date: event.event_date,
+          venue: event.venue,
+          institute: event.institute,
+          institute_dept: event.institute_dept,
+          food_supplier: event.food_supplier,
+          external_participants: event.external_participants,
+          internal_participants: event.internal_participants,
+          total_participants:
+            event.internal_participants +
+            event.external_participants +
+            (event.other_participants ?? 0),
+          venue_charge: budgetTotal(findBudget(eventBudgetItem.venue)),
+          food_unit: foodBudget?.unit ?? 0,
+          food_per_cost: foodBudget ? Number(foodBudget.unit_cost) : 0,
+          food_cost: budgetTotal(foodBudget),
+          transportation: budgetTotal(
+            findBudget(eventBudgetItem.transportation),
+          ),
+          projector: budgetTotal(findBudget(eventBudgetItem.projector)),
+          sound_system: budgetTotal(findBudget(eventBudgetItem.sound)),
+          other_cost: budgetTotal(findBudget(eventBudgetItem.other)),
+          total_budget: totalBudget,
+          total_eb_h: totalBudget + totalHonorarium,
+          current_status: event.current_status,
+          approval_date:
+            event.current_status === "approved"
+              ? (event.event_approvers[0]?.created_at ?? null)
+              : null,
+        };
 
-      if (event.event_consultants.length === 0) {
-        return [
-          {
-            ...base,
-            dr_child_id: null,
-            dr_name: null,
-            role: null,
-            honorarium: 0,
-            h_words: "",
-            nth_engagement: null,
-          },
-        ];
-      }
+        if (event.event_consultants.length === 0) {
+          return [
+            {
+              ...base,
+              dr_child_id: null,
+              dr_name: null,
+              role: null,
+              honorarium: 0,
+              h_words: "",
+              nth_engagement: null,
+            },
+          ];
+        }
 
-      return event.event_consultants.map((consultant) => ({
-        ...base,
-        dr_child_id: consultant.doctor.dr_child_id,
-        dr_name: consultant.doctor.full_name,
-        role: consultant.role,
-        honorarium: Number(consultant.honorarium ?? 0),
-        h_words: "",
-        nth_engagement:
-          consultant.event_consultant_approvals?.nth_engagement ?? null,
-      }));
-    });
+        return event.event_consultants.map((consultant) => ({
+          ...base,
+          dr_child_id: consultant.doctor.dr_child_id,
+          dr_name: consultant.doctor.full_name,
+          role: consultant.role,
+          honorarium: Number(consultant.honorarium ?? 0),
+          h_words: "",
+          nth_engagement:
+            consultant.event_consultant_approvals?.nth_engagement ?? null,
+        }));
+      },
+    );
 
     return apiResponse.multi({ data: rows, count: rows.length });
   } catch (error) {
