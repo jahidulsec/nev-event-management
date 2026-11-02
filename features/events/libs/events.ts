@@ -70,6 +70,7 @@ export const getEvents = async (query: EventQueryType) => {
       role,
       sap_area_code,
       employee_id,
+      status,
       is_archived,
     } = eventQuerySchema.parse(query);
 
@@ -88,6 +89,9 @@ export const getEvents = async (query: EventQueryType) => {
       // legacy rows may have a NULL is_archived, treat them as not archived
       ...(is_archived && {
         is_archived: is_archived === "yes" ? "yes" : "no",
+      }),
+      ...(status && {
+        current_status: status,
       }),
       ...(search && {
         OR: [
