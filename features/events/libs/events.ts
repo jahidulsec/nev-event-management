@@ -85,7 +85,28 @@ export const getEvents = async (query: EventQueryType) => {
       sap_area_code,
     });
 
+    // approvers only see in-review events that are waiting on their role,
+    // plus the events they submitted themselves
+    const canApprove =
+      role !== "superadmin" && permissions.includes("event:approve");
+
+    const awaitingIds =
+      canApprove && role
+        ? await eventService.getEventIdsByCurrentApprover({ role })
+        : [];
+
+    const approverFilter: Prisma.eventsWhereInput = canApprove
+      ? {
+          OR: [
+            { current_status: { not: "processing" } },
+            ...(employee_id ? [{ employee_id }] : []),
+            { id: { in: awaitingIds } },
+          ],
+        }
+      : {};
+
     const filter: Prisma.eventsWhereInput = {
+      AND: [accessFilter, approverFilter],
       // legacy rows may have a NULL is_archived, treat them as not archived
       ...(is_archived && {
         is_archived: is_archived === "yes" ? "yes" : "no",
@@ -112,7 +133,6 @@ export const getEvents = async (query: EventQueryType) => {
           },
         ],
       }),
-      ...accessFilter,
     };
 
     const [res, count] = await Promise.all([
