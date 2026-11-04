@@ -23,7 +23,6 @@ import { Asterisk } from "lucide-react";
 import { PasswordInput } from "../../../components/shared/inputs/password";
 import { FormButton } from "../../../components/shared/button/button";
 import { AppLogo } from "@/components/shared/logo/app";
-import { useRouter } from "@bprogress/next";
 import { userLogin } from "../actions/login";
 import { toast } from "sonner";
 
@@ -39,15 +38,10 @@ export function LoginForm({
     },
   });
 
-  const router = useRouter();
-
   async function onSubmit(data: LoginType) {
+    // on success the action redirects to /dashboard and never returns
     const res = await userLogin(data);
-    toast[res.success ? "success" : "error"](res.message);
-
-    if (res.success) {
-      router.replace("/dashboard");
-    }
+    if (res && !res.success) toast.error(res.message);
   }
 
   return (

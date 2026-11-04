@@ -6,13 +6,14 @@ import { Toaster } from "@/components/ui/sonner";
 import { AppMetaData } from "@/lib/data";
 
 const outfit = Outfit({
-  subsets: ["latin"], variable: "--font-sans"
-})
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
 
 const raleway = Raleway({
-  subsets: ["latin"], variable: "--font-heading"
-})
-
+  subsets: ["latin"],
+  variable: "--font-heading",
+});
 
 export const metadata: Metadata = {
   title: {
@@ -52,7 +53,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${outfit.variable} ${raleway.variable} antialiased font-sans`}>
+      <body
+        className={`${outfit.variable} ${raleway.variable} antialiased font-sans`}
+      >
         <ProgressProviders>
           {children}
           <Toaster closeButton richColors position="top-right" />

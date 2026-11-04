@@ -33,6 +33,11 @@ export const getEventAccessFilter = ({
   // superadmin can access all events
   if (role === "superadmin") return {};
 
+  // director sales covers every area, but only sees events whose approver pipeline includes it
+  if (role === "director_sales") {
+    return { event_type: { approver: { some: { user_type: role } } } };
+  }
+
   // ec, marketing can access events of their assigned products
   if (role === "ec" || role === "marketing") {
     return employee_id

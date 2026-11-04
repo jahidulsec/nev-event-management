@@ -12,9 +12,10 @@ export type UserMultiProps = Prisma.usersGetPayload<{
 
 export const getUsers = async (query: UserQueryType) => {
   try {
-    const { page, size, search } = userQuerySchema.parse(query);
+    const { page, size, search, role } = userQuerySchema.parse(query);
 
     const filter: Prisma.usersWhereInput = {
+      ...(role && { users_role: { some: { role } } }),
       ...(search && {
         OR: [
           {

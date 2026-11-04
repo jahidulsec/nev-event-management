@@ -12,6 +12,9 @@ const AREA_MAX_DEPTH = 4;
 // these roles are assigned by product, every other role is assigned by area
 const PRODUCT_ROLES = ["ec", "marketing"];
 
+// these roles cover every area and product, so they have no area or product assigned
+const GLOBAL_ROLES = ["director_sales"];
+
 const approverUserSelect = {
   employee_id: true,
   full_name: true,
@@ -74,6 +77,16 @@ export const getNextApprover = async (event: ApproverEvent, index = 0) => {
     status: "active",
     users_role: { some: { role } },
   };
+
+  if (GLOBAL_ROLES.includes(role)) {
+    const users = await userService.getusers({
+      filter: roleFilter,
+      options: { select: approverUserSelect },
+      cacheOption: { cache: false },
+    });
+
+    return { approver, role, recipients: users ?? [] };
+  }
 
   if (PRODUCT_ROLES.includes(role)) {
     const users = await userService.getusers({

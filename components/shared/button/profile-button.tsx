@@ -44,13 +44,9 @@ const ProfileButton = ({ user }: { user: AuthUser }) => {
             <DropdownMenuItem
               variant="destructive"
               onClick={() =>
-                toast.promise(userLogout, {
-                  loading: "Logging out...",
-                  success: (data) => {
-                    if (!data.success) throw data;
-                    return data.message;
-                  },
-                  error: (data) => data.message,
+                // on success the action redirects to /login and never returns
+                userLogout().then((res) => {
+                  if (res && !res.success) toast.error(res.message);
                 })
               }
             >

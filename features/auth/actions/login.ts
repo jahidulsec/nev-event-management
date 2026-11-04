@@ -10,6 +10,7 @@ import {
 import { isValidPassword } from "@/utils/password";
 import { LoginType } from "./schema";
 import { userService } from "@/services/user";
+import { redirect, RedirectType } from "next/navigation";
 
 export const userLogin = async (data: LoginType) => {
   try {
@@ -62,12 +63,6 @@ export const userLogin = async (data: LoginType) => {
 
     // set default area for dashboard
     if (userAreaCodes[0]) await saveArea(userAreaCodes[0]);
-
-    return response({
-      success: true,
-      message: "You are logged in successfully",
-      data: user,
-    });
   } catch (error) {
     console.error(error);
     return response({
@@ -75,18 +70,27 @@ export const userLogin = async (data: LoginType) => {
       message: (error as Error).message ?? "Something went wrong",
     });
   }
+
+  // redirect from the action (outside try, since redirect throws) so the
+  // dashboard renders with the new session cookie instead of a client-cached
+  // logged-out redirect to /login
+  redirect("/dashboard", RedirectType.replace);
 };
 
 export const userLogout = async () => {
   try {
     await deleteSession();
-    return response({ success: true, message: "You are logged out" });
   } catch (error) {
     return response({
       success: false,
       message: (error as Error).message ?? "Something went wrong",
     });
   }
+
+  // redirect from the action so the current dashboard page is never
+  // re-rendered logged out; otherwise the client router caches the layout's
+  // redirect to /login and replays it on the next login
+  redirect("/login", RedirectType.replace);
 };
 
 export const setDashboardRole = async (role: string) => {

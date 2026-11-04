@@ -1,3 +1,4 @@
+import { userRoleSchema } from "@/schemas/common";
 import { QuerySchema } from "@/schemas/query";
 import z from "zod";
 
@@ -59,7 +60,9 @@ export const createUsersDTOSchema = z.array(
   }),
 );
 
-export const userQuerySchema = QuerySchema.extend({});
+export const userQuerySchema = QuerySchema.extend({
+  role: userRoleSchema.optional(),
+});
 
 export const updateUserDTOSchema = createUserDTOSchema.partial();
 

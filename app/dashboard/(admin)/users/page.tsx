@@ -2,6 +2,7 @@ import { ErrorBoundary } from "@/components/shared/boundary/error-boundary";
 import { DownloadButton } from "@/components/shared/button/download";
 import { ExcelUploadButton } from "@/components/shared/button/excel-upload";
 import { SearchForm } from "@/components/shared/inputs/search";
+import { Select } from "@/components/shared/select/select";
 import PagePagination from "@/components/shared/pagination/pagination";
 import {
   Section,
@@ -17,6 +18,8 @@ import UserTable from "@/features/users/components/user-table";
 import { getUsers } from "@/features/users/libs/users";
 import { NoAccess } from "@/components/shared/state/state";
 import { getActivePermissions } from "@/lib/permission-guard";
+import { userRoleList } from "@/lib/data";
+import { UserQueryType } from "@/features/users/schema/schema";
 import { RowPermissions } from "@/types/permission";
 import { SearchParams } from "@/types/search-params";
 import { DEFAULT_PAGE, DEFAULT_PAGE_SIZE } from "@/utils/settings";
@@ -37,6 +40,12 @@ export default async function UserPage({
         <SectionHeading>Users</SectionHeading>
 
         <SectionActions>
+          <Select
+            className="w-full sm:w-fit"
+            placeholder="Filter by role"
+            paramsName="role"
+            data={userRoleList}
+          />
           <SearchForm />
           {permissions.includes("user:import") && (
             <>
@@ -70,11 +79,12 @@ const TableContainer = async ({
   searchParams: SearchParams;
   permissions: RowPermissions;
 }) => {
-  const { page, size, search } = await searchParams;
+  const { page, size, search, role } = await searchParams;
   const res = await getUsers({
     page: Number(page || DEFAULT_PAGE),
     size: Number(size || DEFAULT_PAGE_SIZE),
     search: search?.toString(),
+    role: role?.toString() as UserQueryType["role"],
   });
 
   return (
