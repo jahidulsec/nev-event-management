@@ -27,7 +27,11 @@ export const notify = async ({
   is_marked = "no",
   email,
 }: NotifyInput) => {
-  const devEmail = process.env.EMAIL_DEV_ADDRESS;
+  // redirect every email to the dev address only when EMAIL_DEV_ENABLED=1
+  const devEmail =
+    process.env.EMAIL_DEV_ENABLED === "1"
+      ? process.env.EMAIL_DEV_ADDRESS
+      : undefined;
 
   if (email && (devEmail || recipient.email)) {
     sendEmail({
