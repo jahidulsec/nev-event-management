@@ -181,6 +181,7 @@ export function UserDashboardView({
                   {data.awaiting.items.length ? (
                     <ActionList
                       waitingSince
+                      moreHref="/dashboard/events?awaiting=yes"
                       items={data.awaiting.items}
                       count={data.awaiting.count}
                     />

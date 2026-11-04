@@ -24,9 +24,12 @@ export function ActionList({
   items,
   count,
   waitingSince = false,
+  moreHref = "/dashboard/events",
 }: {
   items: EventBrief[];
   count: number;
+  /** events page link for the remaining items, with matching filters */
+  moreHref?: string;
   /** show how long each event has been waiting instead of its date */
   waitingSince?: boolean;
 }) {
@@ -63,7 +66,7 @@ export function ActionList({
         <li className="pt-1 text-center text-xs text-muted-foreground">
           + {count - items.length} more in{" "}
           <Link
-            href="/dashboard/events"
+            href={moreHref}
             className="font-medium text-primary underline-offset-4 hover:underline"
           >
             Events

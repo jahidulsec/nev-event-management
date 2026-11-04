@@ -162,6 +162,8 @@ export const eventQuerySchema = QuerySchema.extend({
   event_type_id: z.string().optional(),
   status: eventCurrentStatusEnum.optional(),
   is_archived: yesNoEnum.optional().default("no"),
+  // only events waiting on the viewer's approval
+  awaiting: yesNoEnum.optional(),
   start: z
     .string()
     .regex(/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/)

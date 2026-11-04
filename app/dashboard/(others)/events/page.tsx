@@ -69,6 +69,15 @@ export default async function EventsPage({
             value: item,
           }))}
         />
+        {dashboardRole !== "superadmin" &&
+          permissions.includes("event:approve") && (
+            <Select
+              className="w-full sm:w-fit"
+              placeholder="Filter by approval"
+              paramsName="awaiting"
+              data={[{ label: "Awaiting my approval", value: "yes" }]}
+            />
+          )}
         {dashboardRole === "superadmin" && (
           <Select
             className="w-full sm:w-fit"
@@ -98,7 +107,7 @@ const TableSection = async ({
 }: {
   searchParams: SearchParams;
 }) => {
-  const { page, size, search, status, start, end, is_archived } =
+  const { page, size, search, status, start, end, is_archived, awaiting } =
     await searchParams;
 
   const authUser = await getAuthUser();
@@ -120,6 +129,7 @@ const TableSection = async ({
       : "processing",
     // only admin can view archived events
     is_archived: is_archived?.toString() === "yes" ? "yes" : "no",
+    awaiting: awaiting?.toString() === "yes" ? "yes" : undefined,
   });
 
   return (

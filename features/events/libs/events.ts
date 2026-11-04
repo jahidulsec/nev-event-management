@@ -72,6 +72,7 @@ export const getEvents = async (query: EventQueryType) => {
       employee_id,
       status,
       is_archived,
+      awaiting,
     } = eventQuerySchema.parse(query);
 
     const permissions = await getActivePermissions();
@@ -95,15 +96,17 @@ export const getEvents = async (query: EventQueryType) => {
         ? await eventService.getEventIdsByCurrentApprover({ role })
         : [];
 
-    const approverFilter: Prisma.eventsWhereInput = canApprove
-      ? {
+    const approverFilter: Prisma.eventsWhereInput = !canApprove
+      ? {}
+      : awaiting === "yes"
+        ? { current_status: "processing", id: { in: awaitingIds } }
+        : {
           OR: [
             { current_status: { not: "processing" } },
             ...(employee_id ? [{ employee_id }] : []),
             { id: { in: awaitingIds } },
           ],
-        }
-      : {};
+        };
 
     const filter: Prisma.eventsWhereInput = {
       AND: [accessFilter, approverFilter],
